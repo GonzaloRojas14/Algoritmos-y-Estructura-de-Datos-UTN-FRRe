@@ -1,0 +1,41 @@
+// Ejercicio 1.1.35
+// Escriba un algoritmo que acepte un número entero que representa una suma de dinero e indique
+// cuantos billetes de cada denominación necesita, suponiendo que solo existen billetes de 500,
+// 100, 50, 20, 10, 5 y 1 peso.
+
+Accion 1.1.35 es
+Ambiente
+    dinero,b500,b100,b50,b20,b10,b5,b1:ENTERO
+Proceso
+    Escribir("Ingrese el monto()"); Leer(dinero)
+    b500:= dinero div 500
+    dinero:= dinero mod 500
+    
+    b100:= dinero div 100
+    dinero:= dinero mod 100
+
+    b50:= dinero div 50
+    dinero:= dinero mod 50
+
+    b20:= dinero div 20
+    dinero:= dinero mod 20
+
+    b10:= dinero div 10
+    dinero:= dinero mod 10
+
+    b5:= dinero div 5
+    dinero:= dinero mod 5
+
+    b1:= dinero div 1
+    dinero:= dinero mod 
+    
+    Escribir("Billetes que se necesitan:")
+    Escribir(b500,"de 500")
+    Escribir(b100,"de 100")
+    Escribir(b50,"de 50")
+    Escribir(b20,"de 20")
+    Escribir(b10,"de 10")
+    Escribir(b5,"de 5")
+    Escribir(b1,"de 1")
+FinProceso
+FinAccion

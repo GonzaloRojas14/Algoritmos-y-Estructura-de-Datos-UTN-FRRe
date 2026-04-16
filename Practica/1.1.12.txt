@@ -1,0 +1,36 @@
+// Ejercicio 1.1.12
+// Escriba un algoritmo que acepte un número entero mayor a 100 y menor a 1000, y muestre como
+// está compuesto (unidades, decenas y centenas) y si es múltiplo de 3 (Recordar: todo número
+// cuya suma de sus dígitos sea múltiplo de 3, lo es también).
+
+Accion 1.1.12 es
+    Ambiente
+        numero,centena,decena,unidad,sumanum:entero
+    Proceso
+        Escribir("Ingrese el numero mayor a 100 y menor a 1000: "); Leer(numero)
+        si (numero>100) y (numero<1000) Entonces
+
+            centera:=numero div 100 
+            decena:= numero mod 100 
+            decena:= decena div 10
+            unidad:= decena mod 10
+
+            Escribir("El numero esta compuesto por")
+            Escribir(centena," Centenas")
+            Escribir(decena," Decenas")
+            Escribir(unidad," Unidades")
+
+            sumanum:=centena+decena+unidad
+            sumanum:=sumanum mod 3
+
+            Si (sumanum=0) Entonces
+                Escribir("El numero es multiplo de 3")
+            Sino
+                Escribir("El numero no es multiplo de 3")
+            FinSi
+
+        Sino
+            Escribir("No ingreso un numero entre 100 y 1000")
+        FinSi
+    FinProceso
+FinAccion

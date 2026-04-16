@@ -1,0 +1,39 @@
+// Ejercicio 1.1.24
+// Escribir un algoritmo que, dado un importe dinero, permia calcular e informar cuanto
+// corresponde pagar por un impuesto, en cuantas cuotas y el valor de las mismas. Tener en cuenta
+// los siguientes datos:
+// • IMPUESTO = 10% del importe dado.
+// • Los importes mayores que $500 y menor o igual que $1000 se pagan en dos cuotas.
+// • Los mayores de $1000 en tres cuotas. EI algoritmo debe permitir tratar varios importes
+// finalizando cuando se ingresa 9999 como importe.
+
+Accion 1.1.24 es
+Ambiente
+    IMPORTE,IMPUESTO:REAL
+    PAGOCUOTA:REAL
+    CUOTAS:ENTERO
+    NumeroBool: Booleano
+    
+Proceso
+    Escribir("Ingrese el Importe"); Leer(IMPORTE)
+    Mientras(IMPORTE<>9999) 
+        IMPORTE:=IMPORTE*1.10
+        importe imsporte hacer
+            <500: cuotas:=1
+            >500 y importe<=1000:cuotas:=2
+            >1000 : cuotas:=3
+        finsegun
+        PAGOCUOTA:=IMPORTE/CUOTAS
+        Escribir("El impuesto correspondiente al importe de $",IMPORTE,"es de $",IMPUESTO," el impuesto se va a pagar en ", CUOTAS," cuotas de $", PAGOCUOTA)
+        Escribir("Ingrese el Importe"); Leer(IMPORTE)
+    FinMientras
+FinProceso
+FinAccion
+    
+
+    
+
+
+
+
+    

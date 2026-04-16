@@ -1,0 +1,28 @@
+Escriba un algoritmo que lea el monto total de una compra en un supermercado y determine el total a pagar según los siguientes criterios:
+Si el monto de la compra supera los $200.000, se aplica un 15% de descuento
+Luego se consulta el tipo de entrega (el usuario ingresa el número de opción):
+
+Opción 1 → retiro en sucursal, no se suma ningún cargo adicional
+Opción 2 → envío a domicilio dentro de Resistencia, se suma un 5% sobre el monto final
+Opción 3 → envío a domicilio fuera de Resistencia, se suma un 10% sobre el monto final
+
+
+Accion 1.14 es 
+
+    Ambiente 
+        monto: real
+        opcion:entero
+    proceso
+        Escribir("Ingrese el monto de la compra"); Leer(monto)150     
+        si (monto > 200000) entonces
+            monto:= monto - monto*0.15
+        fin_si 
+        Escribir("Ingrese el tipo de entrega 1/2/3"); Leer(opcion)
+        SEGUN opcion HACER
+            2:  monto:= monto + monto*0.05 
+            3:  monto:= monto + monto*0.1 
+        FIN_SEGUN
+        Escribir("El monto total a pagar es de: ", monto)
+
+    fin_proceso
+Fin_Accion

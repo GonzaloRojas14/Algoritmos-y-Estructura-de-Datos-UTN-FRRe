@@ -1,0 +1,6 @@
+C=float(input("Ingrese el precio actual del articulo: "))
+N=int(input("Ingrese el año actual: "))
+R=float(input("Ingrese la tasa de inflacion: "))
+A=int(input("Ingrese el año futuro: "))
+P = C*(1+R)**(N-A)
+print("El precio final es: ", (C*(1+R)**(N-A)) )

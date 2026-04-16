@@ -1,0 +1,20 @@
+// Ejercicio 1.1.28
+// Construya un algoritmo capaz de encontrar todas las cifras de tres dígitos que cumplan con la
+// condición de que la suma de los cubos de sus dígitos sea igual al número que la cifra
+// representa.
+
+Accion 1.1.28 es
+Ambiente
+Proceso
+    Para i = 100 hasta 999 Hacer
+        centena=i div 100
+        decena=(i mod 100)div 10
+        unidad=decena mod 10
+
+        suma:=centena**3+decena**3+unidad**3
+        Si suma=i Entonces
+            Escribir("El numero", i,"Cumple la condicion")
+        FinSi
+    FinPara
+FinProceso
+FinAccion

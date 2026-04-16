@@ -1,0 +1,36 @@
+Escriba un algoritmo que permita ingresar 3 valores numéricos y determine cuál es el mayor, el medio y el menor. (era el 3 de los complementarios)
+
+Accion 1.1.6 
+    Ambiente
+        a,b,c:entero
+    Algoritmo
+        ESCRIBIR("Ingrese 3 valores numericos para determinar el mayor, el del medio y el menor")
+        Leer(a,b,c)
+
+        SI (a>b y b>c) ENTONCES 
+            ESCRIBIR("el mayor es",a," el del medio ",b,"y el del menor " ,c) //a b c
+        SINO
+            SI (a>c y c>b) ENTONCES
+                ESCRIBIR("el mayor es ",a,"el del medio ",c," y el menor ",b)//a c b
+            SINO
+                SI (b>a y a>c) ENTONCES 
+                    ESCRIBIR("el mayor es ",b,"el del medio ",a," y el menor ",c)//b a c 
+                SINO
+                    SI (b>a y c>a) ENTONCES 
+                        ESCRIBIR("el mayor es ",b,"el del medio ",c," y el menor ",a)//b c a 
+                    SINO
+                        SI (c>a y a>b) ENTONCES 
+                            ESCRIBIR("el mayor es ",c,"el del medio ",a," y el menor ",b)//c a b
+                        SINO
+                            SI (c>a y b>a) ENTONCES 
+                                ESCRIBIR("el mayor es ",c,"el del medio ",b," y el menor ",a)//c b a 
+                            FIN_SI
+                        FIN_SI
+                    FIN_SI 
+                FIN_SI
+            FIN_SI
+        // FIN_SI
+
+        
+        
+FinAccion

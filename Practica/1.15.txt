@@ -1,0 +1,22 @@
+Hacer un algoritmo que calcule la altura aproximada de un edificio en pies, ingresando como dato la cantidad de pisos del mismo y la altura promedio de cada piso, en metros. (1 m = 3.28 pies)
+Modifique el algoritmo del punto 1. para que permita calcular la altura de 50 edificios.
+Modifique el algoritmo del punto 1. para que permita calcular la altura de una cantidad indeterminada de edificios. Prevea una condición de fin.
+
+
+Accion 1.15 es
+    Ambiente
+        pisos,opcion:entero
+        metros,pies:real
+    proceso
+
+        Repetir 
+            Escribir("Ingrese la altura del piso y la cantidad de pisos"); Leer(metros,pisos)
+            pies:= metros*pisos*3.28
+            Escribir("La altura del edificio es de: ", pies)
+
+            Escribir("Quiere Calcular la altura de otro edificio? Escriba 0 para salir y 1 para volver a calcular"); Leer(opcion)
+
+        Hasta que (opcion = 0)
+
+    fin_proceso
+Fin_Accion

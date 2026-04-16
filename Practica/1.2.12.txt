@@ -1,0 +1,27 @@
+Ejercicio 1.2.12
+Escribir una función que lea desde el teclado las unidades y el precio que quiere comprar, y en función de las unidades introducidas le haga un descuento o no (cuando las unidades excedan media docena se aplicará 4% y el 10% cuando excedan la docena).
+
+Accion 1.2.12 
+Ambiente
+    uni:entero
+    costo,Resultado:real
+    
+    Funcion Descuento(unidades:entero, precio:real):Real
+        Ambiente
+            Total:Real
+
+        Segun unidades hacer
+        >6 y unidades<12 : Descuento:=unidades*precio*0,96
+        >12 : Descuento:=unidades*precio*0,9
+        FinSegun
+        Descuento:=unidades*precio
+    FinFuncion
+
+    Escribir("Ingrese las unidades y el precio del producto a comprar")
+    Leer(uni);Leer(costo)
+    Resultado:=Descuento(uni,costo)
+    Escribir("El precion con el descuento es de", Resultado)s
+
+Proceso
+FinProceso
+FinAccion

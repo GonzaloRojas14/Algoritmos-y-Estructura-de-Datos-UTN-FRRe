@@ -1,0 +1,46 @@
+Accion 1.2.11 es
+Ambiente
+    num1,num2:Real
+    x:entero
+
+    Procedimiento Menu()
+        Escribir("Ingrese el numero correspondiente a la funcion que quiere usar:");
+        Escribir("1. Sumar")
+        Escribir("2. Restar")
+        Escribir("3. Multiplicar")
+        Escribir("4. Dividir")
+    FinProcedimiento
+
+    Procedimiento RecibirVar()
+        Escribir("Ingrese el primer numero"); Leer(num1)
+        Escribir("Ingrese el segundo numero"); Leer(num2)
+    FinProcedimiento
+
+    Funcion Suma(a,b:Real):Real
+        Suma:=a+b
+    FinFuncion
+
+    Funcion Resta(a,b:Real):Real
+        Resta:=a-b
+    FinFuncion
+
+    Funcion Multiplicacion(a,b:Real):Real
+        Multiplicacion:=a*b
+    FinFuncion
+
+    Funcion Division(a,b:Real):Real
+        Division:=a/b
+    FinFuncion
+
+Proceso
+    Menu()
+    Leer(X)
+    RecibirVar()
+    Segun x Hacer
+        =1 : Escribir("El resultado es:", Suma(num1,num2))
+        =2 : Escribir("El resultado es:", Resta(num1,num2))
+        =3 : Escribir("El resultado es:", Multiplicacion(num1,num2))
+        =4 : Escribir("El resultado es:", Division(num1,num2))
+    FinSegun
+
+FinProceso

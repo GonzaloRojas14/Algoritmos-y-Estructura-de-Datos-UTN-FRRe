@@ -1,0 +1,109 @@
+En una Empresa Farmacéutica se posee un archivo MAE_REMEDIOS (ordenado por Clave: Farmacia + Medicamento), el que se actualiza semanalmente, a traves de la información que se encuentra cargada en un archivo de MOVIMIENTOS (ordenado por Clavem: Farmacia + Medicamento, y Cod_Mov), de la siguiente forma:
+
+Si Clave (MAE_REMEDIOS) es menor que Clavem (MOVIMIENTOS), simplemente se transfieren los datos del Maestro a la salida y se graban.
+
+Si Clave (MAE_REMEDIOS) es igual a Clavem (MOVIMIENTOS) y el Codmov es 1, se considera error y se lista un mensaje indicando el tipo de error; pero si el Codmov es 2, entonces es un remedio que deja de fabricarse y se transfiere el registro al archivo de Remedios vencidos (REM_VENC) ; pero si el Cod_Mov es 3, se modifica la cantidad actual con la cantidad recibida.
+
+Si Clave (MAE_REMEDIOS) es mayor que Clavem (MOVIMIENTOS) y el Codmov es 1, se incorpora el remedio a nuestro Vademecum, considerando que la cantidad recibida configura la cantidad actual y la Fecha_Vencimiento es 30 días posterior a la fecha actual; pero si el Codmov es 2 o 3 se considera error y se deben producir los correspondientes mensajes de error.
+
+MAE_REMEDIOS Ordenado por Farmacia y Medicamento
+
+FarmaciaMedicamentoCant_ActualFecha_Vencimiento
+MOVIMIENTOS Ordenado por Farmacia, Medicamento y Cod_Mov
+
+FarmaciaMedicamentoCod_MovCant_Recibida
+REM_VENC Ordenado por Medicamento
+
+MedicamentoCant_Vencida
+
+Accion 2.1.19 
+Ambiente 
+    rem = registro
+        clave: registro
+            Farmacia:AN
+            Medicamento:AN
+        finregistro
+        Cant_Actual:N
+        Fecha_Vencimiento: fecha
+    finregistro
+
+    Fech = registro
+            año: N
+            mes: N
+            dia: N
+        finregistro                                     
+    
+    Mov= registro
+        clave: registro
+            Farmacia:AN
+            Medicamento:AN
+        finregistro
+        cod_mov:N 
+        Cant_Recibida
+    finregistro
+
+    ven = registro
+        Medicamento: AN
+        Cant_Vencida
+    finregistro
+
+    reg_rem : rem; 
+    reg_fecha: fech; 
+    reg_mov: mov;
+    reg_rem_ven: ven
+    reg_sal: rem
+
+    mae_remedios: archivo de rem ordenado por farmacia, Medicamento
+    movimientos: archiivo de mov ordenado por farmacia, Medicamento,cod_mov
+    rem_venc: archivo de ven ordenado por medicamento
+    mae_sal: archivo de rem ordenado por farmaca, medicamento
+
+    procedimiento Leer_mae()
+    
+
+
+Proceso
+    Abrir E/S(mae_remedios); Abrir S(rem_venc) Abrir E/(movimientos)
+    Crear(mae_sal)
+    
+
+    mientras mae_remedios <> HV o movimientos <> HV
+
+        si  reg_rem.clave < reg_mov.clave hacer
+            reg_sal:= reg_rem 
+            grabar(mae_sal,reg_sal)
+        sino
+            si reg_rem.clave = reg_mov.clave hacer
+                segun reg_mov.cod_mov hacer
+                    =1 : escribir("error")
+                    =2 : reg_rem_venc.medicamento:= reg_mov.medicamento;
+                        reg_rem_venc.Cant_Vencida:= reg_mov.Cant_Recibida;
+                        grabar(rem_venc,reg_rem_venc);
+                    =3 : reg_sal.Cant_Actual:= reg_mov.Cant_Recibida;
+                        reg_sal:= reg_rem
+                        reg_sal.Cant_Actual:=reg_mov.Cant_Recibida
+                        grabar(mae_sal,reg_sal)
+                finsegun
+            sino 
+                si si reg_rem.clave >    reg_mov.clave hacer
+        reg.clave:="juan"
+        leer(arch,reg)
+        mientras NFDA(arch)
+
+                
+        finsi 
+
+    finmientras
+
+
+segun variable hacer
+
+
+
+
+
+
+        
+
+
+    

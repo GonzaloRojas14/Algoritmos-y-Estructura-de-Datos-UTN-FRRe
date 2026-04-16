@@ -1,0 +1,59 @@
+Escriba un algoritmo que acepte un número entero mayor a 100 y menor a 1000, y muestre cómo está compuesto (unidades, decenas y centenas) y si es múltiplo de 3 (Recordar: todo número cuya suma de sus dígitos sea múltiplo de 3, lo es también).
+
+Accion 1.12 es 
+
+
+    Ambiente
+        num,unidad,decena,centena,: Entero 
+        
+    Proceso
+        Escribir("Ingrese un numero mayor a 100 y menor a 1000"); Leer(num) 
+        
+        unidad:= num mod 10 
+        
+        si num >100 y num <1000 
+
+
+            unidad:= numero mod 10     
+            numero:= numero div 10      
+
+            digito:= numero mod 10 
+            Y:= digito *10
+            numero:= nuSmero div 10  
+
+            digito:= numero mod 10 
+            Z:= digito *100
+            numero:= numero div 10 
+            
+            
+
+            secuencia:(1234,833,203,300)
+
+    Fin_Proceso
+    
+Fin_Accion
+
+funcion NaC(x:caracter):entero
+    Segun x hacer
+        ="0" : Can=0
+        ...
+        ="9": Can=9
+    fin_segun
+secuencia: ("auto123")
+para i=1 hasta 4 hacer
+    AVANZAR(secuencia, v)
+fin_para
+
+:= NaC(v) 
+
+("LucianoPeralta-44512762%08/11/2002 CarinaBurger-17307090%10/04/1994 CarinaBurger-17307090%10/04/1994")
+
+mientras v <> "" entonces
+
+mientras v <> "-"
+
+para i=1 hasta 8 hacer
+
+
+
+avz()

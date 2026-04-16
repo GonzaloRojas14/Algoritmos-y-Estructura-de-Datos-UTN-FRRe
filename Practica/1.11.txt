@@ -1,0 +1,25 @@
+    Dados dos números enteros A y B generar un algoritmo que permita determinar si A es divisor de B o B es divisor de A.
+
+    Accion 1.11 es
+        Ambiente   
+            a,b:entero
+
+        Proceso
+            Escribir("Ingrese los dos numeros a dividir"); Leer(a,b)
+
+            SI (b mod a = 0) ENTONCES
+                Si (a mod b = 0) ENTONCES
+                    Escribir("a es divisor de b y b es divisor de a")
+                sino
+                    Escribir("a es divisor de b")
+                FIN_SI
+            sino
+                Si (a mod b = 0) ENTONCES
+                    ESCRIBIR("b es divisor de a")
+                sino 
+                    Escribir("Ni a ni b son divisores del otro")         
+                FIN_SI       
+            FIN_SI
+
+        Fin_proceso
+    Fin_Accion

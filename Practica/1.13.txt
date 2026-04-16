@@ -1,0 +1,27 @@
+Escriba un algoritmo que acepte un número entero mayor a 100 y menor a 1000 que representa una suma de dinero e indique cuantos billetes de cada denominación necesita, suponiendo que solo existen billetes de 100, 10 y 1 peso.
+
+Accion 1.13 es 
+    Ambiente
+        num,b100,b10,b1: Entero
+    Proceso
+        Escribir("Ingrese un numero mayor a 100 y menor a 1000"); Leer(num)
+
+        Si (num > 100 y num < 1000) entonces
+        
+            b1:= num mod 10 0
+            num:= num div 10 30
+
+            b10:= num mod 10 0
+            num:= num div 10 3
+
+            b100:= num mod 10 3
+
+            Escribir("Se necesitan ", b1, " billettes de 1 peso, ", b10," billetes de 10 y ", b100," billetes de 100")
+
+        Sino 
+            Escribir("Error, su numero no esta entre 100 y 1000")
+        Fin_si
+    
+    Fin_proceso
+
+Fin_accion
