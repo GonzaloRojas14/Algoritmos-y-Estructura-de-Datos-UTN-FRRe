@@ -1,21 +1,21 @@
-Escribir un programa que permita calcular el precio de un artículo para un año dado, considerando que la inflación es del 4 por 100 anual.
+//Escribir un programa que permita calcular el precio de un artículo para un año dado, considerando que la inflación es del 4 por 100 anual.
 
-La fórmula del precio es: P = C * (1 + R) ^ (N - A)
+//La fórmula del precio es: P = C * (1 + R) ^ (N - A)
 
-C - Precio actual.
-N - Año futuro.
-R - Tasa de Inflación.
-A - Año actual.
+//C - Precio actual.
+//N - Año futuro.
+//R - Tasa de Inflación.
+//A - Año actual
 
-
-Accion 1.1.5.1 es
-    Ambiente
-        C,N,R,A,P:Real
-
-    Algoritmo
-        Escribir("Ingrese el precio actual del articulo"); Leer(C)
-        Escribir("Ingrese el año actual"); Leer(A)
-        Escribir("Ingrese el año futuro") LEER(N)
-        Escribir("Ingrese la tasa de inflacion") LEER(R)
-        P := C*(1+R)**(N-A)
-        Escribir("El precio del articulo es de: ",P)
+ACCION ejercicio_1.1.5 ES
+    AMBIENTE
+        c, p: REAL
+        n, a: ENTERO
+        r: 0.4
+    PROCESO
+        ESCRIBIR("Ingrese el año actual y el año futuro: ")
+        LEER(a, n)
+        ESCRIBIR("Ingrese el precio del producto: ")
+        p := c * (1 + r) ^ (n - a)
+        ESCRIBIR("El precio calculado a base de la inflacion es: ", p)
+FIN_ACCION
