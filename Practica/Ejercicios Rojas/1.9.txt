@@ -1,0 +1,22 @@
+//Escriba un algoritmo que permita conocer la edad de una persona, 
+//con solo ingresar la fecha de nacimiento y la fecha actual, 
+//ambas en el formato: DIA, MES, AÑO
+
+ACCION 1.9 ES
+    AMBIENTE
+        dia_nac, mes_nac, año_nac, dia, mes, año, edad: ENTERO
+    PROCESO
+        ESCRIBIR("Ingrese el nacimiento en dd/mm/aaaa")
+        LEER(dia_nac,mes_nac,año_nac)
+        ESCRIBIR("Ingrese la fecha actual en dd/mm/aaaa")
+        LEER(dia,mes,año)
+        edad := año_nac - año 
+        SI mes_nac > mes ENTONCES:
+            edad := edad - 1
+        SINO
+            SI mes_nac = mes Y dia_nac > dia ENTONCES:
+                edad := edad - 1
+            FIN_SI
+        FIN_SI
+        ESCRIBIR("La edad del individuo es: ", edad)
+FIN_ACCION
