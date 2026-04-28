@@ -1,0 +1,18 @@
+//Se desea comprar una PC y una impresora. Calcular el precio total: el cual está dado por la suma de los precios de costos, 
+//los porcentajes de ganancia del vendedor y un 21% de IVA. 
+//Supóngase una ganancia del vendedor del 12% por la PC y 7% por la impresora. 
+//Se leen los costos y se imprimen el precio total de ventas.
+
+ACCION 1.1.5.3 ES
+    AMBIENTE 
+        iva = 1.21
+        por_pc = 1.12
+        por_imp = 1.07
+        costo_pc, costo_imp, precio_total: REAL
+    PROCESO
+        ESCRIBIR("Ingrese el costo de la PC y luego el de la impresora: ")
+        LEER(costo_pc, costo_imp)
+        precio_total := (costo_pc * por_pc) + (costo_imp * por_imp)
+        precio_total := precio_total * iva
+        ESCRIBIR("El preico total es: ", precio_total)
+FIN_ACCION

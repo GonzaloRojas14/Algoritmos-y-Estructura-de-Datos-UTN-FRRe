@@ -1,0 +1,23 @@
+//Escriba un algoritmo que acepte dos números, calcule la suma e imprima el mensaje de acuerdo al resultado obtenido.
+//
+//Suma <= 50
+//Suma > 50 y <= 100
+//Suma > 100 y <= 200
+//Suma > 200
+
+ACCION 1.8 ES
+    AMBIENTE
+        suma,a,b: ENTERO
+    PROCESO 
+        ESCRIBIR("Ingrese dos numeros: ")
+        LEER(a,b)
+        suma := a + b
+
+        SEGUN suma HACER:
+            <= 50: ESCRIBIR("El valor es menor o igual a 50")
+            <= 100: ESCRIBIR("El valor es menor o igual a 100")
+            <= 200: ESCRIBIR("El valor es menor o igual a 200")
+            OTROS: ESCRIBIR("El valor es mayor a 200")
+        FIN_SEGUN
+    FIN_PROCESO
+FIN_ACCION        

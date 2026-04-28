@@ -1,0 +1,34 @@
+//Escriba un algoritmo que permita ingresar 3 valores numéricos y determine cuál es el mayor, el medio y el menor. 
+//(era el 3 de los complementarios)
+
+ACCION 1.7 ES
+    AMBIENTE
+        a,b,c: REAL
+    PROCESO
+        ESCRIBIR("Ingresar 3 numeros en cualquier orden: ")
+        LEER(a,b,c)
+        SI a > b Y b > c ENTONCES:  // a b c
+            ESCRIBIR("El numero mayor es: ", a, "El segundo numero mayor es: ", b, "Y el tercer numero mayor es: ", c)
+        SINO 
+            SI b > a Y a > c ENTONCES: // b a c
+                ESCRIBIR("El numero mayor es: ", b, "El segundo numero mayor es: ", a, "Y el tercer numero mayor es: ", c)
+            SINO
+                SI c > a Y a > b ENTONCES: // c a b
+                    ESCRIBIR("El numero mayor es: ", c, "El segundo numero mayor es: ", a, "Y el tercer numero mayor es: ", b)
+                SINO
+                    SI c > b Y b > a ENTONCES: // c b a
+                        ESCRIBIR("El numero mayor es: ", c, "El segundo numero mayor es: ", b, "Y el tercer numero mayor es: ", a)
+                    SINO
+                        SI b > c Y c > a ENTONCES: // b c a
+                            ESCRIBIR("El numero mayor es: ", b, "El segundo numero mayor es: ", c, "Y el tercer numero mayor es: ", a)
+                        SINO
+                            SI a > c Y c > b ENTONCES: // a c b
+                                ESCRIBIR("El numero mayor es: ", a, "El segundo numero mayor es: ", c, "Y el tercer numero mayor es: ", b)
+                            FIN_SI
+                        FIN_SI
+                    FIN_SI
+                FIN_SI
+            FIN_SI
+        FIN_SI
+    FIN_PROCESO
+FIN_ACCION
