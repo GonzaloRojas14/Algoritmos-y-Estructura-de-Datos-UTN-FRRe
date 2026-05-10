@@ -1,0 +1,18 @@
+//Dados dos números enteros A y B generar un algoritmo que permita determinar si A es divisor de B o B es divisor de A.
+
+ACCION ejercicio_1_11 ES
+    AMBIENTE
+        a,b: ENTERO
+    PROCESO
+        ESCRIBIR("Ingrese dos numeros a verificar: ")
+        LEER(a,b)
+        SI a MOD b = 0 ENTONCES
+            ESCRIBIR("El numero ", b, "es divisor del numero ", a)
+        SINO
+            SI b MOD a = 0 ENTONCES
+                ESCRIBIR("El numero ", a, "es divisor del numero ", b)
+            SINO
+                ESCRIBIR("Los numeros no son divisores entre si")
+            FIN_SI
+        FIN_SI
+FIN_ACCION
