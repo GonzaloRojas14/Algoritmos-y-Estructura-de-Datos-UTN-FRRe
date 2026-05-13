@@ -1,0 +1,12 @@
+//Escriba un algoritmo que acepte un número entero mayor a 100 y menor a 1000, 
+//y muestre cómo está compuesto (unidades, decenas y centenas) y si es múltiplo de 3 
+//(Recordar: todo número cuya suma de sus dígitos sea múltiplo de 3, lo es también).
+
+ACCION ejercicio_1_12 ES
+    AMBIENTE
+        num: ENTERO
+    PROCESO
+        ESCRIBIR("Ingrese un numero desde 100 al 1000:")
+        LEER(num)
+        SI num > 100 Y num < 1000 ENTONCES
+            
