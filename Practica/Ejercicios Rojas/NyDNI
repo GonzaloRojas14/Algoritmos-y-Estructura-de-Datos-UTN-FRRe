@@ -1,0 +1,31 @@
+//Subsecuencias para escribir el Nombre y el DNI, sabiendo que el DNI tiene 8 caracteres. 
+//Ademas mostrar cuantas personas fueron ya procesadas con un contador
+
+
+ACCION NyDNI ES
+    AMBIENTE
+        sec: SEC DE CARACTERES
+        v: CARACTER
+        cont: ENTERO
+    PROCESO
+        ARRANCAR(sec); AVANZAR(sec, v)
+        cont := 1
+
+        MIENTRAS NFDS(sec) HACER
+            ESCRIBIR('Nombre', cont)
+
+            MIENTRAS v <> '-' HACER
+                ESCRIBIR(v)
+                AVANZAR(sec, v)
+            FIN_MIENTRAS
+
+            AVANZAR(sec, v)
+
+            PARA i := 1 HASTA 8 HACER
+                ESCRIBIR(v)
+                AVANZAR(sec, v)
+            FIN_PARA
+
+            cont := cont + 1
+        FIN_MIENTRAS
+FIN_ACCION

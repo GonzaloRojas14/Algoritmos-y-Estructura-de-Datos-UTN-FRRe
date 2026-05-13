@@ -1,0 +1,37 @@
+//Escribir un algoritmo que produzca una secuencia de salida que contenga una oración formada 
+//por las palabras en posición par de cada oración de una secuencia texto de entrada, que además comienzan con la letra 'M'.
+
+ACCION 1_2_18 ES
+    AMBIENTE
+        sec, sal: SEC DE CARACTERES
+        v: CARACTER
+        cont: ENTERO
+    PROCESO
+        ARRANCAR(sec); AVANZAR(sec, v); CREAR(sal)
+
+        MIENTRAS NFDS(sec) HACER
+            cont := 0
+
+            MIENTRAS v <> '.' HACER
+
+                MIENTRAS v = ' ' HACER
+                    AVANZAR(sec,v)
+                FIN_MIENTRAS
+                cont := cont + 1
+
+                SI cont MOD 2 = 0 Y v + 'm' ENTONCES // Consulta si la palabra es par, que es lo que pide el ejercicio procesar si solo es palabra par
+
+                    MIENTRAS v <> ' ' y v <> '.' HACER
+                        ESCRIBIR(sal,v)
+                        AVANZAR(sec, v)
+                    FIN_MIENTRAS
+
+                SINO
+                    MIENTRAS v <> ' ' y v <> '.' HACER
+                        AVANZAR(sec,v)
+                    FIN_MIENTRAS
+                FIN_SI
+            FIN_MIENTRAS  
+            AVANZAR(sec,v)
+        FIN_MIENTRAS  
+FIN_ACCION

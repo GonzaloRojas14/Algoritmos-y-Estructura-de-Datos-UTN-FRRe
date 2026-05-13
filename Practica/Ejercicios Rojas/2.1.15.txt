@@ -1,0 +1,61 @@
+//Se desea saber la cantidad promedio de palabras que contienen las oraciones de una secuencia de caracteres. 
+//Supóngase que los puntos son siempre contiguos al último caracter de la palabra. La secuencia finaliza con una marca.
+
+ACCION Ej_2_1_15 ES
+    AMBIENTE
+        sec : SECUENCIA DE CARACTERES
+        v : CARACTER
+        cont_pal, cont_ora : ENTERO
+        prom : REAL
+    PROCESO
+        cont_pal := 0
+        cont_ora := 0
+        
+        ARRANCAR(sec)
+        AVANZAR(sec, v)
+
+        MIENTRAS NFDS(sec) HACER
+            
+            // Ignorar posibles espacios en blanco antes de una oración
+            MIENTRAS v = ' ' HACER
+                AVANZAR(sec, v)
+            FIN_MIENTRAS
+
+            SI NFDS(sec) Y v <> '.' ENTONCES
+                cont_ora := cont_ora + 1  // Detectamos el inicio de una nueva oración
+                
+                // 2. Ciclo de subsecuencia jerárquica: ORACIÓN
+                MIENTRAS v <> '.' Y NFDS(sec) HACER
+                    
+                    // Ignorar posibles espacios múltiples entre palabras
+                    MIENTRAS v = ' ' HACER
+                        AVANZAR(sec, v)
+                    FIN_MIENTRAS
+
+                    SI v <> '.' Y NFDS(sec) ENTONCES
+                        cont_pal := cont_pal + 1  // Detectamos el inicio de una nueva palabra
+                        
+                        // 3. Ciclo de subsecuencia jerárquica: PALABRA
+                        // Avanzamos hasta que la palabra termine por un espacio O por el punto
+                        MIENTRAS v <> ' ' Y v <> '.' Y NFDS(sec) HACER
+                            AVANZAR(sec, v)
+                        FIN_MIENTRAS
+                    FIN_SI
+                FIN_MIENTRAS
+                
+                // Estamos parados en el punto que finaliza la oración actual, lo superamos
+                SI v = '.' ENTONCES
+                    AVANZAR(sec, v)
+                FIN_SI
+            FIN_SI
+            
+        FIN_MIENTRAS
+
+        // Salida segura evitando división por cero
+        SI cont_ora > 0 ENTONCES
+            prom := cont_pal / cont_ora
+            ESCRIBIR("El promedio de palabras por oraciones es: ", prom)
+        SINO
+            ESCRIBIR("La secuencia no contenía oraciones válidas.")
+        FIN_SI
+FIN_ACCION

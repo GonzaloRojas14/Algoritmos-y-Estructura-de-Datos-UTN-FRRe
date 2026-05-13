@@ -1,0 +1,34 @@
+//Se dispone de 2 secuencias de caracteres, una contiene caracteres, incluidos espacios y otra contiene caracteres “numéricos”. 
+//Se pide crear una nueva secuencia de salida de caracteres donde se copien los caracteres de ambas secuencias en forma alternada, o sea un carácter, 
+//un digito, un carácter, un digito, etc.
+//
+//Ejemplo:
+//
+//Sec1: Para habilitar la función de Salas para grupos pequeños para su uso*
+//
+//Sec2: 13481460918460846161334868461086*
+//
+//Salida: P1a3r4a8 1h4….
+//
+//Analice y responda: Que pasaría en el caso de que una secuencia de entrada termine antes que la otra? se podría cumplir con la consigna?
+//Como modificaría el algoritmo en el caso de que solicite contar la cantidad de caracteres de cada secuencia y mostrar por pantalla al final del proceso?
+
+
+
+
+
+ACCION 2_1_4 ES
+    AMBIENTE 
+        s1, s2, sal: SEC DE CARACTER.  // Se necesita definir las secuencias en el ambiente, NO cuenta como empezarla   
+        v1, v2: CARACTER. // Se definen las ventanas de cada secuencia 
+    PROCESO
+        ARRANCAR(s1); ARRANCAR(s2); CREAR(sal)
+        AVANZAR(s1, v1); AVANZAR(s2, v2)
+
+        MIENTRAS NFDS(s1) Y NFDS(s2) HACER
+            ESCRIBIR(sal, v1); ESCRIBIR(sal, v2) // Necesitamos SIEMRPE escribir LA VENTANA asignada en la SECUENCIA DE SALIDA 
+            AVANZAR(s1,v1); AVANZAR(s2,v2) // Una vez que hayamos manipulado lo que el ejercicio pedia, se tiene que avanzar las ventanas de las secunecias en uso
+        FIN_MIENTRAS
+
+        CERRAR(sal); CERRAR(s1); CERRAR(s2) // Siempre se cierran las secuencias para guardarlas o algo asi, si o si se cierran por cada secuencia en separado
+FIN_ACCION
