@@ -1,0 +1,21 @@
+//Las raíces de una ecuación de segundo grado ax^2+bx+c=0 son reales si y sólo si el discriminante dado por (b2−4ac) no es negativo. 
+//Se desea leer el valor de los coeficientes a,b,c
+//Imprimir el resultado del discriminante. Realizar prueba de escritorio.
+
+ACCION Ej_1.1.5.2 es
+     AMBIENTE
+     A,B,C,disc: REAL
+
+     PROCESO
+     escribir("Ingrese los valores de A,B,C")
+     leer(A,B,C)
+
+     disc:= (b ** 2)-(4 * a * c)
+
+     SI (disc <= 0) ENTONCES
+     escribir("Las raices son reales, el discriminante es: ", disc)
+     SINO 
+         escribir("Las raices no son reales, el discriminante es negativo: ", disc)  
+     FIN_SI
+FIN_ACCION
+     
