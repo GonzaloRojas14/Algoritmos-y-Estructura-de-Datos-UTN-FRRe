@@ -1,0 +1,34 @@
+ACCION 2_2_2 ES
+    AMBIENTE
+        
+        FECHA = REGISTRO
+            aa: ENTERO
+            mm: ENTERO
+            dd: ENTERO
+        FIN_REGISTRO
+
+        FACTURA = REGISTRO
+            nro: ENTERO
+            f_fact: FECHA
+            imp: REAL
+        FIN_REGISTRO
+
+        facturas: Archivo de FACTURA
+        fac: FACTURA
+
+        fecha_us: FECHA
+
+    PROCESO
+        ABRIR E/(facturas): LEER(facturas, fac)
+        ESCRIBIR("Ingrese la fecha deseada, dia, mes, año")
+        LEER(fecha_us.dd, fecha_us.mm, fecha_us.aa)                 // SI la fecha se ingresa de este formato, se reformatea al que tiene la esctrucutra de fecha
+
+        MIENTRAS NOFDA(facturas) HACER
+            SI fac.f_fact > fecha_us Y fac.imp < 1000 ENTONCES
+                ESCRIBIR(fac.nro, fac.f_fact.dd, fac.f_fact.mm, fac.f_fact.aa, fac.imp)
+            FIN_SI
+            LEER(facturas, fac)
+        FIN_MIENTRAS
+        CERRAR(facturas)
+    FIN_PROCESO
+FIN_ACCION
