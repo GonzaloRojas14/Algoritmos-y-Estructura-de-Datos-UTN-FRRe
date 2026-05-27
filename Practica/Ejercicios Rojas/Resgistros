@@ -1,0 +1,38 @@
+Un campo es la entidad lógica más pequeña y la unidad mínima de información que conforma el registro.
+
+Un registro es un conjunto de datos heterogéneos.
+
+Todo campo requiere una declaración basada en tres atributos esenciales: nombre, tipo, tamaño.
+
+    Ejemplo:
+    {
+        dni:    N(8)
+        carrera: ('isi', 'iq', 'iem', 'lar')   -- tipo de dato enumerado
+    }
+
+
+Declaración de ambiente (estructura):
+
+    AMBIENTE
+        PERSONA = REGISTRO      -- No se ocupa "PERSONA", es solo la estructura.
+                                -- Se accede con persona.dni o reg.campo
+            DNI:       ENTERO
+            NOMBRE:    AN(50)
+            DOMICILIO: AN(70)
+        FIN_REGISTRO
+
+    Asignación: reg.dni := 12131231
+
+
+Los registros anidados son cuando existen estructuras dentro de otra.
+Por ejemplo, las fechas que se definen como una estructura aparte.
+
+Un archivo secuencial es un conjunto de registros.
+
+LEER() lee todo el registro entero, ESCRIBIR() también escribe todo el registro completo.
+
+Clave compuesta: dos o más campos que juntos forman una llave única para identificar.
+
+Flujo de archivo esencial:
+
+    Abrir → Leer → Control (no FDA) → ... → Cerrar

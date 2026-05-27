@@ -1,0 +1,63 @@
+// A partir de la secuencia del ejercicio 2.01 se desea generar otra secuencia con los alumnos de una carrera dada
+// que aprobaron alguna materia este año, con nota mayor a 7 (siete).
+//
+// - Apellido y Nombre
+// - Carrera (ISI - IEM - IQ)
+// - Nº de Legajo
+// - Fecha de Nacimiento
+// - Fecha de Ingreso
+// - D.N.I.
+// - Sexo (M o F)
+// - Fecha de último examen aprobado
+// - Nota
+
+
+ACCION 2_2_4 ES
+    AMBIENTE
+
+        carrera_ingresada: AN(30)                           // guarda la carrera que el usuario ingresa por teclado para filtrar
+        año_actual: ENTERO                                  // guarda el año ingresado para comparar con el año del último examen del alumno
+
+        FECHA = REGISTRO                                    // estructura auxiliar reutilizable para representar cualquier fecha
+            dia: ENTERO                                     // día
+            mes: ENTERO                                     // mes
+            año: ENTERO                                     // año — este campo se usa luego para comparar si el examen fue este año
+        FIN_REGISTRO
+
+
+        ALUMNO = REGISTRO                                   // estructura que representa a un alumno con todos sus datos académicos y personales
+            apynom: AN(40)
+            carrera: ('isi','iem','iq','lar')
+            legajo: ENTERO
+            fecha_nac: FECHA                                // campos de tipo FECHA anidados dentro del registro ALUMNO
+            fecha_ing: FECHA
+            dni: N(8)
+            sexo: ('M', 'F')
+            fecha_ult_exam: FECHA                          // fecha del último examen aprobado — se accede al año con alu.fecha_ult_exam.año
+            nota: ENTERO
+        FIN_REGISTRO
+
+    arch_alu, arch_alu_sal: Archivo de ALUMNO              // arch_alu: archivo de entrada con todos los alumnos | arch_alu_sal: archivo de salida filtrado
+    alu, alusal: ALUMNO                                    // alu: variable para leer cada registro del archivo | alusal: variable para armar el registro de salida
+
+    PROCESO
+        Abrir E/(arch_alu); LEER(arch_alu, alu)            // abre el archivo de entrada en modo lectura y carga el primer registro en alu
+        Abrir /S(arch_alu_sal);                            // abre el archivo de salida en modo escritura (empieza vacío)
+
+        ESCRIBIR("Ingrese el AÑO ACTUAL y la CARRERA a consultar, en ese orden")
+        LEER(año_actual, carrera_ingresada)                // el usuario define los dos criterios de filtro: año del examen y carrera buscada
+
+        MIENTRAS NFDA(arch_alu) HACER                      // recorre el archivo de entrada completo hasta llegar al fin de archivo
+            ESCRIBIR(alu.legajo, alu.apynom, alu.dni, alu.carrera)  // imprime por pantalla los datos básicos de cada alumno que se va procesando
+
+            SI alu.carrera = carrera_ingresada Y alu.nota > 7 Y alu.fecha_ult_exam.año = año_actual ENTONCES  // triple condición: carrera coincide, nota aprobada con más de 7, y el examen fue en el año ingresado
+                alusal := alu                              // como ambas variables son del mismo tipo ALUMNO, se puede copiar el registro completo de una sola vez
+                ESCRIBIR(arch_alu_sal, alusal)             // escribe el registro en el archivo de salida — solo llegan acá los que cumplen las tres condiciones
+            FIN_SI
+
+            LEER(arch_alu, alu)                            // avanza al siguiente registro del archivo para continuar el ciclo
+        FIN_MIENTRAS
+
+        CERRAR(arch_alu); CERRAR(arch_alu_sal)             // cierra ambos archivos al terminar — importante para que el sistema libere los recursos
+    FIN_PROCESO
+FIN_ACCION

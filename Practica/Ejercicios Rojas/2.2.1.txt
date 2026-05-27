@@ -1,0 +1,62 @@
+ACCION 2_2_1 ES
+    AMBIENTE
+        FECHA = REGISTRO                                    // Estructura auxiliar para representar una fecha
+            aa: ENTERO                                      // año
+            mm: ENTERO                                      // mes
+            dd: ENTERO                                      // día
+        FIN_REGISTRO
+
+        ALUMNO = REGISTRO                                   // Estructura completa con todos los datos del alumno
+            apynom: AN(40)
+            carrera: ('isi','iem','iq','lar')
+            legajo: ENTERO
+            fecha_nac: FECHA                                // campos FECHA anidados dentro de ALUMNO
+            fecha_ing: FECHA
+            dni: N(8)
+            sexo: ('M', 'F')
+            fecha_ult_exam: FECHA
+            nota: ENTERO
+        FIN_REGISTRO
+
+        ALUMNOISI = REGISTRO                                // Versión reducida de ALUMNO, solo los campos necesarios para ISI
+            apynom: AN(40)
+            carrera: ('isi','iem','iq','lar')
+            legajo: ENTERO
+            fecha_ing: FECHA
+            dni: N(8)
+        FIN_REGISTRO
+
+        arch_alu, arch_alu_iq: Archivo de ALUMNO           // arch_alu: entrada | arch_alu_iq: salida para alumnos IQ
+        arch_alu_isi: Archivo de ALUMNOISI                 // salida para alumnos ISI con formato reducido
+        alu, aluiq: ALUMNO                                 // variables de trabajo para leer y copiar registros ALUMNO
+        aluisi: ALUMNOISI                                  // variable de trabajo para armar el registro reducido ISI
+
+    PROCESSO
+        Abrir E/(arch_alu); Leer(arch_alu, alu)            // abre el archivo de entrada y lee el primer registro
+        Abrir /S(arch_alu_iq); Abrir /S(arch_alu_isi)      // abre los dos archivos de salida (vacíos)
+
+        MIENTRAS NFDA(arch_alu) HACER                      // recorre todos los registros hasta el fin de archivo
+            ESCRIBIR(alu.legajo, alu.apynom, alu.dni, alu.carrera)  // muestra por pantalla los datos básicos del alumno
+
+            SI alu.carrera = 'iq' ENTONCES
+                aluiq := alu                               // como son del mismo tipo, copia todos los campos de una vez
+                ESCRIBIR(arch_alu_iq, aluiq)               // graba el registro completo en el archivo de IQ
+            SINO
+                SI alu.carrera = 'isi' ENTONCES
+
+                    aluisi.apynom := alu.apynom            // los tipos son distintos (ALUMNO vs ALUMNOISI),
+                    aluisi.legajo := alu.legajo            // no se puede asignar directo, hay que copiar
+                    aluisi.fecha_ing := alu.fecha_ing      // campo por campo solo los que tiene ALUMNOISI
+                    aluisi.dni := alu.dni
+
+                    ESCRIBIR(arch_alu_isi, aluisi)         // graba el registro reducido en el archivo de ISI
+
+                FIN_SI
+            FIN_SI
+
+            LEER(arch_alu, alu)                            // lee el siguiente registro para continuar el ciclo
+        FIN_MIENTRAS
+
+        CERRAR(arch_alu); CERRAR(arch_alu_iq); CERRAR(arch_alu_isi)   // cierra los tres archivos al terminar
+    FIN_PROCESO
+FIN_ACCION
