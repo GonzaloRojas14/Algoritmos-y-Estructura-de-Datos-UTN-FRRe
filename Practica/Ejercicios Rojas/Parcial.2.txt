@@ -1,0 +1,206 @@
+//Ejercicio N° 1
+//Durante la Feria del Libro se relevó información sobre las editoriales participantes y los libros que presentan. Los
+//datos fueron almacenados en dos secuencias de caracteres, las cuales deben ser procesadas para obtener distintos
+//informes.
+//
+//Datos de Entrada
+//A. Secuencia de Editoriales:
+//Cada editorial está representada de la siguiente manera:
+//
+//- Nombre de la editorial (cantidad indeterminada de caracteres, finaliza con ‘&’)
+//- Provincia (2 caracteres que representan un número del ‘01’ al ‘23’)
+//Ejemplo: Planeta&01Sudamericana&03...
+//
+//B. Secuencia de Libros:
+//
+//Por cada editorial hay una cantidad indeterminada de libros, separados por el carácter ‘@’. Cada libro contiene los
+//siguientes campos:
+//
+//- Tema (1 carácter): L = Literatura / C = Ciencia / A = Autoayuda y desarrollo personal / I = Infantiles
+//- Cantidad de páginas: (3 caracteres, por ejemplo 245)
+//- Nombre del libro: (cantidad indeterminada de caracteres, finaliza con ‘&’)
+//- Resumen: texto libre (finaliza con el carácter ‘#’).
+//Las palabras están separadas por una cantidad variable de espacios en blanco.
+//
+//Ejemplo:
+//
+//L245Elprincipito&Una vida a vivir y aprender.#@C120FisicaParaTodos&Conceptos basicos para jovenes.#...
+//Se solicita escribir un algoritmo en pseudocódigo que permita:
+//
+//a) Generar una secuencia de salida con los nombres de los libros de tema ‘Literatura’ (tema = ‘L’) que tengan más
+//de 200 y hasta 300 páginas inclusive.
+//
+//b) Para cada editorial, informar la longitud promedio de los resúmenes, expresada en cantidad de palabras (una
+//palabra se define como una secuencia de caracteres alfabéticos, separada por espacios en blanco).
+//
+//c) Indicar en qué provincia se encuentra la editorial con mayor cantidad de libros presentados.
+//En caso de ser necesario, escribir una función auxiliar para convertir secuencias de caracteres a valores numéricos.
+
+
+ACCION Ejercicio_Feria_Libro ES
+    AMBIENTE
+        sec_ed, sec_lib, sec_sal : SECUENCIA DE CARACTERES
+        ve, vl : CARACTER
+        
+        // Variables para la Editorial
+        prov, prov_max, max_libros : ENTERO
+        
+        // Variables para los Libros y Cálculos
+        tema_lib : CARACTER
+        cant_pags, cant_libros_ed, tot_palabras_ed : ENTERO
+        es_objetivo : LOGICO
+
+        // Función obligatoria para convertir caracteres a números.
+        // Las subacciones deben tener su propio AMBIENTE y PROCESO aislados [4, 5].
+        FUNCION car_a_ent(x : CARACTER) : ENTERO
+            AMBIENTE
+            PROCESO
+                SEGUN x HACER
+                    '0': car_a_ent := 0 
+                    '1': car_a_ent := 1 
+                    '2': car_a_ent := 2 
+                    '3': car_a_ent := 3 
+                    '4': car_a_ent := 4 
+                    '5': car_a_ent := 5 
+                    '6': car_a_ent := 6 
+                    '7': car_a_ent := 7 
+                    '8': car_a_ent := 8 
+                    '9': car_a_ent := 9 
+                FIN_SEGUN
+        FIN_FUNCION
+
+    PROCESO
+        // 1. Inicialización Global
+        // Se inicializa el máximo fuera de todos los ciclos para no perder su valor [6, 7].
+        max_libros := -1 
+
+        // 2. Preparación de Motores (Secuencias)
+        // El verbo ARRANCAR ubica el motor antes del primer elemento, y CREAR inicializa la cinta vacía [8, 9].
+        ARRANCAR(sec_ed); AVANZAR(sec_ed, ve)
+        ARRANCAR(sec_lib); AVANZAR(sec_lib, vl)
+        CREAR(sec_sal)
+
+        // 3. MOTOR PRINCIPAL: Recorre las editoriales.
+        // Usamos MIENTRAS porque la secuencia es Indefinida Impura [10].
+        MIENTRAS NFDS(sec_ed) HACER
+            
+            // --- CINTA A: Procesar Editorial ---
+            // 3.1. Saltar el nombre de la editorial (termina en '&')
+            MIENTRAS NFDS(sec_ed) Y ve <> '&' HACER
+                AVANZAR(sec_ed, ve)
+            FIN_MIENTRAS
+            
+            AVANZAR(sec_ed, ve) // AVANCE VITAL: Superar el '&' para leer el número.
+
+            // 3.2. Leer la Provincia (Sabemos que son 2 caracteres exactos)
+            prov := car_a_ent(ve) * 10
+            AVANZAR(sec_ed, ve)
+            prov := prov + car_a_ent(ve)
+            
+            AVANZAR(sec_ed, ve) // AVANCE VITAL: Dejar la cinta lista para la próxima editorial.
+
+            // 4. Inicialización Local (Por cada Editorial)
+            // Estos contadores se resetean a 0 cada vez que empezamos una editorial nueva.
+            cant_libros_ed := 0
+            tot_palabras_ed := 0
+
+            // --- CINTA B: Procesar Libros de esta Editorial ---
+            // El '@' es el Fin de Secuencia (FDS) local de los libros de esta editorial [11, 12].
+            MIENTRAS NFDS(sec_lib) Y vl <> '@' HACER
+                
+                cant_libros_ed := cant_libros_ed + 1 // Contamos un libro nuevo
+                
+                // 4.1. Leer Tema
+                tema_lib := vl
+                AVANZAR(sec_lib, vl)
+                
+                // 4.2. Leer Páginas (Sabemos que son 3 caracteres)
+                cant_pags := car_a_ent(vl) * 100
+                AVANZAR(sec_lib, vl)
+                cant_pags := cant_pags + car_a_ent(vl) * 10
+                AVANZAR(sec_lib, vl)
+                cant_pags := cant_pags + car_a_ent(vl)
+                AVANZAR(sec_lib, vl) // Superamos el último dígito
+                
+                // 4.3. Evaluar Condición (Punto A)
+                // Usamos operadores lógicos para evaluar múltiples datos y guardar el resultado [13].
+                SI tema_lib = 'L' Y (cant_pags > 200 Y cant_pags <= 300) ENTONCES
+                    es_objetivo := V
+                SINO
+                    es_objetivo := F
+                FIN_SI
+
+                // 4.4. Procesar Nombre del Libro
+                MIENTRAS NFDS(sec_lib) Y vl <> '&' HACER
+                    // Si el libro cumple, lo escribimos en la secuencia nueva [14].
+                    SI es_objetivo = V ENTONCES
+                        ESCRIBIR(sec_sal, vl)
+                    FIN_SI
+                    AVANZAR(sec_lib, vl)
+                FIN_MIENTRAS
+                
+                AVANZAR(sec_lib, vl) // AVANCE VITAL: Superar el '&'
+
+                // 4.5. Procesar Resumen (Subsecuencia Jerárquica: Palabras) [2, 12]
+                MIENTRAS NFDS(sec_lib) Y vl <> '#' HACER
+                    
+                    // Ignorar espacios en blanco múltiples
+                    MIENTRAS NFDS(sec_lib) Y vl = ' ' HACER
+                        AVANZAR(sec_lib, vl)
+                    FIN_MIENTRAS
+                    
+                    // Si no chocamos con el fin del resumen, hay una palabra
+                    SI vl <> '#' ENTONCES
+                        tot_palabras_ed := tot_palabras_ed + 1
+                        
+                        // Recorrer la palabra hasta el próximo espacio o el '#'
+                        MIENTRAS NFDS(sec_lib) Y vl <> ' ' Y vl <> '#' HACER
+                            AVANZAR(sec_lib, vl)
+                        FIN_MIENTRAS
+                    FIN_SI
+                    
+                FIN_MIENTRAS
+                
+                AVANZAR(sec_lib, vl) // AVANCE VITAL: Superar el '#' para ir al próximo libro.
+                
+            FIN_MIENTRAS // Fin de los libros de ESTA editorial
+
+            // AVANCE VITAL: Superar el delimitador '@' en la cinta B, 
+            // así queda lista para la próxima editorial en el ciclo general principal.
+            SI vl = '@' ENTONCES
+                AVANZAR(sec_lib, vl)
+            FIN_SI
+
+            // 5. Cálculos Estadísticos de la Editorial (Punto B y C)
+            // Seguro contra fallo de división por cero [15].
+            SI cant_libros_ed > 0 ENTONCES
+                ESCRIBIR("Editorial de Provincia ", prov, " - Promedio de palabras por resumen: ", tot_palabras_ed / cant_libros_ed)
+            SINO
+                ESCRIBIR("La editorial de la Provincia ", prov, " no presentó libros.")
+            FIN_SI
+            
+            // Evaluar el máximo de libros
+            SI cant_libros_ed > max_libros ENTONCES
+                max_libros := cant_libros_ed
+                prov_max := prov
+            FIN_SI
+
+        FIN_MIENTRAS // Fin del recorrido de todas las editoriales
+
+        // 6. Clausura y Resultados Finales
+        ESCRIBIR("La provincia con la editorial de mayor cantidad de libros es: ", prov_max)
+        
+        // Obligatorio cerrar los archivos/secuencias para liberar la memoria buffer [16].
+        CERRAR(sec_ed)
+        CERRAR(sec_lib)
+        CERRAR(sec_sal)
+
+FIN_ACCION
+                    
+
+
+
+
+
+
+
