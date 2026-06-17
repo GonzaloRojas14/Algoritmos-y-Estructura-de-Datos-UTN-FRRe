@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# Artefactos / cachés de build
+*.tsbuildinfo
+
+# Dependencias y salida de build (defensivo; los subproyectos también los ignoran)
+node_modules/
+.next/
