@@ -1,0 +1,47 @@
+# RetroVerse — stack aislado (proyecto compose propio "retroverse").
+# No publica puertos en el host -> NO colisiona con los servicios existentes
+# (marketplace-postgres:5432, marketplace-minio:9000-9001, app en :3000).
+# cloudflared expone la app vía un Quick Tunnel (URL random de trycloudflare.com).
+name: retroverse
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: retroverse-db
+    environment:
+      POSTGRES_USER: retroverse
+      POSTGRES_PASSWORD: retroverse
+      POSTGRES_DB: retroverse
+    volumes:
+      - retroverse-pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U retroverse -d retroverse"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  app:
+    image: retroverse-app:latest
+    build: .
+    container_name: retroverse-app
+    environment:
+      DATABASE_URL: postgresql://retroverse:retroverse@db:5432/retroverse
+      NODE_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: retroverse-tunnel
+    command: tunnel --no-autoupdate --url http://app:3000
+    depends_on:
+      - app
+    restart: unless-stopped
+
+volumes:
+  retroverse-pgdata:
