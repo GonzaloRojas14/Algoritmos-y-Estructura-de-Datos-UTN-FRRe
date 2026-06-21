@@ -1,0 +1,23 @@
+# Hextech Bazaar — stack aislado (proyecto compose propio "hextech").
+# NO publica puertos en el host -> NO colisiona con los servicios existentes
+# (marketplace-*, retroverse-*). El túnel cloudflared expone la app por HTTPS
+# (puerto 443, reachable desde cualquier red), en su propio contenedor.
+name: hextech
+
+services:
+  app:
+    image: hextech-app:latest
+    build: .
+    container_name: hextech-app
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+    restart: unless-stopped
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: hextech-tunnel
+    command: tunnel --no-autoupdate --protocol http2 --url http://app:3000
+    depends_on:
+      - app
+    restart: unless-stopped

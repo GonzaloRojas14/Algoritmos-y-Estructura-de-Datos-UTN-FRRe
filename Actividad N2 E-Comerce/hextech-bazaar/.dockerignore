@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.DS_Store
+*.log
+db/*.sqlite
+db/*.sqlite-shm
+db/*.sqlite-wal
+docs
+*.md
+scripts/tunnel.sh
