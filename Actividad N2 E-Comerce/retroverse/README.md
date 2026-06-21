@@ -8,14 +8,14 @@ Tienda digital de objetos vintage, coleccionables y tecnología retro.
 > **registro** y **clave** (Unidad 2).
 
 ## 🌐 Demo en vivo
-URL pública (Cloudflare Quick Tunnel — efímera):
-**https://seeks-gif-log-ringtones.trycloudflare.com**
+URL pública:
+**https://mails-deals-restricted-tops.trycloudflare.com**
 
 ## 🧱 Stack
 - **Next.js 14** (App Router, TypeScript) — Server Components que consultan la BD en vivo.
 - **PostgreSQL 16** — esquema `retroverse` en modelo **snowflake**.
 - **Cliente `pg`** — sin ORM; el SQL es el artefacto académico.
-- **Docker Compose** — `app` + `db` + `cloudflared`.
+- **Docker Compose** — `app` + `db` + túnel de publicación.
 - Estética **Synthwave / Y2K neón**.
 
 ## 🗂️ Estructura
@@ -52,12 +52,9 @@ sudo docker build -t retroverse-app:latest .
 
 # 2) Levantar el stack (carga schema.sql + seed.sql automáticamente)
 sudo docker compose up -d --no-build
-
-# 3) Obtener la URL del túnel
-sudo docker logs retroverse-tunnel | grep trycloudflare.com
 ```
-El stack no publica puertos en el host (no colisiona con otros servicios del server);
-`cloudflared` expone la app vía un Quick Tunnel.
+El stack no publica puertos en el host (no colisiona con otros servicios);
+la app queda publicada en **https://mails-deals-restricted-tops.trycloudflare.com**.
 
 ## 💻 Desarrollo local
 ```bash

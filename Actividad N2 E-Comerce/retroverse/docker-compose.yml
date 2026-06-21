@@ -1,7 +1,12 @@
 # RetroVerse — stack aislado (proyecto compose propio "retroverse").
 # No publica puertos en el host -> NO colisiona con los servicios existentes
 # (marketplace-postgres:5432, marketplace-minio:9000-9001, app en :3000).
-# cloudflared expone la app vía un Quick Tunnel (URL random de trycloudflare.com).
+#
+# Exposicion publica via Cloudflare Quick Tunnel (HTTPS / puerto 443):
+# el contenedor "tunnel" (cloudflared) entrega una URL https://<random>.trycloudflare.com
+# Se usa HTTPS/443 (en vez de bore con puerto alto) porque los puertos altos los
+# bloquean algunas redes/ISP. Es un Quick Tunnel: la URL es aleatoria y cambia si el
+# contenedor del tunel se reinicia.
 name: retroverse
 
 services:
@@ -35,10 +40,10 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  cloudflared:
+  tunnel:
     image: cloudflare/cloudflared:latest
     container_name: retroverse-tunnel
-    command: tunnel --no-autoupdate --url http://app:3000
+    command: tunnel --no-autoupdate --protocol http2 --url http://app:3000
     depends_on:
       - app
     restart: unless-stopped
