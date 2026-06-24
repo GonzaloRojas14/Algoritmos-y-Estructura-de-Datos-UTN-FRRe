@@ -104,3 +104,26 @@ ACCION parc1 ES
         CERRAR(secsal)
         
 FIN_ACCION
+
+
+
+
+//Ejercicio N° 2
+//La red de estaciones de carga urbana para vehículos eléctricos (VE) dispone de un sistema de monitoreo que
+//registra las sesiones de carga realizadas durante el mes de JUNIO. La información se encuentra ordenada por
+//Número de Estación, Tipo de Vehículo, y Número de Carga, y para cada sesión de carga se registra:
+//Nro. de Estación Tipo de Vehículo
+
+//(SD, SV, UT) Nro. Carga Fecha de carga Duración carga
+
+//(minutos) Costo carga
+
+//Nota: SD: Sedan. SV: Suv y UT: Utilitario
+//Se pide escribir un algoritmo para:
+//a) Listar todas las cargas de la primera quincena.
+//b) Mostrar el total recaudado por estación y por tipo de vehículo.
+//c) Crear un archivo de salida que contenga, por cada estación:
+//• Número de Estación
+//• Total recaudado en vehículos de tipo UTILITARIO
+//d) Informar cuáles son las estaciones de carga que tuvieron mayor recaudación en vehículos tipo SEDAN que en
+//vehículos tipo UTILITARIO.

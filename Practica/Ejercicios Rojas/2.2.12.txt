@@ -1,0 +1,35 @@
+Ejercicio 2.2.12¶
+Dada una secuencia con información de población de un PAIS:
+
+POBLACION Ordenado por Provincia, Departamento, Ciudad, Barrio, ID_Casa
+
+ProvinciaDepartamentoCiudadBarrioID_CasaCantidad_Habitantes
+Generar una secuencia con información de los departamentos de esa provincia, cuyo registro tenga el siguiente formato:
+
+POBLACION_SALIDA
+
+ProvinciaDepartamentoCantidad_Habitantes
+
+
+
+Primero se crea el procedimiento de corte de menor nivel
+
+en el proceso se abren los archivos, se inicializan los contadores, inicicializar los resguardo y mientras NFDA
+
+Tratar corte es siempre igual, aprender d e memoria
+y tratar registro depende de lo que tenga que hacer en la activdidad
+
+
+se pregunta si el resguardo cambia, en caso de que si se aplica el corte
+
+una vez tratado el registro, es importante leer el sigueiente regustro
+
+
+dependiendo del corte, si se piden totales por ejemplo rubro o sucursal, se calcula por suma por rubro y por sucurslar
+
+
+tratar corte tratar regisytro leer()
+
+
+
+
