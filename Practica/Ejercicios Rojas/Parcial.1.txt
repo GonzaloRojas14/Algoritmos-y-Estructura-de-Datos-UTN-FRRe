@@ -127,3 +127,38 @@ FIN_ACCION
 //• Total recaudado en vehículos de tipo UTILITARIO
 //d) Informar cuáles son las estaciones de carga que tuvieron mayor recaudación en vehículos tipo SEDAN que en
 //vehículos tipo UTILITARIO.
+
+
+ACCION ej_parcial_1_2 ES
+    AMBIENTE
+
+        fecha = REGISTRO
+            dia: ENTERO
+            mes: ENTERO
+            año: ENTERO
+        FIN_REGISTRO
+
+        reg = REGISTRO
+            clave = REGISTRO
+                nro_estacion: ENTERO
+                tipo_veh: ALFANUMERICO
+                nro_carga: ENTERO
+            FIN_REGISTRO
+            fecha_carg: FECHA
+            dura_carg: ENTERO
+            costo_carg: REAL
+        FIN_REGISTRO
+
+        regsal = REGISTRO
+            nro_estacion_sal: ENTERO
+            total_ut: ENTERO
+        FIN_REGISTRO
+
+        arch: Archivo de reg ordenado por clave
+        arch_sal = Archivo de regsal
+
+        total_quinc, may_estac: ENTERO
+        total_rec, total_rec_util: REAL
+        
+        
+    PROCESO
