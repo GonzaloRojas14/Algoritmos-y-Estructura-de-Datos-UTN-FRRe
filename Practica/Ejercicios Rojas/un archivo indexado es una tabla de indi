@@ -1,0 +1,37 @@
+un archivo indexado es una tabla de indices que estan ordenados secuencialmentes las claves del arhcivos asociado a 
+unon d eellos en la direccion fisica
+
+
+para acceder al registro necesitamos saber la clave id 
+
+Se define de la siguiente manera:
+
+DATO=registro
+    CLAVE:...
+    CAMPO2:...
+
+
+
+Se abre de la siguiente manera:
+
+ABRIR E/S (variable_archivo).  <---- Se puede abrir de entrada/salida
+
+
+Para accerder a los registros
+
+reg.clave := valor_buscado
+
+LEER(arch,reg)
+
+Podemos usar un SI EXISTE ENTONCES para preguntar por la existencia del mismo
+
+
+ESCRIBIR(arch,reg) <--- Para escirbir un registro
+
+REESCRIBIR(arch,reg) <----- Para cambiar algun campo que NO sea la clave
+
+ELIMINAR(arch,reg) <----- Eliminar el registro (baja fisica)
+
+
+
+

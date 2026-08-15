@@ -1,0 +1,79 @@
+2.3.10
+
+Una empresa dedicada a la venta de combustibles para automotores anunció una promoción 
+mediante la cual los clientes pueden acceder a descuentos importantes. 
+En cada carga los clientes suman 10 puntos por cada $100 de combustible, y una vez que el cliente llega a los 100 puntos, 
+este los puede canjear por un descuento de $100 en el importe total. La cantidad de puntos que tiene cada cliente está almacenado 
+en el archivo indexado PUNTOS el cual tiene el siguiente formato:
+
+PUNTOS Indexado por DNI
+
+DNICant_PuntosUlt_Carga
+Los datos de cada cliente se encuentran almacenados en el archivo CLIENTE también indexado con el siguiente formato
+
+CLIENTE Indexado por DNI
+
+DNI Ape_Nom Edad Ciudad
+Se pide realizar el algoritmo que permita:
+
+Realizar la carga interactiva de las cargas de combustible 
+(ingresando monto), actualizando la cantidad de Puntos y la Fecha de Última Carga en el archivo PUNTOS. 
+Si no existe el Cliente, se lo debe inicializar en ambos archivos con los datos correspondientes.
+Permitir al cliente aplicar descuentos a las cargas realizadas siempre y cuando tenga puntos suficientes 
+(sólo se puede canjear 100 puntos por carga).
+Determinar la cantidad de cargas realizadas de usuarios no existentes.
+
+
+ACCION ej2.3.10 ES
+    AMBIENTE
+        punto = REGISTRO
+            DNI: ENTERO
+            cant_punt: ENTERO
+            ult_carga: FECHA
+        FIN_REGISTRO
+
+        puntos: ARCHIVO DE punto INDEXADO POR DNI
+
+        p: punto
+
+        cliente = REGISTRO
+            DNI: ENTERO
+            nombre: AN
+            edad: ENTERO
+            ciudad: AN
+        FIN_REGISTRO
+
+        clientes: ARCHIVO DE cliente INDEXADO POR DNI
+        c: cliente
+
+        monto: ENTERO
+        cont: ENTERO; resp:('s','n')
+
+    Proceso
+        Abrir E/S(puntos); Abrir E/S(clientes)
+        cont:= 0
+        repetir 
+            Escribir("Ingrese DNI del cliente")
+            Leer(p.dni)
+            Escribir("Ingrese el monto de la carga")
+            Leer(monto)
+            Leer(puntos,p)
+            Si existe Entonces
+                Si p.cant_puntos > 100 Entonces
+                    Escribir("Quiere usar 100 puntos para aplicar el descuento")
+                    Leer(respuesta)
+                    Si respuesta = "s" Entonces
+                        p.cant_puntos:= p.cant_puntos-100
+                        monto:= monto-100
+                        Escribir("Nuevo monto a pagar: ", monto)
+
+                    Fin_Si
+                Fin_Si
+                p.cant_puntos:= p.cant_puntos + (monto div 100) * 10
+                p.ultima_carga:= fechasistema()
+                Reescribir(puntos,p)
+            Fin_Si
+        hasta que (resp = 'n')
+        ESCRIBIR('La cantidad de altas fueron: ', cont)
+        CERRAR(puntos); CERRAR(clientes)
+Fin_Accion

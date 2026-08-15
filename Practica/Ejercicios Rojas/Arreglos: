@@ -1,0 +1,97 @@
+Arreglos: 
+
+(Los arreglos son estructuras que estan en la memoria interna, no se puede modificar en ejecucion)
+
+Que es un arreglo?: 
+    Es una coleccion finita, homogena y ordenada de elementos
+
+    Finita porque tiene un limite de elementos
+
+    Homogenea porque sus compoenntes son del mismo tipo de dato
+
+    Ordenada porque se puede identificar el primero, el segundo, etc
+
+
+Por que existen los arreglos?
+    Se utilizan para manejar variables dentro de los elementos por ejemplo a los contadores, accediendo a cada posicion
+
+Los arreglos podrian ser unidimensionales y bidimensionales, siendo como vectores o matrices.
+
+Esta compuesto por componentes e indices, como elementos. Es cada celda que lo compone. Se define un indice por dimension
+
+Las operaciones que componen los arreglos, al ser un conjunto de variables es un tipo de dato estructurado, 
+
+
+
+Se define de la sigueinte manera:
+
+v: arreglo[1..50] de REAL;
+
+Se accede mediante el indice v[i]
+
+
+El indice puede ser de tipo de dato entero, conjutnos vocales("a","e","i","o","u") y el alfabeto
+
+
+Declaracion de un vectores
+
+v: arreglo[li..ls] DE TIPO X;
+
+Donde el numero total de componentes esta dado por limite superior - limite inferior + 1
+
+
+Para que se usan los vectores:
+
+    Notas de alumnos, temperaturas diarias, stock de productos, nombre de meses
+
+
+Declaracion de matrices
+
+m: arreglo[1..f..1..c] DE TIPO X
+m[2,5] <-- fila 2 columna 5
+
+Se elige una matriz por sobre un vector dependiendo de la clase o tipo de la representacion de los elementos
+
+Operaciones con arreglos:
+
+    Carga de un vector
+
+
+ACCION carga_vector ES:
+    AMBIENTE 
+        v: arreglo[1..50] DE ENTERO
+        i: ENTERO
+    PROCESO
+        PARA i:=1 HASTA 50 HACER
+            LEER(v[i])                  <----- Ingresa el valor directamente en esa posicion
+        FIN_PARA
+    FIN_PROCESSO
+FIN_ACCION
+
+
+    Recorrido y lectura de un vector:
+
+ACCION leer_vector ES:
+    AMBIENTE 
+        v: arreglo[1..50] DE ENTERO
+        i: ENTERO
+    PROCESO
+        PARA i:=1 HASTA 50 HACER
+            ESCRIBIR(v[i])                  <----- Muestra el valor directamente en esa posicion
+        FIN_PARA
+    FIN_PROCESSO
+FIN_ACCION
+
+
+
+Accion CARGAR _MATRIZ ES;
+    Ambiente
+        m: arreglo [1..10, 1..5] de real;
+        i, j: entero;
+    Proceso
+        PARA i:=1 HASTA 10 HACER
+            PARA j:=1 HASTA 5 HACER
+               Leer(m [i,j]);
+        FIN_PARA;
+    FIN_PARA;
+FinAccion
