@@ -1,0 +1,134 @@
+---
+fuente: https://aed-frre.github.io/complementarios/1/
+tipo: guia-catedra
+bloque: Complementarios
+materia: Algoritmos y Estructura de Datos
+tags:
+  - AED
+  - guia-catedra
+  - complementarios
+---
+
+> [!info] Guía de Trabajos Prácticos — cátedra AED UTN-FRRe
+> Transcripción íntegra de [https://aed-frre.github.io/complementarios/1/](https://aed-frre.github.io/complementarios/1/), sin resumir ni alterar.
+> Bajada el 24/08/2026.
+
+---
+# 1. Datos y Estructuras Elementales
+
+
+## Datos Elementales
+
+
+### Ejercicio 1.1
+
+
+---
+
+
+
+La Mutual del personal del Banco, a pedido de un socio canjea un plazo fijo, pagándole el capital inicial. Luego, al cobrarse el plazo fijo, le paga los intereses, descontando los días correspondientes y $5 por gastos. Se desea liquidar el pago de la diferencia entre el capital inicial y capital con intereses, sabiendo que el interés es el 5% a 30 días y teniendo como datos el capital inicial, capital con intereses y los días de anticipo.
+
+### Ejercicio 1.2
+
+
+---
+
+
+
+Se desea ingresar dos números X, Y. Hallar la media aritmética y la geométrica de ambos valores. Diseñe un algoritmo que sea capaz de hallar el máximo entre los dos valores.
+
+### Ejercicio 1.3
+
+
+---
+
+
+
+Escriba un algoritmo que determine si un valor entero es par o impar.
+
+### Ejercicio 1.4
+
+
+---
+
+
+
+Genere un algoritmo que determine el factorial de un número dado N.
+
+### Ejercicio 1.5
+
+
+---
+
+
+
+Se desea determinar si un estudiante aprobó una materia. Para ello se le toman 5 exámenes (E1, E2, E3, E4, E5). Se considera aprobada la materia a aquellos alumnos que aprobaron los 5 exámenes: deberán rendir un examen de complemento aquellos que aprobaron 3 exámenes, siempre que uno de estos tres sea el último. Tendrán la posibilidad de volver a rendir el último examen aquellos alumnos que no lo aprobaron, pero aprobaron por lo menos el 3ro. y el 4to.
+
+### Ejercicio 1.6
+
+
+---
+
+
+
+Las medidas de las tablas de surf, como invento norteamericano que son, se expresan en el sistema métrico anglosajón, es decir, en pies y en pulgadas. De esta manera si decimos que nuestra tabla es una 6’2” estaremos diciendo que su longitud es de 1,88 m. Escriba un algoritmo que calcule la longitud de una tabla en metros, conociendo la misma en formato anglosajón. Las equivalencias con nuestro sistema métrico serían las siguientes: 1 pie = 12 plg, 1 plg = 2,54 cm, 1 m = 100cm.
+
+### Ejercicio 1.7
+
+
+---
+
+
+
+Se desea obtener una tabla con 5 valores de e^X, usando para ello la siguiente fórmula:
+
+$e^x  = 1 - (x/1)! + (x^2/2)! - (x^3/3)! + ... + (x^{20}/20)!$
+
+### Ejercicio 1.8
+
+
+---
+
+
+
+Se desea realizar el cálculo de una serie e^X que se detiene cuando un término es menor o igual que 0,000001.
+
+### Ejercicio 1.9
+
+
+---
+
+
+
+Realizar un algoritmo que muestre el cambio en billetes de \$100, \$50, \$20, \$10, \$5; \$2 y monedas de \$1, de un monto ingresado por teclado. Considere que este monto siempre sera entero.
+
+Ej: ingresa → 377 muestra → 3 billetes de \$100, 1 billete de \$50, 1 billete \$20, 1 billete \$5, 1 billete \$2
+
+### Ejercicio 1.10
+
+
+---
+
+
+
+Se les pide a los alumnos que implementen un algoritmo en pseudocodigo para un juego de adivinanza de números.
+
+Las especificaciones del juego son las siguientes:
+
+1. El algoritmo debe generar un número entero aleatorio entre 1 y 100 (inclusive).
+2. El algoritmo debe solicitar al usuario que adivine el número generado.
+3. Si el número ingresado es menor que el número generado, el algoritmo debe mostrar un mensaje indicando que el número ingresado es menor y permitir al usuario ingresar otro número.
+4. Si el número ingresado es mayor que el número generado, el algoritmo debe mostrar un mensaje indicando que el número ingresado es mayor y permitir al usuario ingresar otro número.
+5. Si el número ingresado es igual al número generado, el algoritmo debe mostrar un mensaje indicando que el usuario ha ganado el juego y permitir al usuario elegir si desea jugar de nuevo o finalizar el algoritmo.
+6. Si el usuario elige jugar de nuevo, el algoritmo debe generar un nuevo número aleatorio y volver al paso 2.
+7. El usuario tiene un máximo de 10 intentos para adivinar el número generado. Si el usuario no logra adivinar el número en 10 intentos, el algoritmo debe mostrar un mensaje indicando que el usuario ha perdido y permitir al usuario elegir si desea jugar de nuevo o finalizar el algoritmo.
+8. Si el usuario tiene 1 intento restante, el mensaje debe ser "¡Cuidado! Este es tu último intento". Si el usuario tiene 2 a 5 intentos restantes, el mensaje debe ser "¡Vamos! Aún tienes oportunidades para ganar". Si el usuario tiene más de 5 intentos restantes, el mensaje debe ser "Tienes varios intentos, ¡utilízalos sabiamente!".
+9. El algoritmo debe llevar un registro de los intentos realizados por el usuario. Al final, si el usuario adivino el numero, informar en que numero de intento lo hizo.
+10. El algoritmo debe permitir al usuario finalizar el juego en cualquier momento.
+
+
+**Ayuda:** Para generar un numero aleatorio incluya la siguiente linea a su algoritmo
+```
+numero_aleatorio = Random(1, 100)
+```

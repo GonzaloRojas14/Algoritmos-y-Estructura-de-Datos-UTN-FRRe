@@ -1,0 +1,297 @@
+// EJERCICIO Nº 1
+// Una empresa industrial multinacional solicita un programa que permita automatizar la
+// asignación de técnicos de mantenimiento para cada intervención programada en sus
+// plantas de producción.
+// Para ello, cuenta con una lista simple de INTERVENCIONES, con las distintas tareas
+// programadas con el siguiente formato:
+// Planta Sector ZONA Fecha Región (1,2,3,4)
+// Y una secuencia de caracteres con correspondencia uno a uno respecto de cada nodo de
+// la lista INTERVENCIONES (se repite el formato explicado por cada intervención a realizar),
+// la misma se utiliza para aleatorizar la asignación.
+// Formato de la secuencia: Descripción_del_desperfecto$Restriccion(1 caracter)
+// Y una lista circular con los datos de los técnicos de mantenimiento disponibles:
+// ApellidoyNombre: AN(80) cant_asignaciones: N(2) Región: (1,2,3,4)
+// Se pide:
+// a) Generar una lista doble con cada intervención (ordenada por fecha de menor a mayor) y su
+// técnico asignado, con los datos de: Planta, Sector, Región, Fecha, ApellidoYNombre del
+// técnico, con las siguientes restricciones (con este orden de prioridad):
+// ● Un técnico no puede tener más de 10 asignaciones.
+// ● Dependiendo del carácter “Restricción” de la secuencia, si:
+// ● es a, no existe ninguna otra restricción.
+// ● es b, no puede asignarse un técnico a una intervención de su misma región y
+// no puede asignarse si el mismo tiene menos de 5 intervenciones asignadas.
+// b) Por finalizar mostrar cuántas intervenciones tiene asignadas cada Región (teniendo en
+// cuenta la región del Técnico).
+
+/*
+=====================================================================================
+CÓMO ENCARARLO (la versión charlada)
+=====================================================================================
+
+PASO 0 — No arranques a escribir código. Primero hacé el inventario.
+------------------------------------------------------------------
+Leé la consigna con un lápiz y marcá dos cosas: qué te DAN y qué te PIDEN.
+
+  Te dan (entradas):
+    - Una lista simple de intervenciones        -> la recorro con p, de PRIM_I a NIL
+    - Una secuencia de caracteres               -> la leo con ARR / AVZ, de a un carácter
+    - Una lista circular de técnicos            -> la recorro con T, y nunca llega a NIL
+
+  Te piden (salidas):
+    - a) Una lista doble NUEVA, ordenada por fecha   -> NUEVO + inserción ordenada
+    - b) Un número por región (1 a 4)                -> un contador por región
+
+Con eso ya sabés las tres estructuras del Ambiente que tenés que declarar (un nodo por
+cada lista) y que vas a necesitar contadores.
+
+
+PASO 1 — Encontrá la frase que te dice cómo se recorre todo.
+------------------------------------------------------------
+La clave está acá: "una secuencia de caracteres con correspondencia UNO A UNO respecto
+de cada nodo de la lista INTERVENCIONES".
+
+Traducido: la intervención 1 va con el primer pedazo de la secuencia, la 2 con el
+segundo, y así. Entonces NO son dos recorridos separados: es UN SOLO ciclo sobre la
+lista, y en cada vuelta leo el pedacito de secuencia que le toca a ese nodo.
+
+    MIENTRAS p <> NIL HACER
+        leer el pedazo de secuencia de esta intervención
+        buscarle un técnico
+        armar el nodo de la lista doble e insertarlo ordenado
+        p := *p.prox
+    FIN_MIENTRAS
+
+Ese es el esqueleto. Todo lo demás es rellenar esos tres renglones.
+
+
+PASO 2 — El pedazo de secuencia: "Descripción$R".
+-------------------------------------------------
+Cada pedazo es: un montón de letras, un '$', y UNA letra de restricción ('a' o 'b').
+La descripción en sí no la pide nadie... salvo que la consigna dice que la secuencia
+"se usa para aleatorizar". Lo único variable que tiene es su largo, así que la cuento.
+
+    largo := 0
+    MIENTRAS NFDS(sec) Y (v <> '$') HACER     -> cuento letras hasta el '$'
+        largo := largo + 1
+        AVZ(sec, v)
+    FIN_MIENTRAS
+    AVZ(sec, v)          -> salto el '$'       (la trampa de siempre: quedaste PARADO en él)
+    restr := v           -> esta es la restricción
+    AVZ(sec, v)          -> y ya quedo listo en la primera letra del pedazo siguiente
+
+Si te olvidás de alguno de esos AVZ, se corre todo: la restricción te queda el '$', o
+la próxima descripción arranca con la letra de restricción.
+
+
+PASO 3 — Buscar técnico en la circular (lo más difícil).
+--------------------------------------------------------
+Pensalo como una ronda de técnicos sentados en círculo. T es el dedo que va señalando.
+
+  a) Aleatorizar: muevo el dedo "largo" lugares.  PARA k := 1 HASTA largo -> T := *T.prox
+  b) Desde ahí pregunto técnico por técnico si sirve, hasta que encuentre uno o hasta que
+     dé la vuelta completa y vuelva a donde empecé. Por eso me guardo dónde empecé:
+     inicio := T
+
+     ¿Por qué no MIENTRAS T <> NIL? Porque en una circular NUNCA aparece NIL: daría
+     vueltas para siempre. El tope es "volví a inicio".
+
+  c) ¿Cuándo sirve un técnico? Las condiciones van en el orden de prioridad que dice la
+     consigna:
+       1ro: que tenga menos de 10 (si ya tiene 10, no puede "tener más de 10")
+       2do: si la restricción es 'b', además: región distinta a la de la intervención Y
+            que ya tenga 5 o más asignaciones
+            si es 'a', no se pide nada más
+
+     Yo lo armé con un REPETIR porque al técnico donde quedó el dedo lo tengo que
+     revisar sí o sí, aunque sea uno solo en la ronda.
+
+  d) Si lo encontré: le sumo 1 a sus asignaciones (para que la próxima vez cuente) y le
+     sumo 1 a la región DEL TÉCNICO (eso es el inciso b, se cuenta acá y no al final).
+
+
+PASO 4 — Armar el nodo de la lista doble e insertarlo ordenado por fecha.
+-------------------------------------------------------------------------
+Esto es la carga ordenada de la teoría, pero doble. Dos punteros: q (el actual) y
+a (el anterior). Avanzo mientras la fecha del actual sea menor o igual a la nueva:
+
+    a := NIL;  q := PRIM_D
+    MIENTRAS (q <> NIL) Y (*q.fecha <= *nuevo.fecha) HACER
+        a := q;  q := *q.prox
+    FIN_MIENTRAS
+
+Cuando sale, el nuevo va ENTRE a y q. En una doble son 4 enganches:
+    *nuevo.ant := a                 *nuevo.prox := q
+    si a = NIL -> PRIM_D := nuevo   si no -> *a.prox := nuevo
+    si q <> NIL -> *q.ant := nuevo
+
+Truco para acordarte: el nuevo apunta a sus dos vecinos, y cada vecino (si existe) lo
+apunta a él.
+
+
+PASO 5 — Lo que la consigna no dice: decidilo y dejalo escrito.
+---------------------------------------------------------------
+  - ¿Qué pasa si ningún técnico sirve? Lo puse igual, con "SIN ASIGNAR".
+  - ¿Cómo se "aleatoriza" exactamente? Avanzando tantos técnicos como letras tiene la
+    descripción.
+  - ¿Cómo es la fecha? AAAAMMDD, así comparo un número solo.
+Ninguna de estas es "la correcta". Lo que no te van a perdonar es adivinar en silencio:
+poné el comentario y listo.
+
+
+RESUMEN PARA EL PARCIAL
+-----------------------
+  1. Inventario: qué me dan, qué me piden.
+  2. Buscar la frase que dice cómo se recorren juntas las cosas ("uno a uno").
+  3. Escribir el esqueleto de UN ciclo con los pasos en castellano.
+  4. Rellenar cada paso con la plantilla que corresponde: secuencia (contar hasta la
+     marca + saltarla), circular (inicio + una vuelta), doble (carga ordenada con 4
+     enganches).
+  5. Prueba de escritorio con 2 o 3 intervenciones y 3 técnicos, a mano.
+=====================================================================================
+*/
+
+// Lo que asumo, porque la consigna no lo aclara:
+// 1) "Aleatorizar" con la secuencia: por cada intervención cuento los caracteres de la
+//    descripción y avanzo esa cantidad de técnicos en la lista circular. Desde ahí busco el
+//    primero que cumpla las restricciones, dando como máximo una vuelta.
+// 2) Si ningún técnico cumple, la intervención igual va a la lista doble ("cada
+//    intervención"), con "SIN ASIGNAR" en lugar del técnico, y no suma en ninguna región.
+// 3) La fecha es N(8) con formato AAAAMMDD, así se ordena comparando un solo número.
+// 4) Las dos listas llegan cargadas, como parámetro de la acción (PRIM_I y PRIM_T).
+
+ACCION ejercicio1 (PRIM_I: Puntero a NODO_I; PRIM_T: Puntero a NODO_T) ES
+    AMBIENTE
+        // lista simple de intervenciones
+        NODO_I = REGISTRO
+            planta: AN(20);
+            sector: AN(20);
+            zona: AN(20);
+            fecha: N(8);                // AAAAMMDD
+            region: 1..4;
+            prox: Puntero a NODO_I;
+        FIN_REGISTRO
+
+        // lista circular de técnicos
+        NODO_T = REGISTRO
+            apynom: AN(80);
+            cant_asig: N(2);
+            region: 1..4;
+            prox: Puntero a NODO_T;
+        FIN_REGISTRO
+
+        // lista doble que se genera
+        NODO_D = REGISTRO
+            planta: AN(20);
+            sector: AN(20);
+            region: 1..4;
+            fecha: N(8);
+            apynom: AN(80);
+            ant: Puntero a NODO_D;
+            prox: Puntero a NODO_D;
+        FIN_REGISTRO
+
+        sec: SECUENCIA de caracter;
+        v, restr: caracter;
+
+        p: Puntero a NODO_I;
+        T, inicio: Puntero a NODO_T;
+        PRIM_D, nuevo, q, a: Puntero a NODO_D;
+
+        largo, k, r: entero;
+        asignado: logico;
+        cont: ARREGLO[1..4] de entero;      // intervenciones asignadas por región del técnico
+
+    PROCESO
+        PRIM_D := NIL;
+        PARA r := 1 HASTA 4 HACER
+            cont[r] := 0;
+        FIN_PARA
+
+        ARR(sec);
+        AVZ(sec, v);
+        T := PRIM_T;
+        p := PRIM_I;
+
+        MIENTRAS p <> NIL HACER
+            // --- la parte de la secuencia que corresponde a esta intervención ---
+            largo := 0;
+            MIENTRAS NFDS(sec) Y (v <> '$') HACER     // descripción: la cuento
+                largo := largo + 1;
+                AVZ(sec, v);
+            FIN_MIENTRAS
+            AVZ(sec, v);                              // supero el '$'
+            restr := v;                               // el carácter de restricción
+            AVZ(sec, v);                              // queda en la próxima descripción
+
+            // --- buscar técnico en la lista circular ---
+            asignado := falso;
+            SI PRIM_T <> NIL ENTONCES
+                PARA k := 1 HASTA largo HACER         // aleatorizar
+                    T := *T.prox;
+                FIN_PARA
+                inicio := T;
+                REPETIR
+                    SI *T.cant_asig < 10 ENTONCES     // 1ra prioridad: máximo 10
+                        SI restr = 'b' ENTONCES
+                            SI (*T.region <> *p.region) Y (*T.cant_asig >= 5) ENTONCES
+                                asignado := verdadero;
+                            FIN_SI
+                        SINO                          // 'a': ninguna otra restricción
+                            asignado := verdadero;
+                        FIN_SI
+                    FIN_SI
+                    SI NO asignado ENTONCES
+                        T := *T.prox;
+                    FIN_SI
+                HASTA QUE asignado O (T = inicio)
+            FIN_SI
+
+            // --- armar el nodo de la lista doble ---
+            NUEVO(nuevo);
+            *nuevo.planta := *p.planta;
+            *nuevo.sector := *p.sector;
+            *nuevo.region := *p.region;
+            *nuevo.fecha := *p.fecha;
+            SI asignado ENTONCES
+                *nuevo.apynom := *T.apynom;
+                *T.cant_asig := *T.cant_asig + 1;
+                cont[*T.region] := cont[*T.region] + 1;
+            SINO
+                *nuevo.apynom := "SIN ASIGNAR";
+            FIN_SI
+
+            // --- insertarlo ordenado por fecha (q = actual, a = anterior) ---
+            a := NIL;
+            q := PRIM_D;
+            MIENTRAS (q <> NIL) Y (*q.fecha <= *nuevo.fecha) HACER
+                a := q;
+                q := *q.prox;
+            FIN_MIENTRAS
+            *nuevo.ant := a;
+            *nuevo.prox := q;
+            SI a = NIL ENTONCES
+                PRIM_D := nuevo;                      // va primero
+            SINO
+                *a.prox := nuevo;
+            FIN_SI
+            SI q <> NIL ENTONCES
+                *q.ant := nuevo;                      // no es el último
+            FIN_SI
+
+            p := *p.prox;
+        FIN_MIENTRAS
+        CERRAR(sec);
+
+        // a) la lista doble generada
+        ESCRIBIR("Fecha | Planta | Sector | Región | Técnico");
+        q := PRIM_D;
+        MIENTRAS q <> NIL HACER
+            ESCRIBIR(*q.fecha, " | ", *q.planta, " | ", *q.sector, " | ", *q.region, " | ", *q.apynom);
+            q := *q.prox;
+        FIN_MIENTRAS
+
+        // b) intervenciones asignadas por región del técnico
+        PARA r := 1 HASTA 4 HACER
+            ESCRIBIR("Región ", r, ": ", cont[r], " intervenciones");
+        FIN_PARA
+FIN_ACCION

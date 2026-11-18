@@ -1,0 +1,106 @@
+/*
+Una lista es una estructura dinamica (no tiene un tamaño fijo) que esta en memoria interna,
+desordenados.
+
+Es una coleccion de elemtnos de los mismos tipos de datos siendo homogeneos, con por lo menos dos campos, lineal y dinamica
+No necesariamente estan consecutivos en memoria, o sea estan desordenados.
+
+Cada elemento de la lista se lo deifne como Nodo, se dice que es un regisro porque se compone de un campo de dato y un campo puntero,
+que es un espacio de memoria que indica la posisicion del siguiente Nodo para poder ir recorriendo la lista
+
+Dato | puntero ---> Dato | puntero
+
+Listas simplemente enlazadas: Cada registro tiene un solo puntero que apunta al siguiente
+Lista Doblemente enlazzda: Cada registro tiene un puntero del anterior registro y del siguiente nodo
+Listas Circulares: El ultimo Nodo apunta al primero
+
+El tipo de dato puntero es un tipo de dato que cuyo valor es una posicion en memoria hexadecimal
+
+Se define un nodo de la siguiente manera
+
+P: Puntero a NODO;
+
+Nodo = REGISTRO
+    dato: [tipo de dato]
+    prox: Puntero a NODO
+FIN_REGISRTO
+
+q, PRIM: Puntero a NODO;
+
+punt: Puntero a nodo
+Nodo= REGISTRO 
+    dato: tipo de dato
+    prox: punt
+FIN_REGISRTO
+
+p,q,PRIM; punt
+
+
+*p.dato := [dato]
+p^.dato := [dato]
+
+ESCIRBIR(*p.dato)
+LEER(*p.dato)
+
+ACCION listas ES
+    AMBIENTE
+        Nodo = REGISTRO
+            dato: [tipo de dato]
+            prox: Puntero a NODO
+        FIN_REGISRTO
+        P: Puntero a NODO
+
+    PROCESO
+        P:= PRIM
+
+        MIENTRAS (p <> NIL) HACER
+            ESCRIBIR(*p.dato)
+            p := *p.dato
+        FIN_MIENTRAS
+FIN_ACCION
+
+
+Carga Apilada: 
+
+LEER (valor)
+
+Prim:= nil
+MIENTRAS (valor <> '*') HACER
+    NUEVO (p)
+    *p.Dato:= valor
+    *p.Prox:= Prim
+    Prim:= p
+    LEER(valor)
+FIN MIENTRAS
+
+Carga Encolada:
+
+
+LEER (valor)
+
+Prim:= nil
+MIENTRAS (valor <> '*') HACER
+    NUEVO (p)
+    *p.Dato:= valor
+    *p.Prox:= nil
+
+    SI Prim = nil ENTONCES
+        Prim = p
+    SINO
+        *a.Prox:= p
+    FIN SI
+    a:=p
+    LEER(valor)
+FIN MIENTRAS
+
+
+*/
+
+ACCION
+    Ambiente
+    Proceso
+FIN_ACCION
+
+
+COmo elimnar un nodo de la lista:
+

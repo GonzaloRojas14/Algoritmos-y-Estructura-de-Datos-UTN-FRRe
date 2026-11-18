@@ -1,0 +1,98 @@
+Corte de control, actualizacion y arreglos entran en el segundo parcial! 
+(Tener en cuenta para realizar research y estudio) 
+
+## La arquiterctura de los Arreglos
+
+
+Arreglo es una estructura dinamica, vive en la ram durante la ejecucion, homogeneo, finito y ordenado
+
+
+Dependiendo de la dimesion del arreglo pueden ser unidimensional (vector), bidimensional (matrices), multidimensional.
+
+acciones que podemos hacer en un arreglo son
+
+Lectura y escritura,
+Recorrido,
+Actualizacion,
+Busqueda,
+Ordenamiento
+
+Se define como mi_vector: ARREGLO de [1..7] de ENTEROS
+
+## Proceso basico de carga para un arreglo
+
+PARA i:= 1 a 30 HACER 
+    LEER(notas[1])
+FIN_PARA
+
+
+## Proceso basico de escritura para un arreglo
+
+PARA i:= 1 a 30 HACER
+    ESCRIBIR(notas[1])
+FIN_PARA
+
+
+El primer indice siempre es la fila y el segundo la columna
+
+
+El tammaño de un array es fijo, no se puede cambiar durante la ejecucion. 
+Se puede acceder a cada elemento directamente sabiendo losindices del mismo
+
+Ejercicio de ejemplo:
+
+ACCION ej_3.2 ES
+    AMBIENTE
+        num: ARREGLO de [1..100] de ENTERO
+        i, posicion_min, posicion_max, contpar, acumpar: ENTERO
+
+    PROCESO
+        contpar:= 0; acumpar:= 0
+        posicion_min := 1; posicion_max := 1
+
+        PARA i := 1 a 100 HACAER
+            ESCRIBIR('Ingrese la piscion ', i, 'del arreglo')
+            LEER(num[i])
+            SI num[1] > num[posicion_max] ENTONCES
+                posicion_max := i 
+            SINO
+                SI num[i] < num[posicion_min] ENTONCES
+                    posicion_min := i
+                FIN_SI
+            FIN_SI
+
+            SI num[i] MOD 2 = 0
+                contpar := contpar +1
+                acumpar := acumpar + num[num[i]]
+            FIN_SI
+        FIN_PARA
+
+        ESCRIBIR("El valor del mayor numero es: ", num[posicion_max], "y su posiciion es: ", posicion_max)
+        ESCRIBIR("El valor del menor numero es: ", num[posicion_min], "y su posiciion es: ", posicion_min)
+        ESCRIBIR("La cantidad de pares son: ", contpar, "Y la suma de los pares son: ", acumpar)
+    FIN_PROCESO
+FIN_ACCION
+
+
+
+Ejercicio de Practica:
+
+Considerando un arreglo de 50 números enteros, confeccione un algoritmo para resolver las siguientes consignas:
+
+Modificar el arreglo dado, de modo que todos sus elementos sean múltiplos de 3.
+Crear otro arreglo que contenga los números que no cumplieron la condición.
+Informar cuántos números cumplieron la condición.
+
+
+ACCION ej_3.4 (nums: arreglo[1..50] de ENTERO)ES
+    AMBIENTE
+        numsno3: ARREGLOS de [1..50] de ENTEROS
+        i, j, contnum: ENTERO
+
+
+    PROCESO
+        contnum := 0, j :=1
+
+        PARA i := 1 a 50 HACER
+            
+        

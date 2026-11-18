@@ -1,0 +1,291 @@
+/*
+    ═══════════════════════════════════════════════════════════════════════
+    EJERCICIO N° 2  —  Estadística de circuitos y lugares de origen
+    ═══════════════════════════════════════════════════════════════════════
+
+    La Secretaría desea analizar la información estadística de los distintos
+    circuitos y equipos utilizados.
+
+    Para ello debe tener en cuenta el archivo NOVEDADES, detallado en el
+    Ejercicio N° 1, y además el archivo:
+
+    USUARIOS (indexado por id_usuario):
+    id_usuario | dni | sexo (m/f) | apellido_y_nombre | lugar_de_origen (1..4) |
+    edad
+
+    Donde lugar_de_origen puede ser:
+    1 - Chaco
+    2 - Otra provincia argentina
+    3 - País limítrofe
+    4 - Otro país
+
+    Se pide calcular y mostrar:
+    1. Importes recaudados por préstamos discriminados por circuito y por lugar
+       de origen de los usuarios (se cuenta con un vector de 6 posiciones con el
+       costo por hora de cada circuito, y la función diff).
+    2. Importes totales recaudados por préstamos: por circuito ecológico y por
+       lugar de origen.
+    b) Informar cuáles fueron los lugares de origen (descripción) que superaron
+       un monto ingresado por el usuario.
+
+
+    ─────────────────────────────────────────────────────────────────────────
+    LO QUE HEREDAMOS DEL EJERCICIO 1 (solo el diseño del archivo)
+    ─────────────────────────────────────────────────────────────────────────
+
+    ARCHIVO: NOVEDADES (Ordenado por tipo_equipo, nro_equipo, tipo_novedad, fecha)
+    tipo_equipo | nro_equipo | tipo_novedad | fecha_novedad | hora_inicio |
+    hora_fin | nro_circuito | id_usuario
+
+    Donde tipo_novedad puede ser:
+    1 (Alta de nuevo equipo)
+    2 (Préstamo)
+    3 (Baja)
+
+    Nota: se dispone de la función diff(hora_inicio, hora_fin) que devuelve la
+    diferencia de horas.
+
+
+    ═══════════════════════════════════════════════════════════════════════
+    LECTURA DEL EJERCICIO (para discutir antes de escribir)
+    ═══════════════════════════════════════════════════════════════════════
+
+    ES UN PROCESO ESTADÍSTICO CON MATRIZ, igual que el de los errores:
+
+        T : ARREGLO[1..7, 1..5] de real
+
+        - 6 circuitos + 1 fila de totales     -> filas
+        - 4 lugares de origen + 1 columna     -> columnas
+        - T[7,5] = total general
+
+    Filas y columnas se pueden dar vuelta; lo que no cambia es que va con un
+    margen de más a cada lado.
+
+    IMPORTANTE: el archivo viene ordenado por tipo_equipo y nro_equipo, NO por
+    circuito ni por usuario. Así que no hay corte de control posible sobre lo que
+    queremos totalizar -> hay que acumular todo en memoria mientras se recorre.
+    Ese es exactamente el argumento del ejercicio de los errores.
+
+    LA VUELTA DE TUERCA respecto de aquel: acá el dato que define la COLUMNA no
+    viene en el registro. NOVEDADES trae el id_usuario, pero el lugar_de_origen
+    está en USUARIOS, que es INDEXADO. Entonces, por cada préstamo:
+
+        1. sacar el id_usuario de la novedad
+        2. buscarlo por clave en USUARIOS  (asignar clave -> LEER -> SI EXISTE)
+        3. de ahí sale el lugar_de_origen, que es la columna
+
+    O sea: el indexado no se recorre, se consulta. Es el patrón de la unidad 2.3.
+    Y ojo con el SI EXISTE: si el usuario no está, hay que decidir qué hacer
+    (informarlo y saltear el registro, seguramente).
+
+    EL IMPORTE no viene dado, se calcula:
+
+        importe := diff(hora_inicio, hora_fin) * costo_hora[nro_circuito]
+
+    donde costo_hora es el vector de 6 posiciones que menciona la consigna.
+
+    SOLO CUENTAN LAS NOVEDADES DE TIPO 2 (préstamo). Las altas y las bajas no
+    recaudan, se saltean.
+
+    LOS 4 INCREMENTOS POR REGISTRO (igual que en el de los errores):
+        T[circ, lugar] += importe      la celda
+        T[circ, 5]     += importe      total de ese circuito
+        T[7, lugar]    += importe      total de ese lugar de origen
+        T[7, 5]        += importe      total general
+
+    PREGUNTA ABIERTA: el punto 2 dice "por circuito ecológico". En la consigna no
+    figura qué circuito es el ecológico ni un campo que lo indique. Puede ser un
+    circuito puntual que el profe aclara de palabra, o un error de tipeo por
+    "por circuito". Hay que preguntarlo.
+
+    EL INCISO b) se resuelve con la fila de totales por lugar de origen: se
+    recorre T[7, 1..4] y se informan los que superan el monto ingresado. Ojo que
+    pide la DESCRIPCIÓN ("Chaco", "Otra provincia argentina", ...), no el número,
+    así que hace falta un vector con los cuatro nombres.
+*/
+
+ACCION estadistica_circuitos ES
+    Ambiente
+
+        // ── Diseños de registro ──────────────────────────────────────────
+
+        fecha = REGISTRO
+            anio : 1..9999
+            mes  : 1..12
+            dia  : 1..31
+        FIN_REGISTRO
+
+        novedad = REGISTRO
+            tipo_equipo   : entero
+            nro_equipo    : entero
+            tipo_novedad  : 1..3        // 1 alta, 2 prestamo, 3 baja
+            fecha_novedad : fecha
+            hora_inicio   : entero
+            hora_fin      : entero
+            nro_circuito  : 1..6
+            id_usuario    : entero
+        FIN_REGISTRO
+
+        usuario = REGISTRO
+            id_usuario        : entero
+            dni               : entero
+            sexo              : caracter
+            apellido_y_nombre : AN(40)
+            lugar_de_origen   : 1..4    // 1 Chaco, 2 otra prov, 3 limitrofe, 4 otro pais
+            edad              : entero
+        FIN_REGISTRO
+
+        novedades : ARCHIVO de novedad ordenado por tipo_equipo, nro_equipo, tipo_novedad y fecha_novedad
+        usuarios  : ARCHIVO de usuario INDEXADO por id_usuario
+
+        reg_nov : novedad
+        reg_usu : usuario
+
+        // ── La matriz del proceso estadistico ────────────────────────────
+        // Filas    1..6 = circuitos,        fila 7    = totales por lugar
+        // Columnas 1..4 = lugares de origen, columna 5 = totales por circuito
+        // T[7,5] = total general
+        T : ARREGLO[1..7, 1..5] de real
+
+        // Dados por la consigna
+        costo_hora : ARREGLO[1..6] de real
+        desc_lugar : ARREGLO[1..4] de AN(30)
+
+        monto : real
+        i, j : entero
+
+        // ─────────────────────────────────────────────────────────────────
+        // La consigna dice que diff() ya existe y no hay que desarrollarla.
+        // La escribo solo para que el algoritmo se pueda ejecutar.
+        FUNCION diff(hi : entero, hf : entero) : real ES
+            Proceso
+                diff := hf - hi
+        FIN_FUNCION
+
+        PROCEDIMIENTO inicializar ES
+            Proceso
+                PARA i := 1 HASTA 7 HACER
+                    PARA j := 1 HASTA 5 HACER
+                        T[i,j] := 0
+                    FIN_PARA
+                FIN_PARA
+        FIN_PROCEDIMIENTO
+
+        // La consigna dice que el vector de costos ya viene cargado.
+        // Lo inicializo acá, junto con las descripciones que pide el punto b).
+        PROCEDIMIENTO cargar_tablas ES
+            Proceso
+                costo_hora[1] := 1200
+                costo_hora[2] := 1500
+                costo_hora[3] := 900
+                costo_hora[4] := 2000
+                costo_hora[5] := 1100
+                costo_hora[6] := 1800
+
+                desc_lugar[1] := "Chaco"
+                desc_lugar[2] := "Otra provincia argentina"
+                desc_lugar[3] := "Pais limitrofe"
+                desc_lugar[4] := "Otro pais"
+        FIN_PROCEDIMIENTO
+
+        // Corazon del ejercicio: un prestamo, cuatro acumulaciones.
+        PROCEDIMIENTO procesar_prestamo ES
+            Ambiente
+                importe : real
+                circ, lugar : entero
+            Proceso
+                // El lugar de origen NO viene en la novedad: hay que ir a
+                // buscarlo al indexado. Clave -> LEER -> SI EXISTE.
+                reg_usu.id_usuario := reg_nov.id_usuario
+                LEER(usuarios, reg_usu)
+
+                SI EXISTE ENTONCES
+                    circ    := reg_nov.nro_circuito
+                    lugar   := reg_usu.lugar_de_origen
+                    importe := diff(reg_nov.hora_inicio, reg_nov.hora_fin) * costo_hora[circ]
+
+                    T[circ, lugar] := T[circ, lugar] + importe   // la celda
+                    T[circ, 5]     := T[circ, 5]     + importe   // total del circuito
+                    T[7, lugar]    := T[7, lugar]    + importe   // total del lugar
+                    T[7, 5]        := T[7, 5]        + importe   // total general
+                SINO
+                    ESCRIBIR("ERROR: equipo ", reg_nov.tipo_equipo, "-", reg_nov.nro_equipo,
+                             " referencia al usuario ", reg_nov.id_usuario, " que no existe en USUARIOS")
+                FIN_SI
+        FIN_PROCEDIMIENTO
+
+        // Punto 1: importes discriminados por circuito y por lugar de origen.
+        PROCEDIMIENTO mostrar_matriz ES
+            Proceso
+                ESCRIBIR("")
+                ESCRIBIR("RECAUDACION POR CIRCUITO Y LUGAR DE ORIGEN")
+                ESCRIBIR("Circuito | Chaco | Otra prov. | Limitrofe | Otro pais | TOTAL")
+                PARA i := 1 HASTA 6 HACER
+                    ESCRIBIR("    ", i, "    | ", T[i,1], " | ", T[i,2], " | ", T[i,3],
+                             " | ", T[i,4], " | ", T[i,5])
+                FIN_PARA
+        FIN_PROCEDIMIENTO
+
+        // Punto 2: totales por circuito y totales por lugar de origen.
+        PROCEDIMIENTO mostrar_totales ES
+            Proceso
+                ESCRIBIR("")
+                ESCRIBIR("TOTAL RECAUDADO POR CIRCUITO")
+                PARA i := 1 HASTA 6 HACER
+                    ESCRIBIR("Circuito ", i, ": ", T[i,5])
+                FIN_PARA
+
+                ESCRIBIR("")
+                ESCRIBIR("TOTAL RECAUDADO POR LUGAR DE ORIGEN")
+                PARA j := 1 HASTA 4 HACER
+                    ESCRIBIR(desc_lugar[j], ": ", T[7,j])
+                FIN_PARA
+
+                ESCRIBIR("")
+                ESCRIBIR("TOTAL GENERAL: ", T[7,5])
+        FIN_PROCEDIMIENTO
+
+        // Punto b): lugares de origen que superaron un monto ingresado.
+        PROCEDIMIENTO informar_superan ES
+            Ambiente
+                hubo : logico
+            Proceso
+                ESCRIBIR("")
+                ESCRIBIR("Ingrese el monto a superar: ")
+                LEER(monto)
+
+                hubo := falso
+                PARA j := 1 HASTA 4 HACER
+                    SI (T[7,j] > monto) ENTONCES
+                        ESCRIBIR(desc_lugar[j], " supero el monto, con ", T[7,j])
+                        hubo := verdadero
+                    FIN_SI
+                FIN_PARA
+
+                SI (NO hubo) ENTONCES
+                    ESCRIBIR("Ningun lugar de origen supero ese monto")
+                FIN_SI
+        FIN_PROCEDIMIENTO
+
+    Proceso
+        inicializar
+        cargar_tablas
+
+        ABRIR E/(novedades)
+        ABRIR E/(usuarios)
+
+        LEER(novedades, reg_nov)
+        MIENTRAS NFDA(novedades) HACER
+            SI (reg_nov.tipo_novedad = 2) ENTONCES
+                procesar_prestamo
+            FIN_SI
+            LEER(novedades, reg_nov)
+        FIN_MIENTRAS
+
+        CERRAR(novedades)
+        CERRAR(usuarios)
+
+        mostrar_matriz
+        mostrar_totales
+        informar_superan
+FIN_ACCION

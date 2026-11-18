@@ -1,0 +1,334 @@
+/*
+    ═══════════════════════════════════════════════════════════════════════
+    EJERCICIO 2.2.19 — Guía de Cátedra, Unidad 2.2 (Actualización)
+    ═══════════════════════════════════════════════════════════════════════
+
+    En una Empresa Farmacéutica se posee un archivo MAE_REMEDIOS (ordenado por
+    Clave: Farmacia + Medicamento), el que se actualiza semanalmente, a través de
+    la información que se encuentra cargada en un archivo de MOVIMIENTOS
+    (ordenado por Clavem: Farmacia + Medicamento, y Cod_Mov), de la siguiente
+    forma:
+
+    - Si Clave (MAE_REMEDIOS) es menor que Clavem (MOVIMIENTOS), simplemente se
+      transfieren los datos del Maestro a la salida y se graban.
+
+    - Si Clave (MAE_REMEDIOS) es igual a Clavem (MOVIMIENTOS) y el Cod_Mov es 1,
+      se considera error y se lista un mensaje indicando el tipo de error; pero
+      si el Cod_Mov es 2, entonces es un remedio que deja de fabricarse y se
+      transfiere el registro al archivo de Remedios vencidos (REM_VENC); pero si
+      el Cod_Mov es 3, se modifica la cantidad actual con la cantidad recibida.
+
+    - Si Clave (MAE_REMEDIOS) es mayor que Clavem (MOVIMIENTOS) y el Cod_Mov es
+      1, se incorpora el remedio a nuestro Vademecum, considerando que la
+      cantidad recibida configura la cantidad actual y la Fecha_Vencimiento es 30
+      días posterior a la fecha actual; pero si el Cod_Mov es 2 o 3 se considera
+      error y se deben producir los correspondientes mensajes de error.
+
+    Se considera que solo existe un registro de movimiento para cada registro del
+    maestro.
+
+    MAE_REMEDIOS — Ordenado por Farmacia y Medicamento
+        Farmacia | Medicamento | Cant_Actual | Fecha_Vencimiento
+
+    MOVIMIENTOS — Ordenado por Farmacia, Medicamento y Cod_Mov
+        Farmacia | Medicamento | Cod_Mov | Cant_Recibida
+
+    REM_VENC — Ordenado por Medicamento
+        Medicamento | Cant_Vencida
+
+
+    ═══════════════════════════════════════════════════════════════════════
+    LA TABLA DE SEIS CELDAS, LLENA
+    ═══════════════════════════════════════════════════════════════════════
+
+    Primero hay que deducir qué es cada Cod_Mov, porque la consigna no lo dice.
+    Se saca de lo que hace cada uno:
+
+        Cod_Mov 1 -> ALTA          (es error si ya existe; incorpora si no existe)
+        Cod_Mov 2 -> BAJA          (deja de fabricarse)
+        Cod_Mov 3 -> MODIFICACION  (cambia la cantidad)
+
+    Y con eso la tabla queda:
+
+    ┌───────────────────┬──────────────────┬──────────────────┬──────────────────┐
+    │                   │ 1 = ALTA         │ 2 = BAJA         │ 3 = MODIFICACION │
+    ├───────────────────┼──────────────────┼──────────────────┼──────────────────┤
+    │ clave = clavem    │ ERROR: ya existe │ mandar a REM_VENC│ sumar la cantidad│
+    │ (EXISTE)          │ + grabar el mae  │ y NO grabar en   │ recibida y grabar│
+    │ -> "iguales"      │ igual, no se     │ el maestro nuevo │ el maestro       │
+    │                   │ pierde           │ (ahí se borra)   │                  │
+    ├───────────────────┼──────────────────┼──────────────────┼──────────────────┤
+    │ clave > clavem    │ crear el registro│ ERROR: baja de   │ ERROR: modif de  │
+    │ (NO EXISTE)       │ y grabar         │ inexistente      │ inexistente      │
+    │ -> "distintos"    │                  │                  │                  │
+    └───────────────────┴──────────────────┴──────────────────┴──────────────────┘
+
+    Tres celdas válidas en diagonal, tres errores. Siempre es así.
+
+    DOS DECISIONES QUE TOMÉ, porque la consigna es ambigua:
+
+    1. "se modifica la cantidad actual con la cantidad recibida" -> la interpreto
+       como SUMAR al stock, no reemplazar. Es una farmacia recibiendo mercadería.
+       Si el profe dice que es reemplazar, se cambia una sola línea (está marcada).
+
+    2. En la celda de ERROR de alta sobre un remedio que ya existe, el registro
+       del maestro SE GRABA igual. La consigna no lo aclara, pero si no lo
+       grabaras perderías un remedio que existe solo porque alguien cargó mal un
+       movimiento. El error es del movimiento, no del maestro.
+*/
+
+ACCION act_remedios ES
+    Ambiente
+
+        // Centinela del ciclo incluyente. Tiene que ser un valor más alto que
+        // cualquier clave real: así el archivo que se termina pierde todas las
+        // comparaciones y el otro se sigue vaciando solo.
+        HV = 99999
+
+        // ── Los tres diseños de registro ─────────────────────────────────
+
+        fecha = REGISTRO
+            anio : 1..9999      // el orden de los campos importa: al comparar
+            mes  : 1..12        // dos registros se comparan campo por campo,
+            dia  : 1..31        // en el orden en que están declarados
+        FIN_REGISTRO
+
+        // La clave es COMPUESTA. Agrupándola en un registro aparte, después se
+        // compara de una sola vez (cla < cla) en vez de campo por campo.
+        // Farmacia va primero porque el archivo está ordenado así.
+        clave = REGISTRO
+            Farmacia    : entero
+            Medicamento : entero
+        FIN_REGISTRO
+
+        mae = REGISTRO
+            cla               : clave
+            Cant_Actual       : entero
+            Fecha_Vencimiento : fecha
+        FIN_REGISTRO
+
+        mov = REGISTRO
+            cla           : clave
+            Cod_Mov       : 1..3        // subrango: la consigna da los valores
+            Cant_Recibida : entero
+        FIN_REGISTRO
+
+        // Tercer diseño, propio de este ejercicio. Ojo: NO es el maestro
+        // recortado, el campo se llama distinto (Cant_Vencida, no Cant_Actual).
+        venc = REGISTRO
+            Medicamento  : entero
+            Cant_Vencida : entero
+        FIN_REGISTRO
+
+        // ── Los cuatro archivos ──────────────────────────────────────────
+        // arch_mae y arch_mae_act comparten el tipo "mae": el maestro
+        // actualizado es el mismo archivo con los datos al día.
+        arch_mae, arch_mae_act : ARCHIVO de mae ordenado por cla
+        arch_mov  : ARCHIVO de mov ordenado por cla y Cod_Mov
+        arch_venc : ARCHIVO de venc
+
+        reg_mae  : mae
+        reg_mov  : mov
+        reg_venc : venc
+
+        // Un registro por archivo: este es el del maestro actualizado, y se usa
+        // para armar las altas. NO se puede usar reg_mae para eso: en la rama de
+        // alta, reg_mae todavía tiene un registro del maestro sin procesar, y
+        // pisarlo lo destruye. Ver la nota del final del archivo.
+        reg_mae_act : mae
+
+        hoy, venc30 : fecha
+
+        // ─────────────────────────────────────────────────────────────────
+        // LECTURAS ENCAPSULADAS
+        // Nunca se lee "suelto". Cada LEER va envuelto en un procedimiento que
+        // además detecta el fin de archivo y le clava HV a la clave. Así el
+        // ciclo principal no necesita preguntar por FDA nunca más: le alcanza
+        // con mirar la clave.
+        // Como la clave es compuesta, HV va en los DOS campos.
+        // ─────────────────────────────────────────────────────────────────
+
+        PROCEDIMIENTO leer_mae ES
+            Proceso
+                LEER(arch_mae, reg_mae)
+                SI FDA(arch_mae) ENTONCES
+                    reg_mae.cla.Farmacia    := HV
+                    reg_mae.cla.Medicamento := HV
+                FIN_SI
+        FIN_PROCEDIMIENTO
+
+        PROCEDIMIENTO leer_mov ES
+            Proceso
+                LEER(arch_mov, reg_mov)
+                SI FDA(arch_mov) ENTONCES
+                    reg_mov.cla.Farmacia    := HV
+                    reg_mov.cla.Medicamento := HV
+                FIN_SI
+        FIN_PROCEDIMIENTO
+
+        // ─────────────────────────────────────────────────────────────────
+        // RAMA 2: las claves COINCIDEN -> el remedio EXISTE en el maestro.
+        // Es la fila de arriba de la tabla.
+        // ─────────────────────────────────────────────────────────────────
+        PROCEDIMIENTO iguales ES
+            Proceso
+                SEGUN reg_mov.Cod_Mov HACER
+
+                    // ALTA de algo que ya existe -> error.
+                    // El maestro se graba igual: el dato malo es el movimiento.
+                    1 : ESCRIBIR("ERROR - ALTA de un remedio que ya existe: farmacia ",
+                                 reg_mae.cla.Farmacia, ", medicamento ", reg_mae.cla.Medicamento)
+                        ESCRIBIR(arch_mae_act, reg_mae)
+
+                    // BAJA. Acá está lo propio de este ejercicio: no se marca
+                    // el registro, se MUDA a otro archivo con otro diseño. Hay
+                    // que armar el reg_venc campo por campo, porque venc y mae
+                    // son tipos distintos y no se pueden asignar entre sí.
+                    2 : reg_venc.Medicamento  := reg_mae.cla.Medicamento
+                        reg_venc.Cant_Vencida := reg_mae.Cant_Actual
+                        ESCRIBIR(arch_venc, reg_venc)
+                        // Y NO se graba en arch_mae_act. Así se borra un
+                        // registro en una actualización secuencial: no
+                        // copiándolo al maestro nuevo.
+
+                    // MODIFICACION. Única línea donde entra Cant_Recibida.
+                    3 : reg_mae.Cant_Actual := reg_mae.Cant_Actual + reg_mov.Cant_Recibida
+                        // ^^^ si el profe dice que REEMPLAZA en vez de sumar:
+                        //     reg_mae.Cant_Actual := reg_mov.Cant_Recibida
+                        ESCRIBIR(arch_mae_act, reg_mae)
+
+                FIN_SEGUN
+        FIN_PROCEDIMIENTO
+
+        // ─────────────────────────────────────────────────────────────────
+        // RAMA 3: la clave del maestro es MAYOR -> el movimiento apunta a un
+        // remedio que NO está en el maestro. Fila de abajo de la tabla.
+        // ─────────────────────────────────────────────────────────────────
+        PROCEDIMIENTO distintos ES
+            Proceso
+                SEGUN reg_mov.Cod_Mov HACER
+
+                    // ALTA de algo que no existe -> es el caso válido.
+                    // La clave sí se puede asignar de una, porque en los dos
+                    // registros es del MISMO tipo (clave). El resto, no: los
+                    // nombres ni coinciden (Cant_Recibida -> Cant_Actual) y
+                    // Fecha_Vencimiento no existe en el movimiento.
+                    1 : reg_mae_act.cla               := reg_mov.cla
+                        reg_mae_act.Cant_Actual       := reg_mov.Cant_Recibida
+                        reg_mae_act.Fecha_Vencimiento := venc30
+                        ESCRIBIR(arch_mae_act, reg_mae_act)
+
+                    2 : ESCRIBIR("ERROR - BAJA de un remedio inexistente: farmacia ",
+                                 reg_mov.cla.Farmacia, ", medicamento ", reg_mov.cla.Medicamento)
+
+                    3 : ESCRIBIR("ERROR - MODIFICACION de un remedio inexistente: farmacia ",
+                                 reg_mov.cla.Farmacia, ", medicamento ", reg_mov.cla.Medicamento)
+
+                FIN_SEGUN
+        FIN_PROCEDIMIENTO
+
+    Proceso
+        ESCRIBIR("Fecha actual (anio mes dia): ")
+        LEER(hoy.anio)
+        LEER(hoy.mes)
+        LEER(hoy.dia)
+
+        // "30 días posterior a la fecha actual". En el parcial esto se asume
+        // dado, igual que el diff() del otro parcial. Acá lo aproximo con
+        // "mismo día del mes siguiente", que es lo que hace la resolución de la
+        // cátedra. Se calcula una sola vez: la fecha actual no cambia.
+        venc30 := hoy                   // copia de registro completo: mismo
+        SI (hoy.mes = 12) ENTONCES      // tipo, se asigna de una
+            venc30.mes  := 1
+            venc30.anio := hoy.anio + 1
+        SINO
+            venc30.mes := hoy.mes + 1
+        FIN_SI
+
+        ABRIR E/(arch_mae)
+        ABRIR E/(arch_mov)
+        ABRIR /S(arch_mae_act)
+        ABRIR /S(arch_venc)
+
+        // LECTURAS ANTICIPADAS: una por archivo. Sin esto, la primera vuelta
+        // del ciclo compararía claves de registros que todavía no se leyeron.
+        leer_mae
+        leer_mov
+
+        // CICLO INCLUYENTE: sigue mientras quede algo en CUALQUIERA de los dos.
+        // Va con O, no con Y. Cuando uno se termina, su clave vale HV y pierde
+        // todas las comparaciones, así que el otro se vacía por la rama que le
+        // corresponde sin necesidad de ciclos de vaciado aparte.
+        MIENTRAS (reg_mae.cla.Farmacia <> HV) O (reg_mov.cla.Farmacia <> HV) HACER
+
+            SI (reg_mae.cla < reg_mov.cla) ENTONCES
+                // El maestro va adelantado: este remedio no tiene movimientos,
+                // pasa tal cual al maestro nuevo.
+                ESCRIBIR(arch_mae_act, reg_mae)
+                leer_mae                    // avanza UNO: el que se consumió
+
+            SINO
+                SI (reg_mae.cla = reg_mov.cla) ENTONCES
+                    // Los dos apuntan al mismo remedio.
+                    iguales
+                    leer_mae                // avanza LOS DOS: se consumieron
+                    leer_mov                // el maestro y el movimiento
+                SINO
+                    // El movimiento va adelantado: apunta a un remedio que el
+                    // maestro no tiene.
+                    distintos
+                    leer_mov                // avanza UNO: solo el movimiento
+                FIN_SI
+            FIN_SI
+
+        FIN_MIENTRAS
+
+        CERRAR(arch_mae)
+        CERRAR(arch_mov)
+        CERRAR(arch_mae_act)
+        CERRAR(arch_venc)
+FIN_ACCION
+
+/*
+    ═══════════════════════════════════════════════════════════════════════
+    EL BUG DE LA PLANTILLA (probado ejecutando)
+    ═══════════════════════════════════════════════════════════════════════
+
+    La plantilla de actualización unitaria de plantillas.md §5 arma el alta
+    escribiendo encima de reg_mae:
+
+        reg_mae.clave  := reg_mov.clave        // ✗
+        reg_mae.campo1 := reg_mov.campo1
+        ESCRIBIR(arch_mae_act, reg_mae)
+
+    Eso rompe el algoritmo, y no en un caso raro: rompe siempre que haya un alta
+    seguida de cualquier otra cosa.
+
+    POR QUÉ. Se llega a la rama de alta cuando reg_mae.clave > reg_mov.clave. O
+    sea: reg_mae TIENE un registro del maestro, válido, todavía sin procesar —
+    justamente por eso perdió la comparación. Si lo pisás con los datos del
+    movimiento, ese registro del maestro se perdió. Y como en esta rama solo
+    avanza leer_mov, el reg_mae corrupto sigue vivo en la vuelta siguiente y se
+    compara como si fuera un registro real.
+
+    LO QUE PASÓ AL EJECUTARLO con 6 registros de maestro y 6 movimientos:
+
+        1  500  120   <- escrito dos veces
+        1  500  120
+        2  100   10   <- tenía 80; quedó con la cantidad del movimiento
+        2  100   10      y encima duplicado
+        (2, 400)      <- se perdió, nunca se grabó
+
+    LA SOLUCIÓN es la de arriba: un registro aparte, reg_mae_act, para armar las
+    altas. reg_mae no se toca nunca salvo para leerlo y para la modificación
+    (donde sí corresponde, porque ahí el registro ES el que se está tratando).
+
+    DATO: la plantilla de actualización POR LOTES (§6) no tiene este problema,
+    porque ya usa un registro auxiliar (aux_mae) para armar todo. El auxiliar
+    estaba ahí por otro motivo —acumular varios movimientos— pero de paso la
+    protege de este bug.
+
+    Es el mismo tipo de error que el "i" global pisado por la búsqueda en el
+    parcial resuelto en clase: una variable compartida que alguien sobreescribe
+    mientras otro todavía la necesita.
+*/

@@ -1,0 +1,196 @@
+// Actividad Formativa N.º 3 - Estación de Monitoreo
+// Temperatura ambiente en Resistencia, un día de octubre: M sensores, N lecturas
+// por sensor (una cada 10 minutos). Los datos están en estacion.datos/archLecturas.csv
+
+ACCION EstacionDeMonitoreo ES
+AMBIENTE
+    M = 5;              // cantidad de sensores
+    N = 144;            // lecturas por sensor: 24 h, una cada 10 minutos
+    UMBRAL = 40.0;      // °C: más de 10 °C por encima de la máxima normal de octubre
+    LONG_MIN = 5;       // lecturas seguidas sobre el umbral para hablar de racha
+
+    lectura = registro
+        sensor: entero;
+        nro: entero;
+        valor: real;
+    fin_reg;
+
+    archLecturas: ARCHIVO de lectura;
+
+    lecturas: ARREGLO[1..N] de real;
+    matriz: ARREGLO[1..M, 1..N] de real;
+    fila: ARREGLO[1..N] de real;
+    promedioPorSensor: ARREGLO[1..M] de real;
+
+    sensorElegido, s: entero;
+    maximo, minimo, promedio: real;
+    posMax, posMin, posSupera, inicioRacha: entero;
+    hayRacha: logico;
+
+    // ===================== PARTE 2: kit de vector =====================
+
+    // Recorre el archivo completo y se queda con las lecturas de un sensor:
+    // cada valor va a la posición que indica su campo nro.
+    Procedimiento CargarSensor(nroSensor: entero; var v: ARREGLO[1..N] de real);
+    Ambiente
+        reg: lectura;
+    Proceso
+        ABRIR E(archLecturas);
+        LEER(archLecturas, reg);
+        MIENTRAS NFDA(archLecturas) HACER
+            SI reg.sensor = nroSensor ENTONCES
+                v[reg.nro] := reg.valor;
+            FIN_SI;
+            LEER(archLecturas, reg);
+        FIN_MIENTRAS;
+        CERRAR(archLecturas);
+    fin_proc;
+
+    // Una sola pasada: máximo y mínimo con sus posiciones, y el promedio.
+    // v se declara con el tamaño máximo (N) y tam dice cuántas posiciones se usan;
+    // así el mismo procedimiento sirve para un sensor (tam = N) y para el
+    // vector de promedios (tam = M).
+    Procedimiento Estadisticas(v: ARREGLO[1..N] de real; tam: entero;
+                               var max: real; var posMax: entero;
+                               var min: real; var posMin: entero;
+                               var prom: real);
+    Ambiente
+        i: entero;
+        suma: real;
+    Proceso
+        max := v[1];
+        posMax := 1;
+        min := v[1];
+        posMin := 1;
+        suma := v[1];
+        PARA i := 2 HASTA tam HACER
+            SI v[i] > max ENTONCES
+                max := v[i];
+                posMax := i;
+            FIN_SI;
+            SI v[i] < min ENTONCES
+                min := v[i];
+                posMin := i;
+            FIN_SI;
+            suma := suma + v[i];
+        FIN_PARA;
+        prom := suma / tam;
+    fin_proc;
+
+    // Posición de la primera lectura que supera el umbral; 0 si ninguna lo supera.
+    Procedimiento BuscarSupera(v: ARREGLO[1..N] de real; tam: entero;
+                               umbral: real; var pos: entero);
+    Ambiente
+        i: entero;
+    Proceso
+        pos := 0;
+        i := 1;
+        MIENTRAS (i <= tam) Y (pos = 0) HACER
+            SI v[i] > umbral ENTONCES
+                pos := i;
+            FIN_SI;
+            i := i + 1;
+        FIN_MIENTRAS;
+    fin_proc;
+
+    // Busca longMin lecturas seguidas por encima del umbral. El contador suma 1
+    // con cada lectura que lo supera y vuelve a 0 apenas una no lo supera.
+    // Si llega a longMin hay racha, y empezó longMin - 1 lecturas antes.
+    Procedimiento DetectarRacha(v: ARREGLO[1..N] de real; tam: entero;
+                                umbral: real; longMin: entero;
+                                var hay: logico; var inicio: entero);
+    Ambiente
+        i, contador: entero;
+    Proceso
+        hay := falso;
+        inicio := 0;
+        contador := 0;
+        i := 1;
+        MIENTRAS (i <= tam) Y (NO hay) HACER
+            SI v[i] > umbral ENTONCES
+                contador := contador + 1;
+                SI contador = longMin ENTONCES
+                    hay := verdadero;
+                    inicio := i - longMin + 1;
+                FIN_SI;
+            SINO
+                contador := 0;
+            FIN_SI;
+            i := i + 1;
+        FIN_MIENTRAS;
+    fin_proc;
+
+    // ======================== PARTE 3: matriz ========================
+
+    // Un solo recorrido: cada registro ya trae su fila (sensor) y su columna (nro).
+    Procedimiento CargarMatriz(var mat: ARREGLO[1..M, 1..N] de real);
+    Ambiente
+        reg: lectura;
+    Proceso
+        ABRIR E(archLecturas);
+        LEER(archLecturas, reg);
+        MIENTRAS NFDA(archLecturas) HACER
+            mat[reg.sensor, reg.nro] := reg.valor;
+            LEER(archLecturas, reg);
+        FIN_MIENTRAS;
+        CERRAR(archLecturas);
+    fin_proc;
+
+    // Copia la fila de un sensor a un vector, para tratarlo con el kit de la Parte 2.
+    Procedimiento ExtraerFila(mat: ARREGLO[1..M, 1..N] de real;
+                              fila: entero; var v: ARREGLO[1..N] de real);
+    Ambiente
+        j: entero;
+    Proceso
+        PARA j := 1 HASTA N HACER
+            v[j] := mat[fila, j];
+        FIN_PARA;
+    fin_proc;
+
+PROCESO
+    // ----- Parte 2: un solo sensor -----
+    sensorElegido := 2;
+    CargarSensor(sensorElegido, lecturas);
+
+    Estadisticas(lecturas, N, maximo, posMax, minimo, posMin, promedio);
+    ESCRIBIR("PARTE 2 - sensor ", sensorElegido);
+    ESCRIBIR("  maximo ", maximo, " en la lectura ", posMax);
+    ESCRIBIR("  minimo ", minimo, " en la lectura ", posMin);
+    ESCRIBIR("  promedio ", promedio);
+
+    BuscarSupera(lecturas, N, UMBRAL, posSupera);
+    SI posSupera = 0 ENTONCES
+        ESCRIBIR("  ninguna lectura supera ", UMBRAL);
+    SINO
+        ESCRIBIR("  primera lectura sobre ", UMBRAL, ": la ", posSupera);
+    FIN_SI;
+
+    DetectarRacha(lecturas, N, UMBRAL, LONG_MIN, hayRacha, inicioRacha);
+    SI hayRacha ENTONCES
+        ESCRIBIR("  racha de al menos ", LONG_MIN, " lecturas desde la ", inicioRacha);
+    SINO
+        ESCRIBIR("  sin rachas de ", LONG_MIN, " lecturas");
+    FIN_SI;
+
+    // ----- Parte 3: los M sensores, reutilizando el kit -----
+    CargarMatriz(matriz);
+    ESCRIBIR("PARTE 3");
+    PARA s := 1 HASTA M HACER
+        ExtraerFila(matriz, s, fila);
+        Estadisticas(fila, N, maximo, posMax, minimo, posMin, promedio);
+        promedioPorSensor[s] := promedio;
+        DetectarRacha(fila, N, UMBRAL, LONG_MIN, hayRacha, inicioRacha);
+        ESCRIBIR("  sensor ", s, ": max ", maximo, " (", posMax, "), min ", minimo,
+                 " (", posMin, "), promedio ", promedio);
+        SI hayRacha ENTONCES
+            ESCRIBIR("    racha desde la lectura ", inicioRacha);
+        SINO
+            ESCRIBIR("    sin racha");
+        FIN_SI;
+    FIN_PARA;
+
+    // el mismo Estadisticas sobre el vector de promedios: la posición del máximo
+    // es directamente el número de sensor
+    Estadisticas(promedioPorSensor, M, maximo, posMax, minimo, posMin, promedio);
+    ESCRIBIR("  sensor con mayor promedio: ", posMax, " (", maximo, ")");
+FIN_ACCION

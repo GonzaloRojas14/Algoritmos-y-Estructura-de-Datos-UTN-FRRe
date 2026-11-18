@@ -1,0 +1,56 @@
+ACCION mezclar_vectores ES
+    Ambiente
+        N = 30                              // componentes de cada vector de entrada
+        M = 60                              // componentes del vector resultado
+
+        A : ARREGLO[1..30] de real          // ordenado creciente
+        B : ARREGLO[1..30] de real          // ordenado creciente
+        C : ARREGLO[1..60] de real          // el resultado, tambien creciente
+
+        i, j, k : entero                    // i recorre A, j recorre B, k arma C
+    Proceso
+        ESCRIBIR("Ingrese los ", N, " valores de A, en orden creciente:")
+        PARA i := 1 HASTA N HACER
+            LEER(A[i])
+        FIN_PARA
+
+        ESCRIBIR("Ingrese los ", N, " valores de B, en orden creciente:")
+        PARA j := 1 HASTA N HACER
+            LEER(B[j])
+        FIN_PARA
+
+        i := 1
+        j := 1
+        k := 1
+
+        // ── MEZCLA: mientras queden componentes en LOS DOS vectores ──
+        MIENTRAS (i <= N) Y (j <= N) HACER
+            SI (A[i] <= B[j]) ENTONCES
+                C[k] := A[i]
+                i := i + 1
+            SINO
+                C[k] := B[j]
+                j := j + 1
+            FIN_SI
+            k := k + 1
+        FIN_MIENTRAS
+
+        // ── VACIADO de A: si B se agoto primero, lo que sobra de A va tal cual ──
+        MIENTRAS (i <= N) HACER
+            C[k] := A[i]
+            i := i + 1
+            k := k + 1
+        FIN_MIENTRAS
+
+        // ── VACIADO de B: si A se agoto primero ──
+        MIENTRAS (j <= N) HACER
+            C[k] := B[j]
+            j := j + 1
+            k := k + 1
+        FIN_MIENTRAS
+
+        ESCRIBIR("Vector C mezclado:")
+        PARA k := 1 HASTA M HACER
+            ESCRIBIR(k, " -> ", C[k])
+        FIN_PARA
+FIN_ACCION

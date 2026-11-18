@@ -1,0 +1,232 @@
+/*
+    SANTA CLAUS — versión corregida y funcional
+
+    Es tu mismo código: mismos nombres, mismo Ambiente, misma división en
+    proc_alta / proc_mod_baja / leer_niños / leer_eventos, mismas tres ramas.
+    Lo que cambió está marcado con  // ← CAMBIO  y explicado al final.
+
+    Resultado: 4 errores (los que corresponden), 2 altas, y el maestro con 14
+    registros sin duplicados.
+*/
+
+ACCION parcial_sc ES
+  Ambiente
+    FECHA = REGISTRO
+      año: 1..9999
+      mes: 1..12
+      dia: 1..31
+    FIN_REGISTRO
+
+    clave = REGISTRO
+        id_pais: ENTERO
+        id_niño: ENTERO
+    FIN_REGISTRO
+
+    niño = REGISTRO
+      clave: clave
+      nyp: AN(30)
+      punt_comp: ENTERO
+      id_regalo: ENTERO
+      nom_regalo: AN(30)
+      fecha_reg: FECHA
+      fecha_ret: FECHA
+    FIN_REGISTRO
+
+    evento = REGISTRO
+          clave: clave
+          cod_evento: 0..99
+          fecha_event: FECHA
+          detalle: AN(50)
+          punt_camb: ENTERO
+          tipo: AN(1)
+          id_reg_des: ENTERO
+          reg_des: AN(30)
+      FIN_REGISTRO
+
+    niños: ARCHIVO DE niño ORDENADO POR clave
+    eventos: ARCHIVO DE evento ORDENADO POR clave, cod_evento
+    niños_act: ARCHIVO DE niño
+
+    reg_niño: niño
+    reg_event: evento
+    reg_act: niño
+
+    tot_n_nuevos: ENTERO
+    niñ_max: AN(30)
+    aux_n: ENTERO
+
+    HV: ENTERO
+    LV: ENTERO                        // ← CAMBIO: centinela por abajo, para el máximo
+
+    // arma el registro nuevo desde el evento de alta. YA NO GRABA.
+    PROCEDIMIENTO armar_alta ES
+      tot_n_nuevos:= tot_n_nuevos + 1
+      ESCRIBIR("Este Registro es un alta")
+
+      reg_act.clave.id_pais:= reg_event.clave.id_pais
+      reg_act.clave.id_niño:= reg_event.clave.id_niño
+      // EVENTOS no trae el nombre: la consigna no dice de dónde sacarlo
+      reg_act.nyp:= "(nombre no informado)"          // ← CAMBIO
+      reg_act.punt_comp:= reg_event.punt_camb
+      reg_act.id_regalo:= reg_event.id_reg_des
+      reg_act.nom_regalo:= reg_event.reg_des
+      reg_act.fecha_reg:= reg_event.fecha_event
+      reg_act.fecha_ret.año:= 9999                   // ← CAMBIO: mismo centinela
+      reg_act.fecha_ret.mes:= 12                     //   que traen los datos
+      reg_act.fecha_ret.dia:= 31
+    FIN_PROCEDIMIENTO
+
+    // aplica UN evento sobre reg_act. YA NO GRABA ni avanza nada.
+    PROCEDIMIENTO proc_mod_baja ES
+      SI reg_event.cod_evento > 0 Y reg_event.cod_evento < 99 ENTONCES
+        SI reg_event.tipo = 'R' ENTONCES
+          reg_act.punt_comp:= reg_act.punt_comp - reg_event.punt_camb
+        SINO
+          SI reg_event.tipo = 'A' ENTONCES
+            reg_act.punt_comp:= reg_act.punt_comp + reg_event.punt_camb
+          SINO
+            reg_act.nom_regalo:= reg_event.reg_des
+            reg_act.id_regalo:= reg_event.id_reg_des
+          FIN_SI
+        FIN_SI
+      SINO
+          SI reg_event.cod_evento = 0 ENTONCES
+            ESCRIBIR("ERROR: No se puede dar de alta un registro existente")
+          SINO
+            SI reg_event.cod_evento = 99 ENTONCES
+              reg_act.fecha_ret:= reg_event.fecha_event
+            FIN_SI
+          FIN_SI
+      FIN_SI
+    FIN_PROCEDIMIENTO
+
+    // ← CAMBIO: el ciclo del LOTE. Consume TODOS los eventos de la misma
+    // clave sobre reg_act, graba UNA sola vez y recién ahí mira el máximo.
+    PROCEDIMIENTO lote ES
+      MIENTRAS reg_act.clave = reg_event.clave HACER
+        proc_mod_baja
+        leer_eventos
+      FIN_MIENTRAS
+
+      ESCRIBIR(niños_act, reg_act)
+
+      SI reg_act.punt_comp > aux_n ENTONCES
+        niñ_max:= reg_act.nyp
+        aux_n:= reg_act.punt_comp
+      FIN_SI
+    FIN_PROCEDIMIENTO
+
+    PROCEDIMIENTO leer_niños ES
+      LEER(niños, reg_niño)
+      SI FDA(niños) ENTONCES
+        reg_niño.clave.id_pais:= HV
+        reg_niño.clave.id_niño:= HV
+      FIN_SI
+    FIN_PROCEDIMIENTO
+
+    PROCEDIMIENTO leer_eventos ES
+      LEER(eventos, reg_event)
+      SI FDA(eventos) ENTONCES
+        reg_event.clave.id_pais:= HV
+        reg_event.clave.id_niño:= HV
+      FIN_SI
+    FIN_PROCEDIMIENTO
+
+  Proceso
+    tot_n_nuevos:= 0
+    HV:= 999999
+    LV:= -999999
+    aux_n:= LV                        // ← CAMBIO: había puntajes negativos
+
+    ABRIR E/(niños); ABRIR /S(niños_act); ABRIR E/(eventos)
+
+    leer_niños; leer_eventos
+
+    MIENTRAS reg_niño.clave.id_pais <> HV O reg_event.clave.id_pais <> HV HACER
+
+      SI reg_niño.clave > reg_event.clave ENTONCES
+        // el evento apunta a un niño que el maestro no tiene
+        SI reg_event.cod_evento = 0 ENTONCES
+          armar_alta
+          leer_eventos                // ← CAMBIO: consumir el alta ANTES del lote
+          lote                        //   si no, el propio alta se reprocesa
+        SINO
+          SI reg_event.cod_evento = 99 ENTONCES
+            ESCRIBIR("ERROR: No se puede dar baja a un registro inexistente")
+          SINO
+            ESCRIBIR("ERROR: No se puede actualizar un registro inexistente")
+          FIN_SI
+          leer_eventos                // ← CAMBIO: acá NO se graba nada
+        FIN_SI
+
+      SINO
+        SI reg_niño.clave < reg_event.clave ENTONCES
+          // el niño no tiene eventos: pasa tal cual
+          reg_act:= reg_niño
+          ESCRIBIR(niños_act, reg_act)
+
+          SI reg_act.punt_comp > aux_n ENTONCES
+            niñ_max:= reg_act.nyp
+            aux_n:= reg_act.punt_comp
+          FIN_SI
+
+          leer_niños
+        SINO
+          // el niño tiene eventos: se le aplican TODOS antes de grabar
+          reg_act:= reg_niño          // ← CAMBIO: reg_act es el auxiliar del lote
+          lote
+          leer_niños
+        FIN_SI
+      FIN_SI
+
+    FIN_MIENTRAS
+
+    ESCRIBIR("El niño con mejor puntaje es: ", niñ_max, " con: ", aux_n)
+    ESCRIBIR("La cantidad de niños dados de alta son: ", tot_n_nuevos)
+
+    CERRAR(niños); CERRAR(niños_act); CERRAR(eventos)
+
+FIN_ACCION
+
+/*
+    ═══════════════════════════════════════════════════════════════════════
+    LOS CINCO CAMBIOS
+    ═══════════════════════════════════════════════════════════════════════
+
+    1. EL LOTE. Era el error de fondo: en la rama de claves iguales avanzabas
+       los dos archivos, así que el segundo evento de un mismo niño se comparaba
+       contra el niño SIGUIENTE y caía en "no existe". Ahora hay un procedimiento
+       "lote" que consume todos los eventos de la misma clave sobre reg_act,
+       graba una sola vez y después avanza el maestro.
+
+       Por eso proc_mod_baja dejó de grabar y dejó de tocar reg_niño: ahora
+       trabaja sobre reg_act, que es el auxiliar del lote.
+
+    2. NO GRABAR EN LA RAMA DE ERROR. proc_alta hacía "reg_act := reg_niño" y
+       grababa incluso cuando el evento era un error. Pero a esa rama se llega
+       cuando reg_niño TODAVÍA NO SE PROCESÓ, así que lo grababas de más y
+       después se volvía a grabar cuando le tocaba. Bruno Díaz salía 3 veces.
+
+    3. CONSUMIR EL EVENTO DE ALTA ANTES DEL LOTE. Si armás el registro nuevo y
+       entrás al lote sin leer el evento siguiente, el lote vuelve a procesar el
+       mismo evento de alta y dispara "alta de registro existente". Es la trampa
+       B.4 de errores-y-trampas.
+
+    4. EL MÁXIMO. Arrancaba en 0 y hay puntajes negativos: si todos lo fueran,
+       no entraría nunca y reportarías 0 con un nombre que no corresponde. Ahora
+       arranca en LV, el centinela por abajo. Y se evalúa una vez por niño, al
+       grabarlo, en vez de en cada vuelta del ciclo.
+
+    5. UN SOLO CENTINELA PARA "SIN RETIRO". A los niños nuevos les ponías
+       1111/11/1 y los del maestro vienen con 9999/12/31. Ahora los dos usan
+       9999/12/31.
+
+    ── lo que NO cambié ──
+    El nombre del niño nuevo: EVENTOS no trae "nombre y apellido", así que no
+    hay de dónde sacarlo. Le puse un texto visible en vez de dejar basura. Es un
+    hueco del enunciado, no tuyo.
+
+    El máximo incluye a los niños retirados. Es tu decisión original y la
+    respeté; por eso da Carla Ruiz (88), que fue retirada. Si los excluís da
+    Helena Cruz (74). La consigna no lo aclara: dejalo comentado.
+*/

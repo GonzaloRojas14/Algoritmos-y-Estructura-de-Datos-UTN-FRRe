@@ -2,7 +2,7 @@
 
 Estructuras fijas. Se copian y se adaptan; **no se reinventan**. Provienen de `isi-aed/Pseudocodigo/` (cátedra), normalizadas a la notación moderna.
 
-Índice: [Secuencial](#1-recorrido-de-archivo-secuencial) · [Corte de control](#2-corte-de-control) · [Mezcla INC](#3-mezcla-inclusiva-con-hv) · [Mezcla EXC](#4-mezcla-exclusiva-con-vaciado) · [Actualización unitaria](#5-actualización-unitaria-inclusiva) · [Actualización lote](#6-actualización-por-lotes) · [ABM indexado](#7-actualización-indexada-abm-interactivo) · [Secuencias](#8-secuencias)
+Índice: [Secuencial](#1-recorrido-de-archivo-secuencial) · [Corte de control](#2-corte-de-control) · [Mezcla INC](#3-mezcla-inclusiva-con-hv) · [Mezcla EXC](#4-mezcla-exclusiva-con-vaciado) · [Actualización unitaria](#5-actualización-unitaria-inclusiva) · [Actualización lote](#6-actualización-por-lotes) · [ABM indexado](#7-actualización-indexada-abm-interactivo) · [Secuencias](#8-secuencias) · [Listas](#9-listas-con-punteros) · [Recursividad](#10-recursividad)
 
 ---
 
@@ -286,6 +286,7 @@ ACCION act_unitaria ES
         FIN_REGISTRO
 
         reg_mae : mae
+        reg_mae_act : mae          // para armar las altas, sin pisar reg_mae
         arch_mae, arch_mae_act : ARCHIVO de mae
         reg_mov : mov
         arch_mov : ARCHIVO de mov
@@ -337,12 +338,15 @@ ACCION act_unitaria ES
                 SI (reg_mov.TipoMov = 'M') ENTONCES
                     ESCRIBIR("ERROR - MODIFICACION de registro inexistente")
                 SINO
-                    // alta: campo por campo, los formatos son distintos
-                    reg_mae.clave  := reg_mov.clave
-                    reg_mae.campo1 := reg_mov.campo1
-                    reg_mae.campo4 := reg_mov.campo4
-                    reg_mae.Baja   := '-'
-                    ESCRIBIR(arch_mae_act, reg_mae)
+                    // alta: campo por campo, los formatos son distintos.
+                    // OJO: va en reg_mae_act, NO en reg_mae. En esta rama reg_mae
+                    // tiene un registro del maestro sin procesar (por eso perdió
+                    // la comparación) y pisarlo lo destruye. Ver errores-y-trampas B.6.
+                    reg_mae_act.clave  := reg_mov.clave
+                    reg_mae_act.campo1 := reg_mov.campo1
+                    reg_mae_act.campo4 := reg_mov.campo4
+                    reg_mae_act.Baja   := '-'
+                    ESCRIBIR(arch_mae_act, reg_mae_act)
                 FIN_SI
             FIN_SI
         FIN_PROCEDIMIENTO
@@ -605,3 +609,232 @@ FIN_ACCION
             ...
         FIN_MIENTRAS
 ```
+
+---
+
+## 9. Listas con punteros
+
+Salen de la teoría de listas de la guía (`Guía de Cátedra/Teoría/Listas.md`) y de los Complementos
+Teóricos de la Guía 2026 (`LISTA_CIRCULAR`, p. 63-64), pasadas a la notación moderna. En la guía
+original hay tres asignaciones escritas con `=` (`p = *p.prox`, `Prim = p`, `Prim = *q.prox`): acá
+van con `:=`. Ver [[errores-y-trampas]] §B.8.
+
+**Declaración**:
+
+```
+    Ambiente
+        NODO = REGISTRO
+            dato: <tipo>
+            prox: Puntero a NODO
+        FIN_REGISTRO
+        PRIM, p, q, a: Puntero a NODO
+        valor: <tipo>
+```
+
+**Recorrido**:
+
+```
+        p := PRIM
+        MIENTRAS p <> NIL HACER
+            ESCRIBIR(*p.dato)
+            p := *p.prox                    // avanzar: sin esto, ciclo infinito
+        FIN_MIENTRAS
+```
+
+**Búsqueda**:
+
+```
+        LEER(valor)
+        p := PRIM
+        MIENTRAS (p <> NIL) Y (*p.dato <> valor) HACER
+            p := *p.prox
+        FIN_MIENTRAS
+        SI p <> NIL ENTONCES
+            ESCRIBIR('Se encontró el elemento')
+        SINO
+            ESCRIBIR('No se encontró el elemento')
+        FIN_SI
+```
+
+**Carga apilada** (cada nuevo queda primero; la lista sale al revés de la lectura):
+
+```
+        PRIM := NIL
+        LEER(valor)
+        MIENTRAS valor <> '*' HACER
+            NUEVO(p)
+            *p.dato := valor
+            *p.prox := PRIM
+            PRIM := p
+            LEER(valor)
+        FIN_MIENTRAS
+```
+
+**Carga encolada** (cada nuevo queda último; `a` es el último hasta ahora):
+
+```
+        PRIM := NIL
+        LEER(valor)
+        MIENTRAS valor <> '*' HACER
+            NUEVO(p)
+            *p.dato := valor
+            *p.prox := NIL
+            SI PRIM = NIL ENTONCES
+                PRIM := p
+            SINO
+                *a.prox := p
+            FIN_SI
+            a := p
+            LEER(valor)
+        FIN_MIENTRAS
+```
+
+**Carga ordenada** (inserta un valor en su lugar; `q` es el actual y `a` el anterior):
+
+```
+        LEER(valor)
+        NUEVO(p)
+        *p.dato := valor
+        a := NIL
+        q := PRIM
+        MIENTRAS (q <> NIL) Y (*q.dato < valor) HACER
+            a := q
+            q := *q.prox
+        FIN_MIENTRAS
+        SI a = NIL ENTONCES                 // va primero (o la lista estaba vacía)
+            *p.prox := PRIM
+            PRIM := p
+        SINO
+            *p.prox := q
+            *a.prox := p
+        FIN_SI
+```
+
+**Eliminación**:
+
+```
+        LEER(valor)
+        a := NIL
+        q := PRIM
+        MIENTRAS (q <> NIL) Y (*q.dato <> valor) HACER
+            a := q
+            q := *q.prox
+        FIN_MIENTRAS
+        SI q = NIL ENTONCES
+            ESCRIBIR('Error, el valor no existe')
+        SINO
+            SI a = NIL ENTONCES             // era el primero
+                PRIM := *q.prox
+            SINO
+                *a.prox := *q.prox
+            FIN_SI
+            DISPONER(q)
+        FIN_SI
+```
+
+> En la guía `a := NIL` está una sola vez, arriba de todo. Si la carga ordenada o la eliminación se
+> repiten dentro de un ciclo, `a` tiene que volver a `NIL` **cada vez**, o arrastra el anterior de
+> la vuelta pasada.
+
+**Lista circular**: el último apunta al primero. De `LISTA_CIRCULAR` (Complementos 2026):
+
+```
+        // listar
+        SI PRIMERO = NIL ENTONCES
+            ESCRIBIR('ERROR, Lista Vacía')
+        SINO
+            T := PRIMERO
+            MIENTRAS *T.SIG <> PRIMERO HACER
+                ESCRIBIR(*T.VALOR)
+                T := *T.SIG
+            FIN_MIENTRAS
+            ESCRIBIR(*T.VALOR)              // el último, donde se detuvo el ciclo
+        FIN_SI
+
+        // insertar (en el 2º lugar, para no tener que buscar el último)
+        NUEVO(P)
+        *P.VALOR := DATO
+        SI PRIMERO = NIL ENTONCES
+            *P.SIG := P                     // único nodo: se apunta a sí mismo
+            PRIMERO := P
+        SINO
+            *P.SIG := *PRIMERO.SIG
+            *PRIMERO.SIG := P
+        FIN_SI
+```
+
+Para eliminar en una circular hay tres casos: único nodo (`PRIMERO := NIL`), el primero (hay que
+buscar el último para engancharlo al nuevo primero) y uno del medio (`*ANT.SIG := *T.SIG`). El
+algoritmo completo está en los Complementos 2026 y en `aed-vscode/test/fixtures/guia_lista_circular.frre`.
+
+**Pilas y colas**: ver [[SINTAXIS]] §10. Apilar es la carga apilada de un nodo; encolar es la
+carga encolada con un puntero `ULT` fijo.
+
+---
+
+## 10. Recursividad
+
+Como se resuelve en clase: **primero el planteo formal, después la función**.
+
+```
+/*
+Planteo formal: F(x)
+  Caso base:       <valor>,          si <x es el caso trivial>
+  Caso recursivo:  <cuenta con F(x')>, si <no lo es>       // x' más cerca del caso base
+*/
+
+FUNCION F(x: <tipo>): <tipo> ES
+    Proceso
+        SI <x es el caso trivial> ENTONCES
+            F := <valor>                    // caso base: sin llamada recursiva
+        SINO
+            F := <cuenta con F(x')>         // caso recursivo
+        FIN_SI
+FIN_FUNCION
+```
+
+**Sobre un arreglo**, con el índice como parámetro que se acerca al caso base:
+
+```
+// de N hacia 1: se llama Suma(V, N)
+FUNCION Suma(A: vector; i: entero): entero ES
+    Proceso
+        SI i = 1 ENTONCES
+            Suma := A[i]
+        SINO
+            Suma := A[i] + Suma(A, i - 1)
+        FIN_SI
+FIN_FUNCION
+
+// de 1 hacia N: se llama Promedio_10_Elementos(V, 1)
+FUNCION Promedio_10_Elementos(A: vector; i: entero): real ES
+    Proceso
+        SI i = 10 ENTONCES
+            Promedio_10_Elementos := A[i] / 10
+        SINO
+            Promedio_10_Elementos := A[i] / 10 + Promedio_10_Elementos(A, i + 1)
+        FIN_SI
+FIN_FUNCION
+```
+
+**Sobre los dígitos de un número**: el último dígito es `N MOD 10` y el resto del número es `N DIV 10`.
+El caso base es `N < 10` (queda un solo dígito).
+
+**Procedimiento recursivo**: lo que se hace **antes** de la llamada sale en orden de bajada; lo que
+se hace **después**, en orden de subida. Por eso para escribir un número en binario se llama
+primero y se escribe después:
+
+```
+PROCEDIMIENTO Binario(n: entero) ES
+    Proceso
+        SI n > 1 ENTONCES
+            Binario(n DIV 2)
+        FIN_SI
+        ESCRIBIR(n MOD 2)
+FIN_PROCEDIMIENTO
+```
+
+Antes de entregar, revisar: ¿hay caso base? ¿cada llamada se acerca a él? ¿el caso base y el
+recursivo usan la misma condición? ¿el resultado de la función se asigna a su nombre en **todas**
+las ramas?
+

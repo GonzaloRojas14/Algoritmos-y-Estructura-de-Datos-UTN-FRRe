@@ -1,29 +1,43 @@
 # Sintaxis y teoría — AyED UTN-FRRe
 
-> ## ⚠️ Este documento quedó desactualizado
+> [!success] Documento corregido y alineado con la cátedra
+> Las secciones de **notación** fueron corregidas contra las **plantillas oficiales**
+> (repo `UTN-FRRe/isi-aed`, carpeta `Pseudocodigo/`). La **teoría sigue igual**: no se
+> quitó ni se resumió nada.
 >
-> La **sintaxis de pseudocódigo** ahora vive en el skill `pseudocodigo-utn`, alimentado con las
-> **plantillas oficiales de cátedra** (repo `UTN-FRRe/isi-aed`, carpeta `Pseudocodigo/`):
+> **Orden de autoridad** — cuando dos fuentes se contradicen, gana la de arriba:
 >
-> - `.claude/skills/pseudocodigo-utn/references/sintaxis-completa.md`
-> - `.claude/skills/pseudocodigo-utn/references/plantillas.md`
-> - `.claude/skills/pseudocodigo-utn/references/errores-y-trampas.md`
->
-> **Varias "correcciones" de la sección 13 de este archivo eran equivocadas.** Estaban deducidas
-> del libro, pero las plantillas oficiales usan otra notación, y en esos puntos coincide con la
-> que ya venías escribiendo:
->
-> | Este doc decía | Lo correcto (plantillas oficiales) |
+> | # | Fuente | Autoridad sobre |
+> |---|---|---|
+> | 1 | Plantillas oficiales `isi-aed/Pseudocodigo/` | **Notación.** Es lo que se pide reproducir en el parcial |
+> | 2 | Libro de cátedra — Pinto & Bolatti 2026 | **Teoría**: conceptos, clasificaciones, definiciones |
+> | 3 | Resoluciones de alumnos `AED26_Guia_Ejercicios` | Solo como ejemplo — **contienen bugs** |
+
+> [!tip] Dónde está cada cosa
+> | Necesitás | Archivo |
 > |---|---|
-> | ~~`GRABAR(arch, reg)`~~ | **`ESCRIBIR(arch, reg)`** — como escribías |
-> | ~~no existe `SI EXISTE`~~ | **`SI EXISTE ENTONCES`** es la forma oficial en indexados |
-> | ~~no existe `ELIMINAR`~~ | **`ELIMINAR(arch, reg)`** existe, para baja física |
-> | ~~`Abrir S/(Arch)`~~ | **`ABRIR /S(arch)`** — como escribías |
-> | ~~`REGRABAR`~~ | **`RE-ESCRIBIR`** (tu `REESCRIBIR` era casi correcto) |
+> | Teoría, conceptos, clasificaciones | **este documento** |
+> | Sintaxis exacta al escribir código | [[sintaxis-completa]] |
+> | Estructura fija de cada tipo de ejercicio | [[plantillas]] |
+> | Checklist al corregir | [[errores-y-trampas]] |
+> | Árbol de decisión "qué plantilla uso" | [[SKILL — pseudocodigo-utn|SKILL.md]] |
+
+> [!warning]- Qué se corrigió respecto de la versión anterior *(desplegar)*
+> La versión anterior dedujo la notación **del libro**, pero el parcial se corrige con las
+> **plantillas**. En estos seis puntos el libro y las plantillas difieren, y **las plantillas
+> coinciden con lo que ya venías escribiendo**:
+>
+> | Decía antes (deducido del libro) | Correcto (plantillas oficiales) |
+> |---|---|
+> | ~~`GRABAR(arch, reg)`~~ | **`ESCRIBIR(arch, reg)`** |
+> | ~~`REGRABAR(arch, reg)`~~ | **`RE-ESCRIBIR(arch, reg)`** |
+> | ~~`Abrir S/(Arch)`~~ | **`ABRIR /S(arch)`** |
+> | ~~`SI EXISTE` no existe~~ | **`SI EXISTE ENTONCES`** es la forma oficial en indexados |
+> | ~~no hay verbo `ELIMINAR`~~ | **`ELIMINAR(arch, reg)`** existe, para baja física |
 > | ~~`PARA ... ; incremento`~~ | **`PARA i := 1 HASTA 10, 1 HACER`** — con coma |
 >
-> Lo que sigue **sirve para la teoría** (capítulos del libro: conceptos, clasificaciones,
-> definiciones). Para escribir código, usar el skill.
+> Las secciones afectadas fueron reescritas: [§5](#5-registros-y-archivos-cap-5),
+> [§6](#6-archivos-indexados-cap-6), [§7](#7-corte-de-control-) y [§13](#13-notación-oficial).
 
 ---
 
@@ -34,10 +48,11 @@ Referencia de teoría de la materia.
 | Marca | Significado |
 |---|---|
 | ✅ | Respaldado por el libro de cátedra (con capítulo indicado) |
-| 🔶 | Inferido de los ejercicios; **el libro no lo cubre** |
+| 📐 | **Notación verificada** contra las plantillas oficiales de cátedra |
+| 🔶 | Inferido de los ejercicios; el libro no lo cubre |
 | ❓ | Vacío conocido |
 
-Índice: [1 Fundamentos](#1-fundamentos-cap-1) · [2 Control](#2-estructuras-de-control-cap-2) · [3 Subacciones](#3-subacciones-cap-3) · [4 Secuencias](#4-secuencias-cap-4) · [5 Registros y archivos](#5-registros-y-archivos-cap-5) · [6 Indexados](#6-archivos-indexados-cap-6) · [7 Corte de control](#7-corte-de-control-) · [8 Apareo](#8-apareo-maestro-movimientos-) · [9 Arreglos](#9-arreglos-) · [10 Dinámicas](#10-estructuras-dinámicas-cap-7) · [11 Recursividad](#11-recursividad-cap-8) · [12 Complejidad](#12-complejidad-algorítmica-cap-9) · [13 Notación](#13-notación-oficial-vs-la-que-venís-usando) · [14 Errores](#14-catálogo-de-errores-frecuentes) · [15 Pendientes](#15-pendientes)
+Índice: [1 Fundamentos](#1-fundamentos-cap-1) · [2 Control](#2-estructuras-de-control-cap-2) · [3 Subacciones](#3-subacciones-cap-3) · [4 Secuencias](#4-secuencias-cap-4) · [5 Registros y archivos](#5-registros-y-archivos-cap-5) · [6 Indexados](#6-archivos-indexados-cap-6) · [7 Corte de control](#7-corte-de-control-) · [8 Apareo](#8-apareo-maestro-movimientos-) · [9 Arreglos](#9-arreglos-) · [10 Dinámicas (listas)](#10-estructuras-dinámicas-cap-7) · [11 Recursividad](#11-recursividad-cap-8) · [Árboles (pendiente)](#árboles--pendiente) · [12 Complejidad](#12-complejidad-algorítmica-cap-9) · **[13 Notación oficial](#13-notación-oficial-)** · [14 Errores](#14-catálogo-de-errores-frecuentes) · [15 Pendientes](#15-pendientes)
 
 ---
 
@@ -144,20 +159,23 @@ Las variables arrancan en `?` (indefinidas), no en 0.
 
 ```
 ACCION Ejemplo1 ES
-    AMBIENTE
+    Ambiente
         a, doble : entero
-    PROCESO
-        ESCRIBIR('Ingrese el número')
+    Proceso
+        ESCRIBIR("Ingrese el número")
         LEER(a)
         doble := a * 2
-        ESCRIBIR('Resultado: ', doble)
+        ESCRIBIR("Resultado: ", doble)
 FIN_ACCION
 ```
 
-> ⚠️ **Corrección respecto de lo que veníamos usando**: el libro **no cierra con `FIN_PROCESO`**. Va del cuerpo directo a `FIN_ACCION`. Varios de tus archivos ponen `FIN_PROCESO` y otros no — ahora hay criterio: no lleva.
+> [!note] 📐 Notación verificada
+> **No lleva `FIN_PROCESO`.** Del cuerpo se pasa directo a `FIN_ACCION`.
+> → `sintaxis-completa.md` §1 · `errores-y-trampas.md` §A.22
 
-- El nombre no lleva puntos: `ACCION ej_2_2_4 ES`, no `ACCION 2.2.4 ES`.
-- `AMBIENTE` va siempre, aunque quede vacío.
+- El nombre **no lleva puntos ni espacios**: `ACCION ej_2_2_4 ES`, no `ACCION 2.2.4 ES`.
+- `Ambiente` va siempre, aunque quede vacío.
+- Comentarios: `//` de línea, `/* ... */` de bloque. La consigna va arriba del `ACCION`, en bloque.
 
 ### Condicional
 
@@ -434,30 +452,38 @@ Conjunto de registros almacenados de forma **permanente en memoria externa**.
 
 | Operación | Sintaxis | Descripción |
 |---|---|---|
-| Abrir lectura | `Abrir E/(Arch)` | Abre para leer; el puntero queda en el primer registro |
-| Abrir escritura | `Abrir S/(Arch)` | Crea (o sobreescribe) el archivo para grabar registros nuevos |
-| Abrir lectura/escritura | `Abrir E/S(Arch)` | Permite leer y modificar en el mismo archivo |
-| Leer registro | `LEER(Arch, Reg)` | Lee el registro actual y avanza el puntero |
-| **Grabar registro** | `GRABAR(Arch, Reg)` | Escribe `Reg` en `Arch` |
-| Cerrar | `CERRAR(Arch)` | Cierra el archivo y libera el buffer |
-| Fin de archivo | `FDA(Arch)` | Función: V cuando no hay más registros |
+| Abrir lectura | `ABRIR E/(arch)` | Abre para leer; el puntero queda en el primer registro |
+| Abrir escritura | `ABRIR /S(arch)` | Crea (o sobreescribe) el archivo para grabar registros nuevos |
+| Abrir lectura/escritura | `ABRIR E/S(arch)` | Permite leer y modificar en el mismo archivo |
+| Leer registro | `LEER(arch, reg)` | Lee el registro actual y avanza el puntero |
+| **Escribir registro** | `ESCRIBIR(arch, reg)` | Escribe `reg` en `arch` |
+| Cerrar | `CERRAR(arch)` | Cierra el archivo y libera el buffer |
+| Fin de archivo | `FDA(arch)` · negado `NFDA(arch)` | Función: V cuando no hay más registros |
 
-> ⚠️ **Dos correcciones importantes respecto de tus archivos:**
-> 1. Es **`Abrir S/(Arch)`**, con la barra **después** de la S — igual que `E/`. La barra es un separador, no indica posición. Tus archivos escriben `Abrir /S(...)`.
-> 2. Para grabar en un archivo el verbo es **`GRABAR`**, no `ESCRIBIR`. `ESCRIBIR` es para pantalla y para secuencias.
+> [!note] 📐 Notación verificada
+> **`ESCRIBIR` sirve para las tres cosas** — pantalla, secuencia y archivo. Lo que las distingue
+> es el primer argumento: `ESCRIBIR("texto")` es pantalla, `ESCRIBIR(sec, v)` es secuencia,
+> `ESCRIBIR(arch, reg)` es archivo.
+>
+> El **libro** usa `GRABAR(arch, reg)` para archivos, pero **las plantillas oficiales usan
+> `ESCRIBIR`** y son las que se corrigen en el parcial.
+> → `sintaxis-completa.md` §4
+>
+> Variantes equivalentes que vas a ver en plantillas viejas de cátedra: `ABRIRe(arch)`,
+> `ABRIRs(arch)`, `ABRIRe/s(arch)`, `NoFDA(arch)`.
 
 > ⚠️ Olvidar `CERRAR` puede provocar **pérdida de datos**: los últimos registros escritos quedan en el buffer y no se vuelcan al disco.
 
 ### Esquema de recorrido secuencial
 
 ```
-Abrir E/(Arch)
-LEER(Arch, Reg)                   // leer el primer registro
-MIENTRAS NO FDA(Arch) HACER
-    <procesar Reg>
-    LEER(Arch, Reg)               // leer el siguiente ← última instrucción del ciclo
+ABRIR E/(arch)
+LEER(arch, reg)                   // lectura anticipada, pegada al ABRIR
+MIENTRAS NFDA(arch) HACER
+    // tratar reg
+    LEER(arch, reg)               // ← última instrucción del ciclo, obligatorio
 FIN_MIENTRAS
-CERRAR(Arch)
+CERRAR(arch)
 ```
 
 El patrón es **abrir → leer → controlar → procesar → leer → cerrar**. Sin el `LEER` final del ciclo es ciclo infinito.
@@ -544,7 +570,7 @@ CLAVE (legajo)  |  POSICIÓN en área de datos
 
 ### Proceso de acceso puntual
 
-1. El programa establece la clave buscada: `CLAVE := valor`
+1. El programa establece la clave buscada: `reg.clave := valor` — **antes** del `LEER`
 2. El sistema busca esa clave en el área de índices (**búsqueda binaria, O(log n)**)
 3. El índice devuelve la posición física
 4. El sistema lee directamente el registro en esa posición
@@ -553,42 +579,54 @@ Con 100.000 registros: la búsqueda secuencial puede requerir hasta 100.000 lect
 
 ### Verbos comparados
 
-| Operación | Secuencia | Archivo Secuencial | Archivo Indexado |
+| Operación | Secuencia | Archivo secuencial | Archivo indexado |
 |---|---|---|---|
-| Iniciar lectura | `ARR(sec)` | `Abrir E/(Arch)` | `Abrir E/(Arch)` o `Abrir E/S(Arch)` |
-| Leer | `AVZ(sec, v)` | `LEER(Arch, Reg)` | `CLAVE := valor` ; `LEER(Arch, Reg)` |
-| Iniciar escritura | `CREAR(secNueva)` | `Abrir S/(Arch)` | `Abrir S/(Arch)` |
-| Escribir | `ESC(sec, v)` | `GRABAR(Arch, Reg)` | `GRABAR` o `REGRABAR(Arch, Reg)` |
-| Fin de datos | `FDS` | `FDA(Arch)` | según operación |
+| Abrir lectura | `ARR(sec)` | `ABRIR E/(arch)` | `ABRIR E/S(arch)` |
+| Abrir escritura | `CREAR(sec)` | `ABRIR /S(arch)` | — |
+| Leer | `AVZ(sec, v)` | `LEER(arch, reg)` | `reg.clave := x` ; `LEER(arch, reg)` |
+| Escribir | `ESCRIBIR(sec, v)` | `ESCRIBIR(arch, reg)` | `ESCRIBIR(arch, reg)` (alta) |
+| Modificar | — | — | `RE-ESCRIBIR(arch, reg)` |
+| Eliminar | — | — | `ELIMINAR(arch, reg)` |
+| ¿Hay más? | `NFDS(sec)` | `NFDA(arch)` | `SI EXISTE ENTONCES` |
+| Cerrar | `CERRAR(sec)` | `CERRAR(arch)` | `CERRAR(arch)` |
 
 **La diferencia clave en la lectura indexada**: hay que asignar la clave **ANTES** del `LEER`. Eso le indica al sistema qué registro buscar en el índice.
+
+> [!note] 📐 Notación verificada
+> El indexado se abre normalmente con **`ABRIR E/S(arch)`**, porque se lee y se modifica en la
+> misma pasada. Y **nunca se recorre con `NFDA`**: el acceso es puntual por clave.
+> → `sintaxis-completa.md` §5
 
 ### Cómo se pregunta si el registro existe
 
 ```
-Abrir E/S(archEmpleados)
+ABRIR E/S(archEmpleados)
 
-CLAVE := 1005
+regEmp.clave := 1005              // ← la clave se asigna ANTES del LEER
 LEER(archEmpleados, regEmp)
 
-SI FDA(archEmpleados) ENTONCES
-    ESCRIBIR('Empleado no encontrado')
-SINO
+SI EXISTE ENTONCES
     ESCRIBIR(regEmp.nombre, regEmp.salario)
+SINO
+    ESCRIBIR("Empleado no encontrado")
 FIN_SI
 
 CERRAR(archEmpleados)
 ```
 
-> ⚠️ **Corrección grande**: la existencia se pregunta con **`FDA(arch)`**, no con `SI EXISTE`.
-> `SI FDA(arch)` → **no** existe. `SI NO FDA(arch)` → existe.
-> Tanto tu `2.3.frre` como tu apunte de indexados usan `SI EXISTE`, que no aparece en el libro.
+> [!note] 📐 Notación verificada
+> La existencia se pregunta con **`SI EXISTE ENTONCES`**, que consulta el resultado del último
+> `LEER`. Es la forma de las plantillas oficiales, y es la que ya usabas en `2.3.frre`.
+>
+> El orden es siempre el mismo y no se puede alterar:
+> **`clave` → `LEER` → `SI EXISTE`**.
+> → `sintaxis-completa.md` §5
 
-### GRABAR vs. REGRABAR
+### ESCRIBIR vs. RE-ESCRIBIR
 
 Distinción fundamental y fuente frecuente de errores.
 
-| | **GRABAR** — alta | **REGRABAR** — modificación |
+| | **ESCRIBIR** — alta | **RE-ESCRIBIR** — modificación |
 |---|---|---|
 | Para qué | insertar un registro que **NO existía** | actualizar uno que **YA fue leído** |
 | Qué hace el sistema | busca espacio en el área de datos, escribe, y **agrega la entrada al índice** en la posición correcta | **sobreescribe la misma posición física** del registro leído |
@@ -596,16 +634,19 @@ Distinción fundamental y fuente frecuente de errores.
 | Índice | se modifica | no se modifica (la clave no cambia) |
 | Si se viola | error de clave duplicada | error de lógica |
 
-> ⚠️ Es **`REGRABAR`**, no `REESCRIBIR`. Tus archivos usan `REESCRIBIR`.
+> [!note] 📐 Notación verificada
+> Es **`RE-ESCRIBIR`**, con guion. Tu `REESCRIBIR` sin guion estaba casi bien —
+> el libro lo llama `REGRABAR`, pero las plantillas oficiales usan `RE-ESCRIBIR`.
+> → `sintaxis-completa.md` §5 · `errores-y-trampas.md` §A.23
 
-> **El ciclo obligatorio de una modificación es siempre:**
-> 1. `Abrir E/S(Arch)`
-> 2. `CLAVE := valor_buscado`
-> 3. `LEER(Arch, Reg)` ← **lectura obligatoria**
-> 4. Modificar campos del `Reg`
-> 5. `REGRABAR(Arch, Reg)`
+> [!important] El ciclo obligatorio de una modificación es siempre:
+> 1. `ABRIR E/S(arch)`
+> 2. `reg.clave := valor_buscado`
+> 3. `LEER(arch, reg)` ← **lectura obligatoria**
+> 4. `SI EXISTE ENTONCES` — modificar campos del `reg`
+> 5. `RE-ESCRIBIR(arch, reg)`
 >
-> Saltarse el paso 3 produce un error de lógica.
+> Saltarse el paso 3 produce un error de lógica: se re-escribe un registro que nunca se leyó.
 
 ### Comparación secuencial vs. indexado
 
@@ -615,72 +656,93 @@ Distinción fundamental y fuente frecuente de errores.
 | Orden de los datos | no necesariamente ordenado | el índice siempre ordenado por clave |
 | Recorrido total | muy eficiente, lectura continua | algo más lento por la doble área |
 | Búsqueda puntual | muy lento, O(n) peor caso | muy rápido, O(log n) |
-| Modificación | no admite regrabar | admite `REGRABAR` tras lectura |
+| Modificación | no admite re-escribir | admite `RE-ESCRIBIR` tras lectura |
 | Uso ideal | reportes, batch, grandes volúmenes | consultas interactivas, ABM en tiempo real |
 
 ### Actualización indexada — ABM
 
 Proceso por el cual un usuario interactivo mantiene el maestro actualizado en tiempo real: **A**lta, **B**aja, **M**odificación.
 
-**Alta** — verificar que la clave NO exista, y recién ahí `GRABAR`:
+**Alta** — verificar que la clave NO exista, y recién ahí `ESCRIBIR`:
 
 ```
-PROCEDIMIENTO Alta(arch : archivo)
-    LEER(nuevoCodigo)
-    CLAVE := nuevoCodigo
-    LEER(arch, reg)                          // verificar si ya existe
-    SI NO FDA(arch) ENTONCES
-        ESCRIBIR('Error: clave ya existe. No se puede dar de alta.')
-    SINO
-        LEER(reg.nombre, reg.salario)        // ingresar datos
+PROCEDIMIENTO Alta(var arch : ARCHIVO de emp) ES
+    Ambiente
+        nuevoCodigo : entero
+        reg : emp
+    Proceso
+        LEER(nuevoCodigo)
         reg.codigo := nuevoCodigo
-        GRABAR(arch, reg)
-        ESCRIBIR('Alta realizada correctamente.')
-    FIN_SI
+        LEER(arch, reg)                      // verificar si ya existe
+        SI EXISTE ENTONCES
+            ESCRIBIR("Error: clave ya existe. No se puede dar de alta.")
+        SINO
+            LEER(reg.nombre, reg.salario)    // ingresar datos
+            reg.codigo := nuevoCodigo
+            ESCRIBIR(arch, reg)              // ← alta
+            ESCRIBIR("Alta realizada correctamente.")
+        FIN_SI
 FIN_PROCEDIMIENTO
 ```
 
-**Modificación** — leer, cambiar, `REGRABAR`:
+**Modificación** — leer, cambiar, `RE-ESCRIBIR`:
 
 ```
-PROCEDIMIENTO Modificacion(arch : archivo)
-    LEER(codigoBuscado)
-    CLAVE := codigoBuscado
-    LEER(arch, reg)
-    SI FDA(arch) ENTONCES
-        ESCRIBIR('Error: registro no encontrado.')
-    SINO
-        ESCRIBIR('Registro actual:', reg.nombre, reg.salario)
-        LEER(reg.salario)
-        REGRABAR(arch, reg)
-        ESCRIBIR('Modificación realizada.')
-    FIN_SI
+PROCEDIMIENTO Modificacion(var arch : ARCHIVO de emp) ES
+    Ambiente
+        codigoBuscado : entero
+        reg : emp
+    Proceso
+        LEER(codigoBuscado)
+        reg.codigo := codigoBuscado
+        LEER(arch, reg)
+        SI EXISTE ENTONCES
+            ESCRIBIR("Registro actual: ", reg.nombre, reg.salario)
+            LEER(reg.salario)
+            RE-ESCRIBIR(arch, reg)           // ← modificación
+            ESCRIBIR("Modificación realizada.")
+        SINO
+            ESCRIBIR("Error: registro no encontrado.")
+        FIN_SI
 FIN_PROCEDIMIENTO
 ```
 
 **Baja** — dos estrategias:
 
-- **Baja física**: se elimina el registro y se actualiza el índice. Costosa: deja "huecos" en el área de datos.
-- **Baja lógica (recomendada)**: se agrega un campo indicador (`activo : logico`); al dar de baja se pone `activo := F` y se `REGRABAR`. El registro queda en el archivo pero los procesos lo ignoran.
+- **Baja física**: `ELIMINAR(arch, reg)` borra el registro y actualiza el índice. Costosa: deja "huecos" en el área de datos.
+- **Baja lógica (preferida cuando el registro tiene campo marca)**: se agrega un campo indicador (`activo : logico` o `Baja : caracter`); al dar de baja se pone la marca y se `RE-ESCRIBIR`. El registro queda en el archivo pero los procesos lo ignoran.
 
 ```
-PROCEDIMIENTO Baja(arch : archivo)
-    LEER(codigoBuscado)
-    CLAVE := codigoBuscado
-    LEER(arch, reg)
-    SI FDA(arch) ENTONCES
-        ESCRIBIR('Error: registro no encontrado.')
-    SINO SI reg.activo = F ENTONCES
-        ESCRIBIR('Advertencia: el registro ya estaba dado de baja.')
-    SINO
-        reg.activo := F
-        REGRABAR(arch, reg)
-        ESCRIBIR('Baja lógica realizada para:', reg.nombre)
-    FIN_SI
+PROCEDIMIENTO Baja(var arch : ARCHIVO de emp) ES
+    Ambiente
+        codigoBuscado : entero
+        reg : emp
+    Proceso
+        LEER(codigoBuscado)
+        reg.codigo := codigoBuscado
+        LEER(arch, reg)
+        SI EXISTE ENTONCES
+            SI reg.activo = falso ENTONCES
+                ESCRIBIR("Advertencia: el registro ya estaba dado de baja.")
+            SINO
+                reg.activo := falso              // baja LÓGICA
+                RE-ESCRIBIR(arch, reg)
+                // baja FÍSICA sería:  ELIMINAR(arch, reg)
+                ESCRIBIR("Baja realizada para: ", reg.nombre)
+            FIN_SI
+        SINO
+            ESCRIBIR("Error: registro no encontrado.")
+        FIN_SI
 FIN_PROCEDIMIENTO
 ```
 
-> ⚠️ **El libro no define ningún verbo `ELIMINAR`.** Tu apunte de indexados lo menciona para baja física; no tiene respaldo. Usar baja lógica.
+> [!note] 📐 Notación verificada
+> **`ELIMINAR(arch, reg)` sí existe** en las plantillas oficiales, para baja física.
+> La versión anterior de este documento decía que no tenía respaldo — era incorrecto.
+>
+> Cuál usar: si el registro **tiene campo marca**, baja lógica con `RE-ESCRIBIR`.
+> Si no lo tiene, baja física con `ELIMINAR`.
+> → `sintaxis-completa.md` §5 · `plantillas.md` §7
 
 ### Características de la actualización indexada
 
@@ -693,58 +755,75 @@ FIN_PROCEDIMIENTO
 
 ---
 
-## 7. Corte de control 🔶
+## 7. Corte de control 📐
 
-> **El libro de cátedra NO cubre corte de control.** No hay capítulo ni sección. Lo que sigue es reconstrucción a partir de las consignas de `2.2.12.txt` y `Parcial.1.txt`, y sigue siendo el hueco más grande.
+> [!success] Hueco cerrado
+> El **libro** no cubre corte de control — no hay capítulo. Pero **las plantillas oficiales sí**,
+> con la variante de procedimientos en cascada (`tratar_corte`, `tratar_registro`), que es la
+> que se exige. La versión anterior de este documento marcaba esto como "el hueco más grande";
+> ya no lo es.
 >
-> Tus notas mencionan una variante con procedimientos (`tratar_corte`, `tratar_registro`) y resguardos comparados en un solo ciclo. **Sigue faltando la teoría que fije cuál se exige.**
+> **Plantilla completa: [[plantillas]] §2**
+>
+> El orden dentro de cada `corte_N` es fijo y no se puede alterar:
+> 1. llamar al corte **inferior**
+> 2. emitir
+> 3. acumular al **superior**
+> 4. poner en cero **lo propio**
+> 5. **re-resguardar** la clave
+>
+> Y dos reglas que se caen siempre en el parcial:
+> - `tratar_corte` pregunta **de mayor a menor** jerarquía.
+> - Después del `MIENTRAS` se llama al corte de **mayor** jerarquía — la cascada baja sola.
+>   Llamar al menor es el bug B.1 de `errores-y-trampas.md`, y está en material que circula
+>   como resuelto.
 
 Precondición: **el archivo tiene que estar ordenado por la clave de corte.**
 
 ### Un nivel — ciclos anidados
 
 ```
-Abrir E/(arch); LEER(arch, r)
+ABRIR E/(arch); LEER(arch, r)
 tot_general := 0
 
-MIENTRAS NO FDA(arch) HACER
+MIENTRAS NFDA(arch) HACER
     resg := r.clave                  // RESGUARDO
     tot_nivel := 0                   // inicializar acumuladores del nivel
 
-    MIENTRAS NO FDA(arch) Y r.clave = resg HACER
+    MIENTRAS NFDA(arch) Y r.clave = resg HACER
         tot_nivel := tot_nivel + r.importe        // TRATAR REGISTRO
         LEER(arch, r)
     FIN_MIENTRAS
 
-    ESCRIBIR('Total de ', resg, ': ', tot_nivel)  // TRATAR CORTE
+    ESCRIBIR("Total de ", resg, ": ", tot_nivel)  // TRATAR CORTE
     tot_general := tot_general + tot_nivel        // acumular al nivel superior
 FIN_MIENTRAS
 
-ESCRIBIR('Total general: ', tot_general)
+ESCRIBIR("Total general: ", tot_general)
 CERRAR(arch)
 ```
 
 ### Dos niveles — el patrón se anida
 
 ```
-MIENTRAS NO FDA(arch) HACER
+MIENTRAS NFDA(arch) HACER
     resg_suc := r.sucursal
     tot_suc := 0
 
-    MIENTRAS NO FDA(arch) Y r.sucursal = resg_suc HACER
+    MIENTRAS NFDA(arch) Y r.sucursal = resg_suc HACER
         resg_rub := r.rubro
         tot_rub := 0
 
-        MIENTRAS NO FDA(arch) Y r.sucursal = resg_suc Y r.rubro = resg_rub HACER
+        MIENTRAS NFDA(arch) Y r.sucursal = resg_suc Y r.rubro = resg_rub HACER
             tot_rub := tot_rub + r.importe
             LEER(arch, r)
         FIN_MIENTRAS
 
-        ESCRIBIR('Rubro ', resg_rub, ': ', tot_rub)
+        ESCRIBIR("Rubro ", resg_rub, ": ", tot_rub)
         tot_suc := tot_suc + tot_rub
     FIN_MIENTRAS
 
-    ESCRIBIR('Sucursal ', resg_suc, ': ', tot_suc)
+    ESCRIBIR("Sucursal ", resg_suc, ": ", tot_suc)
     tot_gral := tot_gral + tot_suc
 FIN_MIENTRAS
 ```
@@ -760,34 +839,48 @@ FIN_MIENTRAS
 
 ---
 
-## 8. Apareo maestro-movimientos 🔶
+## 8. Apareo maestro-movimientos 📐
 
-> **El libro tampoco cubre el algoritmo de apareo.** El Cap. 5 define los *tipos* de archivo maestro/movimiento, pero no el proceso de actualización batch. Reconstruido desde la consigna de `Ejercicios Peralta/2.1.19`.
+> [!success] Hueco cerrado
+> El **libro** define los *tipos* de archivo maestro/movimiento (Cap. 5) pero no el algoritmo.
+> **Las plantillas oficiales cubren las cuatro variantes**, y la elección entre ellas es lo que
+> más se equivoca:
+>
+> | Situación | Plantilla | Ref. |
+> |---|---|---|
+> | Combinar/listar, **los dos archivos deben agotarse** | Mezcla **inclusiva** con `HV` | `plantillas.md` §3 |
+> | Combinar/listar, solo mientras haya en ambos | Mezcla **exclusiva** + 2 ciclos de vaciado | `plantillas.md` §4 |
+> | Maestro + movimientos, **1 movimiento por clave** | Actualización **unitaria** | `plantillas.md` §5 |
+> | Maestro + movimientos, **varios por clave** | Actualización **por lotes** (registro `aux`) | `plantillas.md` §6 |
+>
+> Con `HV` el ciclo es `MIENTRAS (c1 <> HV) O (c2 <> HV)`; sin `HV` es
+> `MIENTRAS NFDA(a1) Y NFDA(a2)` **más los dos vaciados**. Los `LEER` van encapsulados en
+> procedimientos que asignan `HV` al detectar `FDA`.
 
 Dos archivos ordenados por la misma clave, recorridos en paralelo comparando claves:
 
 ```
-Abrir E/(mae); LEER(mae, m)
-Abrir E/(mov); LEER(mov, v)
-Abrir S/(sal)
+ABRIR E/(mae); LEER(mae, m)
+ABRIR E/(mov); LEER(mov, v)
+ABRIR /S(sal)
 
-MIENTRAS NO FDA(mae) O NO FDA(mov) HACER
+MIENTRAS NFDA(mae) O NFDA(mov) HACER
     SI m.clave < v.clave ENTONCES          // solo en maestro → pasa igual
-        sal := m; GRABAR(arch_sal, sal)
+        sal := m; ESCRIBIR(arch_sal, sal)
         LEER(mae, m)
     SINO
         SI m.clave = v.clave ENTONCES      // en los dos → aplicar el movimiento
-            SEGÚN v.cod_mov HACER
-                = 1 : ESCRIBIR('Error: alta de algo que ya existe')
+            SEGUN v.cod_mov HACER
+                = 1 : ESCRIBIR("Error: alta de algo que ya existe")
                 = 2 : // baja
                 = 3 : // modificación
-            FIN_SEGÚN
+            FIN_SEGUN
             LEER(mov, v)
         SINO                                // solo en movimientos → alta
             SI v.cod_mov = 1 ENTONCES
                 // armar el registro nuevo y grabarlo
             SINO
-                ESCRIBIR('Error: baja/modificación de algo inexistente')
+                ESCRIBIR("Error: baja/modificación de algo inexistente")
             FIN_SI
             LEER(mov, v)
         FIN_SI
@@ -795,13 +888,23 @@ MIENTRAS NO FDA(mae) O NO FDA(mov) HACER
 FIN_MIENTRAS
 ```
 
-❓ Falta definir cómo trata la cátedra el **fin desparejo** de los dos archivos (clave alta ficticia vs. ciclos de vaciado).
+> [!success] Resuelto
+> El **fin desparejo** tiene dos tratamientos oficiales, y elegir mal es el error más común:
+> - **Inclusiva** — clave alta ficticia `HV`: `MIENTRAS (c1 <> HV) O (c2 <> HV)`. Los dos archivos se agotan.
+> - **Exclusiva** — sin `HV`: `MIENTRAS NFDA(a1) Y NFDA(a2)` **más dos ciclos de vaciado** al salir.
+>
+> → `plantillas.md` §3 (inclusiva) y §4 (exclusiva)
 
 ---
 
-## 9. Arreglos 🔶
+## 9. Arreglos 📐
 
-> **El libro no tiene capítulo de arreglos.** Solo los menciona al pasar en el Cap. 7 ("los arreglos tienen un número máximo de elementos declarado en el ambiente"). Lo que sigue viene de tu apunte `Arreglos:`.
+> [!success] Hueco cerrado
+> El **libro** solo los menciona al pasar en el Cap. 7 ("los arreglos tienen un número máximo
+> de elementos declarado en el ambiente"). **La notación oficial está en las plantillas**:
+> `ARREGLO[li..ls] de tipo`, y el paso por referencia se marca con el prefijo **`var`** en el
+> parámetro formal.
+> → `sintaxis-completa.md` §9 · §8 (paso de parámetros)
 
 ```
 v : ARREGLO[1..50] DE entero            // vector
@@ -825,7 +928,12 @@ FIN_PARA
 
 ## 10. Estructuras dinámicas (Cap. 7) ✅
 
-Tema **completamente ausente** de tus archivos y del documento anterior.
+> [!info] Fuentes de esta sección
+> - **Teoría**: libro de cátedra, Cap. 7.
+> - **Notación y algoritmos**: la teoría de listas de la guía ([aed-frre.github.io/teoria/listas](https://aed-frre.github.io/teoria/listas/), transcripta en `Guía de Cátedra/Teoría/Listas.md`) y los Complementos Teóricos de la Guía 2026 (p. 63-64: `LISTA_CIRCULAR` y `LISTA_DOBLE`).
+> - **Clase**: tus notas en `Práctica/Clase 5 Listas.frre`.
+>
+> Todo lo de esta sección corre en la extensión desde la 0.12.0.
 
 ### Estáticas vs. dinámicas
 
@@ -862,7 +970,23 @@ AMBIENTE
 *q.prox := PRIM  // asignar al campo prox del nodo apuntado por q
 ```
 
-**Verbos**: `NUEVO(q)` reserva memoria para un nodo; `BORRAR(p)` la libera.
+**Verbos**: `NUEVO(q)` reserva memoria para un nodo; `DISPONER(p)` la libera (el libro lo llama `BORRAR(p)`).
+
+#### Las formas que aparecen en el material
+
+Todas son válidas y quieren decir lo mismo. La primera columna es la que usamos.
+
+| Concepto | Forma que usamos | También aparece | Dónde |
+|---|---|---|---|
+| Tipo puntero | `p : Puntero a NODO` | `punt = Puntero a NODO` y después `p : punt` | teoría de la guía, tus notas |
+| Puntero que no apunta a nada | `NIL` | `nil`, `NULO` | `NIL` en la guía, `NULO` en el libro |
+| Pedir un nodo | `NUEVO(p)` | — | todos |
+| Liberar un nodo | `DISPONER(p)` | `BORRAR(p)` | `DISPONER` en la guía, `BORRAR` en el libro |
+| Campo del nodo apuntado | `*p.dato` | `p^.dato` (tus notas), `P↑.DATO` (guía, ej. 4.1), `*P.PROX` / `P*.PROX` (Complementos 2026) | — |
+| Anidado | `*(*p.ant).prox` | — | Complementos 2026 |
+
+> `p.dato` **sin** asterisco está mal: `p` es un puntero, no un registro. Primero hay que ir al
+> nodo (`*p`) y recién ahí pedir el campo.
 
 > La conexión entre nodos se establece **por punteros, no por proximidad física** en memoria. Dos nodos consecutivos en la lista pueden estar en posiciones alejadísimas.
 
@@ -945,6 +1069,29 @@ SI p <> NULO ENTONCES                // se encontró
 SINO
     ESCRIBIR('Elemento no encontrado')
 FIN_SI
+```
+
+### Las cargas de la guía
+
+La teoría de la guía les pone nombre a las formas de armar una lista. Son las mismas operaciones
+de arriba, leyendo hasta una marca de fin (`'*'`):
+
+| Nombre en la guía | Qué hace | Equivale a |
+|---|---|---|
+| **Carga apilada** | cada nodo nuevo queda **primero** (`*p.Prox := Prim; Prim := p`) | insertar al inicio; la lista queda al revés de como se leyó |
+| **Carga encolada** | cada nodo nuevo queda **último**, con un puntero `a` al anterior | insertar al final; la lista queda en el orden de lectura |
+| **Carga ordenada** | busca la posición con `q` (actual) y `a` (anterior) | insertar en orden |
+| **Eliminación** | busca con `q` y `a`, engancha `*a.prox := *q.prox` y `DISPONER(q)` | eliminar por valor |
+
+Las plantillas completas están en [[plantillas]] §9.
+
+### Lista que llega por parámetro
+
+La guía da la lista ya cargada: *"el algoritmo recibe como parámetro de entrada la dirección del
+primer elemento"* (ej. 4.2). Se escribe en la cabecera de la ACCION:
+
+```
+ACCION Ej_4_2 (PRIM: Puntero a NODO) ES
 ```
 
 ### Pilas (LIFO)
@@ -1052,6 +1199,33 @@ ULT  : PUNTERO a NODO
 
 Al insertar hay que actualizar **CUATRO** punteros (en lugar de dos): el `prox` y el `ant` del nuevo nodo, más el `ant` del sucesor y el `prox` del predecesor.
 
+### Lista circular
+
+El último nodo **no** apunta a `NIL`: apunta al **primero**. No hay "fin de lista", así que el
+recorrido termina cuando se vuelve al principio. Con un solo nodo, ese nodo se apunta a sí mismo.
+
+Búsqueda, de `LISTA_CIRCULAR` (Complementos Teóricos de la Guía 2026, p. 63):
+
+```
+SI PRIMERO = NIL ENTONCES
+    ESCRIBIR('ERROR, Lista Vacía')
+SINO
+    T := PRIMERO
+    MIENTRAS (*T.SIG <> PRIMERO) Y (*T.VALOR <> DATO) HACER
+        T := *T.SIG
+    FIN_MIENTRAS
+    SI *T.VALOR <> DATO ENTONCES
+        ESCRIBIR('ERROR, ', DATO, ' no está en la Lista')
+    SINO
+        ESCRIBIR('HALLADO VALOR: ', *T.VALOR)
+    FIN_SI
+FIN_SI
+```
+
+- La condición de corte es `*T.SIG <> PRIMERO`, **no** `T <> NIL`. Con `NIL` el ciclo no termina nunca.
+- Por eso el último nodo se compara **después** del ciclo: el `MIENTRAS` se detiene parado sobre él.
+- En una **circular doble** además el `ant` del primero apunta al último.
+
 ### Comparación
 
 | Estructura | Inserción | Extracción | Búsqueda | Uso típico |
@@ -1115,6 +1289,82 @@ FIN_FUNCION
 
 > El libro escribe el retorno de `Fib` como `RETORNAR fb` y cierra con `FIN`, inconsistente con `FACTORIAL := ...` / `FIN_FUNCION` del ejemplo anterior. **Usar siempre `nombre := valor` y `FIN_FUNCION`**, que es la forma declarada en el Cap. 3.
 
+### Cómo se escribe en clase: el planteo formal
+
+En clase cada ejercicio arranca con el **planteo formal** (los casos escritos como una función
+matemática) y recién después se pasa a pseudocódigo. Ejemplo de clase, `EsPar` usando solo la resta:
+
+```
+Planteo formal: EsPar(Num)
+  Casos base:      = verdadero,  si Num = 0
+                   = falso,      si Num = 1
+  Caso recursivo:  EsPar(Num - 2), si Num > 1
+```
+
+```
+FUNCION EsPar(Num: N(3)): logico ES
+    Proceso
+        SI Num = 0 ENTONCES
+            EsPar := verdadero                  // caso base
+        SINO
+            SI Num = 1 ENTONCES
+                EsPar := falso                  // caso base
+            SINO
+                EsPar := EsPar(Num - 2)         // caso recursivo
+            FIN_SI
+        FIN_SI
+FIN_FUNCION
+```
+
+### Recursión sobre un arreglo: las dos direcciones
+
+El índice es el parámetro que "se acerca al caso base". Puede bajar o subir:
+
+| | Baja (de N a 1) | Sube (de 1 a N) |
+|---|---|---|
+| Llamada inicial | `Suma(V, 10)` | `Promedio_10_Elementos(V, 1)` |
+| Caso base | `i = 1` → `A[1]` | `i = 10` → `A[10] / 10` |
+| Caso recursivo | `A[i] + Suma(A, i - 1)` | `A[i] / 10 + Promedio_10_Elementos(A, i + 1)` |
+| De dónde sale | guía 5.1.8, resuelto en clase | ejercicio extra de clase |
+
+Los dos son correctos. Lo que no puede faltar es que **cada llamada se acerque al caso base**.
+
+### Prueba de escritorio de una recursión
+
+Se hace en dos tiempos:
+
+1. **Bajada**: cada llamada pide la siguiente y queda **esperando**. Se anotan una debajo de la otra, con sangría, hasta llegar al caso base.
+2. **Subida**: el caso base devuelve un valor sin llamar a nadie, y cada llamada pendiente **termina su cuenta** con lo que le devolvió la de abajo, de la última a la primera.
+
+```
+CantImpares(3527)  -> último 7, impar -> 1 + CantImpares(352)
+  CantImpares(352) -> último 2, par   -> CantImpares(35)
+    CantImpares(35)  -> último 5, impar -> 1 + CantImpares(3)
+      CantImpares(3)   -> caso base: 3 es impar -> 1
+    = 1 + 1 = 2
+  = 2
+= 1 + 2 = 3
+```
+
+Para ver una recursión corriendo paso a paso: `Práctica/Recursividad — prueba de escritorio.frre`.
+
+### Ejercicios resueltos
+
+| Ejercicio | Archivo | Idea |
+|---|---|---|
+| `EsPar` (clase) | `Práctica/Recursividad.frre` | resta 2 hasta llegar a 0 o 1 |
+| Suma de un vector, guía 5.1.8 (clase) | ídem | `A[i] + Suma(A, i - 1)` |
+| Promedio de 10 elementos (clase) | ídem | cada elemento aporta `A[i] / 10` |
+| Promedio de aprobados (clase) | ídem | igual, sumando solo los que aprobaron |
+| Promedio, de n hacia abajo | ídem + prueba de escritorio | `(Promedio(A, n-1) * (n-1) + A[n]) / n` |
+| Cantidad de dígitos impares de N | `Práctica/Recursividad — dígitos impares.frre` | último dígito `N MOD 10`, resto `N DIV 10` |
+
+El **Práctico 5 de la guía** pide funciones recursivas para factorial, Fibonacci, potencia con
+multiplicaciones, dígitos todos pares, división entera con restas, par/impar con restas, MCD de
+Euclides y suma de un vector (1.01 a 1.08), y procedimientos recursivos para imprimir un número
+al revés, el palíndromo de una palabra, una lista en orden descendente y un decimal en binario
+(2.01 a 2.04). Ver `Guía de Cátedra/Práctica/5 — Recursividad.md`.
+
 ### Propiedades
 
 1. No debe generar una secuencia infinita de llamadas; **debe existir al menos un caso base**.
@@ -1131,6 +1381,41 @@ FIN_FUNCION
 | Velocidad | menor (overhead de llamadas) | mayor |
 
 > **La recursividad se debe usar cuando sea realmente necesaria**, es decir, cuando no exista una solución iterativa simple. En condiciones críticas de tiempo y memoria, preferir la iterativa.
+
+### Trampas de recursividad
+
+| Trampa | Qué pasa |
+|---|---|
+| Falta el caso base, o la llamada no se acerca a él | las llamadas no terminan nunca. La extensión corta a las 10000 llamadas con un error |
+| `N` y `n` como si fueran distintas | el pseudocódigo **no distingue mayúsculas**: un parámetro `n` tapa a la constante `N` dentro de la función |
+| Condición distinta en el caso base y en el recursivo | en el promedio de aprobados de clase quedó `> 6` en uno y `>= 6` en el otro: un 6 cuenta en todas las posiciones menos en la última |
+| Llamar a la función como instrucción suelta | `Suma(A, i - 1)` solo no hace nada: el resultado se usa en una expresión o se asigna |
+
+---
+
+## Árboles — pendiente
+
+> [!todo] Próximo tema
+> Todavía no se vio en clase. Lo que hay hasta ahora:
+
+- **Libro de cátedra**: solo los nombra como estructura dinámica, en la tabla del Cap. 7. No hay desarrollo.
+- **Guía 2026, Práctico 5 §5.3** (`Guía de Cátedra/Práctica/5 — Recursividad.md`): es la única fuente con contenido. Pide:
+  - **Terminología** sobre un árbol dado: hojas, raíz, padre, hijos, antecesores, descendientes, hermanos, profundidad, altura de un nodo, caminos de longitud 3.
+  - **Árboles de expresión**: dibujar el de `[(x-y)*z] / (m+n**p)`, pasar expresiones a prefija y postfija, y evaluar uno (letras en las hojas, operadores en los nodos interiores).
+  - **Recorridos**: pre-orden, en-orden y post-orden, con prueba de escritorio, y reconstruir un árbol a partir de su pre-orden y en-orden.
+  - **Funciones recursivas sobre árboles binarios**: cantidad de nodos, altura, suma de los elementos, suma de los múltiplos de 3, buscar una clave y operar con ella.
+  - **AVL**: decidir cuál de dos árboles lo es.
+- **Declaración que da la guía** (ej. 10):
+
+```
+arbol = registro
+    X: entero;
+    Izq, Dcha: puntero a arbol;
+Freg;
+```
+
+- **Extensión**: un árbol binario ya corre, porque es un registro con dos punteros más recursividad. Se probó insertar en un árbol de búsqueda, recorrerlo en orden y calcular la altura. Falta confirmarlo con los ejercicios de la guía cuando se dé el tema.
+- **Falta**: la teoría de clase, la notación que use la cátedra para los recorridos y las plantillas.
 
 ---
 
@@ -1199,38 +1484,106 @@ Para bucles anidados:
 
 ---
 
-## 13. Notación oficial vs. la que venís usando
+## 13. Notación oficial 📐
 
-Estas diferencias son reales y sistemáticas en tus archivos. La columna izquierda es la del libro.
+> [!success] Sección reescrita
+> La versión anterior comparaba tu código contra **el libro** y marcaba como errores cosas que
+> estaban bien. Esta versión compara contra las **plantillas oficiales**
+> (`isi-aed/Pseudocodigo/`), que son las que se corrigen en el parcial.
 
-| Libro (oficial) | Lo que escribís | Comentario |
+### 13.1 — Tabla de referencia rápida
+
+Esta es la notación que hay que usar. Fuente: `sintaxis-completa.md`.
+
+| Concepto | Forma oficial |
+|---|---|
+| Esqueleto | `ACCION nombre ES` · `Ambiente` · `Proceso` · `FIN_ACCION` |
+| Fin de proceso | **no lleva `FIN_PROCESO`** — del cuerpo se pasa directo a `FIN_ACCION` |
+| Nombre de acción | sin puntos ni espacios: `ej_2_2_4`, nunca `2.2.4` |
+| Asignación | `:=` |
+| Comparación | `=` igual · `<>` distinto |
+| Lógicos | `Y` `O` `NO` · pertenencia `EN` |
+| Aritméticos | `+` `-` `*` `/` `MOD` `DIV` `**` (potencia) |
+| Ciclo con paso | `PARA i := 1 HASTA 10, 1 HACER` — **el incremento va con coma**, puede ser negativo |
+| Retorno de función | se asigna **al nombre de la función** |
+| Paso por referencia | prefijo **`var`** en el parámetro formal |
+| Cerrar estructuras | `FIN_SI` `FIN_MIENTRAS` `FIN_PARA` `FIN_SEGUN` `FIN_REGISTRO` `FIN_FUNCION` `FIN_PROCEDIMIENTO` `FIN_ACCION` |
+
+**Verbos por estructura** — la tabla que más se consulta:
+
+| | Secuencia | Archivo secuencial | Archivo indexado |
+|---|---|---|---|
+| Abrir lectura | `ARR(sec)` | `ABRIR E/(arch)` | `ABRIR E/S(arch)` |
+| Abrir escritura | `CREAR(sec)` | `ABRIR /S(arch)` | — |
+| Leer | `AVZ(sec, v)` | `LEER(arch, reg)` | `reg.clave := x` ; `LEER(arch, reg)` |
+| Escribir | `ESCRIBIR(sec, v)` | `ESCRIBIR(arch, reg)` | `ESCRIBIR(arch, reg)` (alta) |
+| Modificar | — | — | `RE-ESCRIBIR(arch, reg)` |
+| Eliminar | — | — | `ELIMINAR(arch, reg)` |
+| ¿Hay más? | `NFDS(sec)` | `NFDA(arch)` | `SI EXISTE ENTONCES` |
+| Cerrar | `CERRAR(sec)` | `CERRAR(arch)` | `CERRAR(arch)` |
+
+> `ESCRIBIR` sirve para pantalla, secuencia y archivo: lo distingue el primer argumento.
+
+---
+
+### 13.2 — Dónde el libro y las plantillas se contradicen
+
+En estos seis puntos las dos fuentes dicen cosas distintas. **Gana la plantilla.**
+
+| Concepto | Libro (Pinto & Bolatti) | ✅ Plantillas oficiales — usar esta |
 |---|---|---|
-| `Abrir S/(Arch)` | `Abrir /S(arch)` | **La barra va después.** `E/`, `S/`, `E/S` |
-| `GRABAR(Arch, Reg)` | `ESCRIBIR(arch, reg)` | `ESCRIBIR` es pantalla y secuencias; archivos usan `GRABAR` |
-| `REGRABAR(Arch, Reg)` | `REESCRIBIR(arch, reg)` | — |
-| `SI FDA(arch)` / `SI NO FDA(arch)` | `SI EXISTE ENTONCES` | `SI EXISTE` **no existe en el libro** |
-| (no hay verbo de baja física) | `ELIMINAR(arch, reg)` | El libro enseña **baja lógica** con campo `activo` |
-| `MIENTRAS NO FDA(Arch) HACER` | `MIENTRAS NFDA(arch) HACER` | `NFDA` es contracción de clase; ambas se entienden |
-| `MIENTRAS elem <> FDS HACER` | `MIENTRAS NFDS(sec) HACER` | ídem. El libro compara la ventana contra `FDS` |
-| `ARR` / `AVZ` / `ESC` | `ARRANCAR` / `AVANZAR` / `ESCRIBIR` | El libro abrevia; las formas largas se entienden |
-| `SEGÚN` / `FIN_SEGÚN` | `SEGUN` / `FIN_SEGUN` | Lleva acento |
-| sin `FIN_PROCESO` | a veces sí, a veces no | **No lleva** |
-| `ALFA(30)` | `AN(40)` | El libro usa `ALFA`; `N(8)` y `R(6,2)` coinciden |
-| `PARA i := a HASTA b; incr HACER` | `PARA i := a HASTA b HACER` | La cláusula de incremento existe |
+| Grabar en archivo | `GRABAR(arch, reg)` | **`ESCRIBIR(arch, reg)`** |
+| Modificar en indexado | `REGRABAR(arch, reg)` | **`RE-ESCRIBIR(arch, reg)`** |
+| Abrir escritura | `Abrir S/(Arch)` | **`ABRIR /S(arch)`** |
+| ¿Existe el registro? | `SI NO FDA(arch)` | **`SI EXISTE ENTONCES`** |
+| Baja física | *(no define verbo)* | **`ELIMINAR(arch, reg)`** |
+| Incremento del `PARA` | `PARA i := a HASTA b; incr` | **`PARA i := a HASTA b, incr HACER`** |
 
-**Criterio para el parcial**: usar la columna izquierda. Las contracciones `NFDA`/`NFDS` y los verbos largos son las únicas que probablemente te acepten sin discusión, porque son de uso corriente en clase — pero `S/`, `GRABAR`, `REGRABAR` y `FDA` en lugar de `SI EXISTE` son correcciones reales.
+---
 
-### Convenciones internas
+### 13.3 — Variantes que **sí** son válidas
+
+No son errores. Aparecen en plantillas de cátedra de distintas épocas y se entienden.
+
+**Las dos son válidas y se pueden mezclar.** No es una preferencia nuestra: los propios
+materiales de la cátedra las mezclan. El libro y las filminas usan una, las resoluciones de
+la guía usan la otra de punta a punta (83 de 83 archivos en notación vieja, cero `FIN_SI`), y
+los parciales que el profesor resuelve en clase combinan `finaccion` con estructuras modernas.
+La extensión acepta cualquier combinación y no avisa nada.
+
+Dicho eso, la **preferencia de Gonzalo** es la forma moderna en mayúsculas: `FIN_SI`,
+`FIN_MIENTRAS`, `FIN_ACCION`. Es la que se usa al escribir código nuevo en este workspace.
+
+| Forma moderna (preferir) | Forma vieja (válida) |
+|---|---|
+| `Proceso` | `Algoritmo` |
+| `SINO` | `Contrario` |
+| `FIN_SI` `FIN_MIENTRAS` | `FinSi` `FinMientras` |
+| `FIN_ACCION` | `FinAccion.` |
+| `FIN_PROCEDIMIENTO` | `Fin_Proc;` / `Fin;` |
+| sin `;` al final de línea | con `;` |
+| `ABRIR E/(arch)` | `ABRIRe(arch)` |
+| `ABRIR /S(arch)` | `ABRIRs(arch)` |
+| `ABRIR E/S(arch)` | `ABRIRe/s(arch)` |
+| `NFDA(arch)` · `NFDS(sec)` | `NoFDA(arch)` · `NoFDS(sec)` |
+| `ESCRIBIR(...)` por pantalla | `ESC(...)` |
+
+---
+
+### 13.4 — Convenciones internas
 
 | Usar | No usar |
 |---|---|
 | `:=` para asignar | `=` para asignar |
 | `<>` para distinto | `!=` |
 | Palabras clave en MAYÚSCULA | mezclar en el mismo archivo |
+| `FIN_SEGUN` — sin acento en el código | `FIN_SEGÚN` |
 | Nombre de acción sin puntos: `ej_2_2_4` | `2.2.4` |
-| Cerrar todo: `FIN_SI`, `FIN_MIENTRAS`, `FIN_PARA`, `FIN_SEGÚN`, `FIN_REGISTRO`, `FIN_FUNCION`, `FIN_PROCEDIMIENTO`, `FIN_ACCION` | — |
+| Un solo registro notacional por archivo | mezclar `Proceso`/`Algoritmo`, `SINO`/`Contrario` |
+| Cerrar toda estructura abierta | — |
 
-Los **tipos** se escriben en minúscula en el libro (`edad : entero`), y los **nombres de tipos registro** en mayúscula (`RegPersona = REGISTRO`). No es una regla dura, pero conviene ser consistente.
+Los **tipos** van en minúscula (`edad : entero`) y los **nombres de tipos registro** en mayúscula
+(`RegPersona = REGISTRO`). No es regla dura, pero conviene ser consistente.
 
 ---
 
@@ -1261,16 +1614,55 @@ Sacados de tus propios archivos. Son los que ya cometiste, así que son los que 
 | 17 | Dividir sin verificar que el divisor sea > 0 | evitado bien en `2.1.15.txt` |
 | 18 | No resolver todos los incisos de la consigna (a, b, c…) | `2.3.frre`, `Parcial.1.txt` |
 
-### De notación (nuevos, tras leer el libro)
+### De notación 📐
 
-| # | Error | Dónde |
+> [!warning] Corregido
+> La lista anterior (errores 19 a 24) marcaba como errores cosas que **estaban bien**:
+> `ABRIR /S`, `ESCRIBIR(arch, reg)`, `REESCRIBIR` y `SI EXISTE`. Salían de comparar contra el
+> libro en vez de contra las plantillas. Esta es la lista real.
+> → `errores-y-trampas.md` §A "Notación"
+
+| # | Error | Correcto |
 |---|---|---|
-| 19 | `Abrir /S(...)` en lugar de `Abrir S/(...)` | `2.2.1.txt`, `2.2.4.txt` |
-| 20 | `ESCRIBIR(arch, reg)` para grabar en archivo, en vez de `GRABAR` | `2.2.1.txt`, `2.2.4.txt` |
-| 21 | `REESCRIBIR` en vez de `REGRABAR` | `2.3.frre`, apunte de indexados |
-| 22 | `SI EXISTE` en vez de `SI NO FDA(arch)` | `2.3.frre`, apunte de indexados |
-| 23 | `FIN_PROCESO` / `FIN_PROCESSO` | `2.2.1.txt`, `2.2.4.txt`, `1.7.txt` |
-| 24 | `NOFDA` en vez de `NFDA` | `2.2.2.txt` |
+| 19 | `NOFDA` | `NFDA` o `NoFDA` |
+| 20 | `PROCESSO` / `FIN_PROCESSO` | `Proceso`, y **no lleva** `FIN_PROCESO` |
+| 21 | `REESCRIBIR` sin guion | `RE-ESCRIBIR` |
+| 22 | `SI ... ENTONCES:` con dos puntos | sin dos puntos |
+| 23 | `SEC DE CARACTER` | `SECUENCIA de caracter` |
+| 24 | Nombre de acción con puntos: `ACCION 2.2.4 ES` | `ACCION ej_2_2_4 ES` |
+| 25 | `PARA i := 1 HASTA 10 HACER` cuando el paso no es 1 | `PARA i := 20 HASTA -20, -2 HACER` |
+| 26 | `p.dato` con `p` puntero | `*p.dato` (el nodo apuntado), ver §10 |
+
+> Mezclar la notación vieja y la moderna en un mismo archivo **no** es error (ver §13.3): los
+> propios materiales de la cátedra lo hacen.
+
+### De listas y recursividad
+
+| # | Error | Dónde apareció |
+|---|---|---|
+| 27 | En el recorrido, avanzar con `p := *p.dato` en vez de `p := *p.prox` | tus notas, `Clase 5 Listas.frre` |
+| 28 | Recorrido que nunca avanza (`p := *p.prox` olvidado) → ciclo infinito | patrón general |
+| 29 | Usar `*p` cuando `p = NIL`, o un nodo después de `DISPONER` | patrón general |
+| 30 | Recorrer una circular con `MIENTRAS p <> NIL` → no termina nunca | §10, lista circular |
+| 31 | Cola: al desencolar el último no se pone `ULT := NIL` | §10, colas |
+| 32 | Recursión sin caso base, o que no se acerca a él | §11 |
+| 33 | Caso base y caso recursivo con condiciones distintas (`>` y `>=`) | promedio de aprobados de clase |
+| 34 | Parámetro `n` que tapa a la constante `N` | §11, trampas |
+
+Detalle en [[errores-y-trampas]] §A "Listas" y "Recursividad".
+
+---
+
+### 🪤 Bugs en el material que circula como resuelto
+
+No son errores tuyos: están en archivos de `AED26_Guia_Ejercicios` que se copian a ciegas.
+Detalle completo en [[errores-y-trampas]] §B.
+
+| # | Bug | Dónde | Consecuencia |
+|---|---|---|---|
+| B.1 | Después del `MIENTRAS` se llama al corte **menor** (`corte_carr`) en vez del mayor | `Ejercicio_2.2.11.frre.txt` | Nunca se emiten los totales del último grupo |
+| B.2 | Filtro negado: `SI (alu.fecha_ing.anio <> 2009)` | mismo archivo | Cuenta justo los que **no** pedía la consigna |
+| B.3 | Barridos invertidos: blancos con `<>` y palabra con `O` | `Parcial 2025 Tema A` *(marcado como corregido por profesores)* | Barre lo que no es, o ciclo infinito |
 
 ---
 
@@ -1285,11 +1677,16 @@ Los huecos que tenía este documento **quedaron cerrados** por las plantillas of
 | Apareo / fin desparejo | ✅ Dos variantes: inclusiva con `HV`, exclusiva con ciclos de vaciado. §3 y §4 |
 | Actualización maestro-movimientos | ✅ Unitaria y por lotes. §5 y §6 |
 | ABM sobre indexado | ✅ `SI EXISTE` + `ESCRIBIR`/`RE-ESCRIBIR`/`ELIMINAR`. §7 |
+| Notación oficial contradictoria | ✅ Resuelto en [§13.2](#132--dónde-el-libro-y-las-plantillas-se-contradicen) — gana la plantilla |
 | Arreglos | ✅ `ARREGLO[li..ls] de tipo`, paso por referencia con `var` |
 | Paso de parámetros por referencia | ✅ Prefijo `var` en el parámetro formal |
 
 Siguen abiertos:
 
-- ❓ **Árboles** — mencionados como estructura dinámica en la tabla del Cap. 7, sin desarrollo ni plantilla.
-- ❓ **Listas, pilas y colas en la notación de cátedra** — el libro las cubre (Cap. 7), pero no hay plantilla de pseudocódigo oficial; solo implementaciones en C.
-- ❓ **Ordenación y búsqueda sobre arreglos** — hay implementaciones en C (`ARR_ORD_*`, `ARR_BUSC_*`) pero no pseudocódigo.
+- ❓ **Árboles**: es el próximo tema. Ver [Árboles — pendiente](#árboles--pendiente) para lo que pide la guía y lo que falta.
+
+Cerrados desde la versión anterior:
+
+- ✅ **Listas, pilas y colas en la notación de cátedra**: la teoría de listas de la guía y los Complementos Teóricos 2026 dan los algoritmos en pseudocódigo. Ver §10 y [[plantillas]] §9.
+- ✅ **Recursividad**: planteo formal de clase, ejercicios resueltos y prueba de escritorio. Ver §11 y [[plantillas]] §10.
+- ✅ **Ordenación y búsqueda sobre arreglos**: están en pseudocódigo en `Teoría/Arreglos y Actualización — apunte completo.md` (lineal, con centinela, binaria, selección, inserción e intercambio).

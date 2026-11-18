@@ -1,0 +1,81 @@
+ACCION ejercicio_par ES
+    Ambiente
+        parcticipadores = REGISTRO
+            clave = REGISTRO
+                confed: AN(30)
+                eq: AN(30)
+            FIN_REGISTRO
+            nom_jug: AN(30)
+            asis: ENTERO
+            posc: ENTERO
+            gols: ENTERO
+            tarj: ENTERO
+        FIN_REGISTRO
+        arch: ARCHIVO DE parcticipadores ORDENADO POR clave
+        res_confed, res_eq: AN(30)
+        parcticipadores_sal = REGISTRO
+            confed: AN(30)
+            goles_del: ENTERO
+        FIN_REGISTRO
+        arch_sal: ARCHIVO DE parcticipadores_sal
+        reg: parcticipadores
+        reg_sal: parcticipadores_sal
+        tot_conf, tot_eq, total, tot_tarj, tot_del: ENTERO
+        PROCEDIMIENTO corte_equipo ES
+            tot_conf := tot_conf + tot_eq
+            ESCRIBIR(" El equipo: ", res_eq, "Tiene el total de goles de: ", tot_eq)
+            SI tot_tarj > 0 ENTONCES
+                ESCRIBIR("El equipo: ", res_eq, "tiene la siguiente cantidad de jugadores con tarjeta roja: ", tot_tarj)
+            SINO
+                ESCRIBIR("El equipo: ", res_eq, "no tiene tarjetas rojas")
+            FIN_SI
+            tot_tarj := 0
+            tot_eq := 0
+            res_eq := reg.clave.eq
+        FIN_PROCEDIMIENTO
+        PROCEDIMIENTO corte_confed ES
+            corte_equipo
+            total := total + tot_conf
+            ESCRIBIR("El total de goles para la confederacion: ", res_confed, "es", tot_conf)
+            SI tot_del > 14 ENTONCES
+                reg_sal.confed := res_confed
+                reg_sal.goles_del := tot_del
+                ESCRIBIR(arch_sal, reg_sal)
+            FIN_SI
+            tot_conf := 0
+            tot_del := 0
+            res_confed := reg.clave.confed
+        FIN_PROCEDIMIENTO
+        PROCEDIMIENTO tratar_registro ES
+            SI reg.gols > 14 Y reg.posc = 10 ENTONCES
+                tot_del := tot_del + reg.gols
+            FIN_SI
+            tot_eq := tot_eq + reg.gols
+            SI reg.tarj > 0 ENTONCES
+                tot_tarj := tot_tarj + 1
+            FIN_SI
+        FIN_PROCEDIMIENTO
+    Proceso
+        tot_conf := 0
+        tot_del := 0
+        tot_eq := 0
+        total:=0
+        tot_tarj:=0
+        ABRIR E/(arch); ABRIR /S(arch_sal)
+        LEER(arch, reg)
+        res_confed:= reg.clave.confed
+        res_eq:= reg.clave.eq
+        MIENTRAS NFDA(arch) HACER
+            SI reg.clave.confed <> res_confed ENTONCES
+                corte_confed
+            SINO
+                SI reg.clave.eq <> res_eq ENTONCES
+                    corte_equipo
+                FIN_SI
+            FIN_SI
+            tratar_registro
+            LEER(arch, reg)
+        FIN_MIENTRAS
+            corte_confed
+            CERRAR(arch); CERRAR(arch_sal)
+FIN_ACCION

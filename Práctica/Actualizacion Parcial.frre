@@ -1,0 +1,150 @@
+/* # Ejercicio N° 2
+# La red de estaciones de carga urbana para vehículos eléctricos (VE) dispone de un sistema de monitoreo 
+# que registra las sesiones de carga realizadas durante el mes de JUNIO. La información se encuentra 
+# ordenada por
+# Número de Estación, Tipo de Vehículo y Número de Carga, y para cada sesión de carga se registra:
+# 
+# Nro. de Estacion
+# Tipo de Vehículo (SD, SV, UT)
+# Nro. Carga
+# Fecha de carga
+# Duración carga (minutos) 
+# Costo carga
+# 
+# Nota: SD: Sedan. SV: SUV y UT: Utilitario
+# Se pide escribir un algoritmo para:
+# a) Listar todas las cargas de una fecha ingresada por el usuario.
+# b) Mostrar el total recaudado por estación y por tipo de vehículo.
+# c) Crear un archivo de salida que contenga, por cada estación:
+# • Número de Estación
+# • Total recaudado en vehículos tipo Sedan
+# d) Informar cuáles son las estaciones que tuvieron mayor recaudación en vehículos tipo SUV 
+# que en vehículos tipo UTILITARIO
+*/
+
+ACCION par1 ES
+    Ambiente
+        fecha = REGISTRO
+            año: 1..9999
+            mes: 1..12
+            dia: 1..31
+        FIN_REGISTRO
+
+        cargas = REGISTRO
+
+            clave = REGISTRO
+                nro_est: ENTERO
+                tipo_veh: ("SD", "SV", "UT")
+                nro_carga: ENTERO
+            FIN_REGISTRO
+
+            fecha_carga: fecha
+            dur_carga: ENTERO
+            cost_carga: REAL
+        FIN_REGISTRO
+
+        cargas_sal = REGISTRO
+            nro_est: ENTERO
+            total_rec: REAL
+        FIN_REGISTRO
+
+        arch_cargas: ARCHIVO DE cargas ORDENADO POR clave
+        arch_sal: ARCHIVO DE cargas_sal
+
+        reg_carga: cargas
+        reg_sal: cargas_sal
+        
+        total_veh, total_sd, total_suv, total_ut, total_est: REAL
+        res_est: ENTERO
+        res_veh: ("SD", "SV", "UT")
+        fecha_input: fecha
+
+        PROCEDIMIENTO tratar_registro() ES
+            SI reg_carga.fecha_carga > fecha_input ENTONCES
+                ESCRIBIR("Est ", reg_carga.clave.nro_est, " | ", reg_carga.clave.tipo_veh, " | carga ", reg_carga.clave.nro_carga, " | ", reg_carga.fecha_carga.dia, "/", reg_carga.fecha_carga.mes, "/", reg_carga.fecha_carga.año, " | ", reg_carga.dur_carga, " min | $ ", reg_carga.cost_carga)
+            FIN_SI
+
+            total_veh := total_veh + reg_carga.cost_carga
+
+            SEGUN reg_carga.clave.tipo_veh HACER
+                "SD": total_sd := total_sd + reg_carga.cost_carga
+                "SV": total_suv := total_suv + reg_carga.cost_carga
+                "UT": total_ut := total_ut + reg_carga.cost_carga
+            FIN_SEGUN
+
+        FIN_PROCEDIMIENTO
+
+        PROCEDIMIENTO corte_vehiculo() ES
+
+            ESCRIBIR("El monto total por vehiculo de tipo ", res_veh, " es ", total_veh)
+            total_est := total_est + total_veh
+            total_veh := 0
+            res_veh := reg_carga.clave.tipo_veh
+
+        FIN_PROCEDIMIENTO
+
+        PROCEDIMIENTO corte_estacion() ES
+            corte_vehiculo
+            ESCRIBIR("El monto total de la estacion ", res_est, " es ", total_est)
+
+            SI total_suv > total_ut ENTONCES
+                ESCRIBIR("La estacion ", res_est, " tuvo mayor recaudacion en SUV que en UTILITARIOS")
+            FIN_SI
+            
+            reg_sal.nro_est := res_est
+            reg_sal.total_rec := total_sd
+            ESCRIBIR(arch_sal, reg_sal)
+
+            total_est := 0
+            total_sd := 0
+            total_suv := 0
+            total_ut := 0
+
+            res_est := reg_carga.clave.nro_est
+        
+        FIN_PROCEDIMIENTO
+    
+    Proceso
+        total_est := 0
+        total_sd := 0
+        total_suv := 0
+        total_ut := 0
+        total_veh := 0
+
+        ABRIR E/(arch_cargas)
+        ABRIR /S(arch_sal)
+
+        LEER(arch_cargas, reg_carga)
+
+        res_est:= reg_carga.clave.nro_est
+        res_veh := reg_carga.clave.tipo_veh
+        
+        ESCRIBIR("Ingrese una fecha (Año Mes Dia)")
+        LEER(fecha_input.año)
+        LEER(fecha_input.mes)
+        LEER(fecha_input.dia)
+
+        ESCRIBIR("")
+        ESCRIBIR("|Estacion|Tipo|Carga|Fecha|Duracion|Costo|")
+
+        MIENTRAS NOFDA(arch_cargas) HACER
+
+            SI res_est <> reg_carga.clave.nro_est ENTONCES
+                corte_estacion
+            SINO 
+                SI res_veh <> reg_carga.clave.tipo_veh ENTONCES
+                    corte_vehiculo
+                FIN_SI
+            FIN_SI
+            
+            tratar_registro
+
+            LEER(arch_cargas, reg_carga)
+
+        FIN_MIENTRAS
+
+        corte_estacion
+
+        CERRAR(arch_cargas)
+        CERRAR(arch_sal)
+FIN_ACCION

@@ -1,0 +1,268 @@
+#Ejercicio 2.2.1
+#Se dispone de una secuencia con los datos de los alumnos de la facultad:
+#
+#Apellido y Nombre
+#Carrera (ISI - IEM - IQ)
+#Nº de Legajo
+#Fecha de Nacimiento
+#Fecha de Ingreso
+#D.N.I.
+#Sexo (M o F)
+#Fecha de último examen aprobado
+#Nota
+#Se desea un listado de los mismos, con el siguiente formato:
+#
+#|Nro_Legajo|Apellido_Nombre|Documento|Carrera|
+
+
+
+
+ACCION ej2.2.1 ES
+    AMBIENTE
+
+        fecha = REGISTRO
+            año: ENTERO
+            mes: ENTERO 
+            dia: ENTERO
+        FIN_REGISTRO
+
+        alumnos = REGISTRO
+            apyn: AN(50)
+            carrera: ('ISI', 'IEM', 'IQ')
+            nro_leg: ENTERO
+            fecha_nac: fecha
+            fecha_ing: fecha
+            dni: ENTERO
+            sexo: ('M', 'F')
+            fecha_exm: fecha
+            nota: ENTERO
+        FIN_REGISTRO
+    
+        alumno: alumnos
+
+        arch_alumn: ARHCIVO DE alumnos 
+
+    PROCESO
+        ABRIR E/(arch_alumn)
+        LEER(arch_alumn, alumno) #------Pilas con esto
+        ESCRIBIR('|Nro_Legajo|Apellido_Nombre|Documento|Carrera|')
+        MIENTRAS NOFDA(arch_alumn) HACER
+            ESCRIBIR(alumno.nro_leg, alumno.apyn, alumno.dni, alumno.carrera)
+            LEER(arch_alumn, alumno)
+        FIN_MIENTRAS
+
+        CERRAR(arch_alumn)
+
+FIN_ACCION
+            
+
+
+#Ejercicio 2.2.2¶
+#Se dispone de una secuencia de facturas con los siguientes datos:
+
+#Nº de Factura
+#Fecha
+#Total
+#Se desea un listado de las facturas cuyas fechas sean posteriores a una fecha dada, y cuyos importes totales no alcancen los $1000, con el siguiente formato:
+
+#|Nro_Factura|Fecha|Importe_Total|
+
+
+ACCION ej2.2.2 ES
+    AMBIENTE
+
+        fecha = REGISTRO
+            año: ENTERO
+            mes: ENTERO 
+            dia: ENTERO
+        FIN_REGISTRO
+
+        facturas: REGISTRO
+            nro_fact: ENTERO
+            fecha_fact: fecha
+            total: REAL
+        FIN_REGISTRO
+
+        arch_fact: ARCHIVO DE factura
+
+        factura: facturas
+        fecha_input: fecha
+
+    PROCESO
+
+        ABRIR E/(arch_fact)
+        LEER(arch_fact, factura)
+
+        ESCRIBIR('|Nro_Factura|Fecha|Importe_Total|')
+        ESCRIBIR('Ingrese una fecha a comparar')
+        ESCRIBIR('Ingrese el año, mes y dia')
+        LEER(fecha_input.año, fecha_input.mes, fecha_input.dia)
+
+        MIENTRAS NOFDA(arch_fact) HACER
+            SI factura.fecha_fact > fecha_input Y factura.total < 1000 ENTONCES
+                ESCRIBIR(factura.nro_fact, factura.fecha_fact, factura.total)
+            FIN_SI
+            LEER(arch_fact, factura)
+        FIN_MIENTRAS
+FIN_ACCION
+
+
+
+#Ejercicio 2.2.3
+#Dada la siguiente secuencia de datos con el siguiente formato:
+
+#Nº de socio
+#Nº de teléfono
+#Apellido y Nombre
+#Carrera (ISI - IEM - IQ - LAR)
+#Domicilio
+#Cantidad de unidades prestadas
+#Correspondiente a los alumnos socios de la Biblioteca, generar la secuencia de los alumnos de “ISI” que tengan prestadas más de 4 unidades bibliográficas#.
+
+
+
+ACCION ej2.2.3 ES
+    AMBIENTE
+
+        socios = REGISTRO
+            nro_socio: ENTERO
+            nro_tel: ENTERO
+            apyn: AN(50)
+            carrera: ('ISI', 'IEM', 'IQ')
+            domicilio: AN(50)
+            cant_prest: ENTERO
+        FIN_REGISTRO
+
+        arch_soc: ARCHIVO DE socios
+        reg_socio: socios
+
+        arch_sal: ARCHIVO DE socios
+
+
+    PROCESO
+        ABRIR E/(arch_soc), ABRIR /S(arch_soc)
+
+        LEER(arch_soc, reg_socio)
+
+        MIENTRAS NOFDA(arch_soc) HACER
+            SI reg_socio.carrera = 'ISI' Y reg_socio.cant_prest < 4 HACER
+                ESCRIBIR(arch_sal, reg_socio)
+            FIN_SI
+            LEER(arch_soc, reg_socio)
+        FIN_MIENTRAS
+
+        CERRAR(arch_soc); CERRAR(arch_sal)
+
+FIN_ACCION
+
+
+
+#Ejercicio 2.2.4¶
+#A partir de la secuencia del ejercicio 2.01 se desea generar otra secuencia con 
+#los alumnos de una carrera dada que aprobaron alguna materia este año, con nota mayor a 7 (siete).
+
+
+ACCION ej2.2.4 ES
+    AMBIENTE
+
+        fecha = REGISTRO
+            año: ENTERO
+            mes: ENTERO 
+            dia: ENTERO
+        FIN_REGISTRO
+
+        alumnos = REGISTRO
+            apyn: AN(50)
+            carrera: ('ISI', 'IEM', 'IQ')
+            nro_leg: ENTERO
+            fecha_nac: fecha
+            fecha_ing: fecha
+            dni: MUMERICO
+            sexo: ('M', 'F')
+            fecha_exm: fecha
+            nota: ENTERO
+        FIN_REGISTRO
+    
+        reg_alumno: alumnos
+
+        arch_sal: ARCHIVO DE alumnos
+        arch_alumn: ARHCIVO DE alumnos
+
+        carrera_input: AN(3)
+        fecha_input: ENTERO
+
+    PROCESO
+        ABRIR E/(arch_alumn); ABRIR /S(arch_sal)
+        LEER(arch_alumn, alumno)
+
+        ESCRIBIR('Ingrese el año a actual')
+        LEER(fecha_input)
+        ESCRIBIR('Ingrese la carrera a consultar')
+        LEER(carrera_input)
+
+        MIENTRAS NOFDA(arch_alumn) HACER
+            SI reg_alumno.fecha_exm.año = fecha_input.año Y reg_alumno.nota > 7 ENTONCES Y reg_alumno.carrera = carrera_input
+                ESCRIBIR(arch_sal, reg_alumno)
+            FIN_SI
+            LEER(arch_alumn, reg_alumno)
+        FIN_MIENTRAS
+
+        CERRAR(arch_alumn); CERRAR(arch_sal)
+
+FIN_ACCION
+
+
+
+#Ejercicio 2.2.5¶
+#A partir de la secuencia del ejercicio 2.01 se desea generar un listado con los alumnos que aprobaron la última materia rendida 
+#con nota superior a 7, e ingresaron el año pasado, con el siguiente formato:
+
+#Nro_LegajoApellido_NombreCarrera
+
+
+ACCION ej2.2.5 ES
+    AMBIENTE
+
+        fecha = REGISTRO
+            año: ENTERO
+            mes: ENTERO 
+            dia: ENTERO
+        FIN_REGISTRO
+
+        alumnos = REGISTRO
+            apyn: AN(50)
+            carrera: ('ISI', 'IEM', 'IQ')
+            nro_leg: ENTERO
+            fecha_nac: fecha
+            fecha_ing: fecha
+            dni: ENTERO
+            sexo: ('M', 'F')
+            fecha_exm: fecha
+            nota: ENTERO
+        FIN_REGISTRO
+    
+        alumno: alumnos
+
+        año_pasado: NUMERICO(4)
+        arch_alumn: ARHCIVO DE alumnos 
+
+    PROCESO
+        ABRIR E/(arch_alumn)
+        LEER(arch_alumn, alumno) 
+
+        ESCRIBIR('Ingrese el año pasado')
+        LEER(año_pasado)
+
+        ESCRIBIR('|Nro_Legajo|Apellido_Nombre|Carrera|')
+
+        MIENTRAS NOFDA(arch_alumn) HACER
+            SI reg_alumno.fecha_ing.año = año_pasado Y reg_alumno.nota > 7 ENTONCES
+                ESCRIBIR(reg_alumno.nro_leg, reg_alumno.apyn, reg_alumno.carrera)
+            FIN_SI
+
+            LEER(arch_alumn, alumno)
+        FIN_MIENTRAS
+
+        CERRAR(arch_alumn)
+
+FIN_ACCION

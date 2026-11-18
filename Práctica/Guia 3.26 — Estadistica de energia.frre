@@ -1,0 +1,182 @@
+/*
+    ═══════════════════════════════════════════════════════════════════════
+    EJERCICIO 3.26 — Guía de Cátedra, Unidad 3 (Arreglos)
+    ═══════════════════════════════════════════════════════════════════════
+
+    Se dispone de un archivo secuencial de facturas de una empresa de energía
+    eléctrica, correspondientes a un año, con el siguiente formato:
+
+        Nro_Factura | Nro_Usuario | Zona | Fecha | Consumo
+
+    Se desea obtener un cuadro estadístico que informe los consumos y los
+    importes totales facturados por mes discriminados por zona, con el
+    siguiente formato:
+
+    ┌────────────────┬────────┬────────┬────────┬────────┬───────────────┐
+    │                │ Zona A │ Zona B │ Zona C │ Zona D │ Total por mes │
+    ├────────────────┼────────┼────────┼────────┼────────┼───────────────┤
+    │ Enero          │  ...   │  ...   │  ...   │  ...   │      ...      │
+    │ Febrero        │  ...   │  ...   │  ...   │  ...   │      ...      │
+    │ ...            │  ...   │  ...   │  ...   │  ...   │      ...      │
+    │ Diciembre      │  ...   │  ...   │  ...   │  ...   │      ...      │
+    ├────────────────┼────────┼────────┼────────┼────────┼───────────────┤
+    │ Total por zona │  ...   │  ...   │  ...   │  ...   │ Total General │
+    └────────────────┴────────┴────────┴────────┴────────┴───────────────┘
+
+    La ciudad está dividida en 4 Zonas (A, B, C, D), la tarifa por Kw. que
+    cobra la empresa en cada una de ellas es:
+
+        Zona A: $ 0,05      Zona C: $ 0,09
+        Zona B: $ 0,07      Zona D: $ 0,13
+
+
+    ═══════════════════════════════════════════════════════════════════════
+    LOS DATOS
+    ═══════════════════════════════════════════════════════════════════════
+
+    En "Guia 3.26 — Estadistica de energia.datos/facturas.tsv": 140 facturas
+    de un año, SIN ningún orden particular (es un proceso estadístico, no un
+    corte de control).
+
+    Declará el archivo con el nombre "facturas". Las columnas son:
+
+        nro_factura    entero
+        nro_usuario    entero
+        zona           ('A', 'B', 'C', 'D')
+        fecha.anio     entero
+        fecha.mes      entero
+        fecha.dia      entero
+        consumo        entero          (en Kw)
+
+    Las respuestas están en "Guia 3.26 — Estadistica de energia —
+    respuestas.md". Abrilo DESPUÉS.
+
+
+    ═══════════════════════════════════════════════════════════════════════
+    CÓMO SE LEE
+    ═══════════════════════════════════════════════════════════════════════
+
+    Es PROCESO ESTADÍSTICO: el archivo viene desordenado, así que no hay corte
+    de control posible. Se acumula todo en memoria y se informa al final.
+
+    LA MATRIZ: 12 meses + 1 fila de totales, 4 zonas + 1 columna de totales.
+    T[13,5] es el total general.
+
+    LO PROPIO DE ESTE EJERCICIO: cada celda lleva DOS cosas, consumo e importe.
+    Se puede resolver con dos matrices en paralelo, pero una matriz de REGISTROS
+    es más segura: no se pueden desincronizar, y los cuatro incrementos se
+    escriben una sola vez para las dos magnitudes.
+
+    DE DÓNDE SALEN LOS ÍNDICES:
+        fila    <- el mes, que está adentro de la fecha: r.fecha.mes
+        columna <- la zona, que es una LETRA y hay que mapearla a 1..4
+
+    EL IMPORTE no viene en el archivo, se calcula: consumo * tarifa[zona].
+*/
+
+ACCION estadistica_energia ES
+    Ambiente
+
+        fecha = REGISTRO
+            anio : 1..9999
+            mes  : 1..12
+            dia  : 1..31
+        FIN_REGISTRO
+
+        factura = REGISTRO
+            nro_factura : entero
+            nro_usuario : entero
+            zona        : ('A', 'B', 'C', 'D')
+            fecha       : fecha
+            consumo     : entero
+        FIN_REGISTRO
+
+        // las dos magnitudes juntas en una sola celda
+        celda = REGISTRO
+            consumo : entero
+            importe : real
+        FIN_REGISTRO
+
+        facturas : ARCHIVO de factura      // sin "ordenado por": viene desordenado
+        r : factura
+
+        // 12 meses + fila de totales  x  4 zonas + columna de totales
+        T : ARREGLO[1..13, 1..5] de celda
+
+        tarifa : ARREGLO[1..4] de real     // dadas por la consigna
+        nombre_mes : ARREGLO[1..12] de AN(12)
+
+        i, j : entero
+        importe : real
+
+    Proceso
+        // PASO 1: la matriz en 0. Las DOS magnitudes de cada celda.
+        PARA i := 1 HASTA 13 HACER
+            PARA j := 1 HASTA 5 HACER
+                T[i,j].consumo := 0
+                T[i,j].importe := 0
+            FIN_PARA
+        FIN_PARA
+
+        tarifa[1] := 0.05      // Zona A
+        tarifa[2] := 0.07      // Zona B
+        tarifa[3] := 0.09      // Zona C
+        tarifa[4] := 0.13      // Zona D
+
+        nombre_mes[1]  := "Enero"       ; nombre_mes[2]  := "Febrero"
+        nombre_mes[3]  := "Marzo"       ; nombre_mes[4]  := "Abril"
+        nombre_mes[5]  := "Mayo"        ; nombre_mes[6]  := "Junio"
+        nombre_mes[7]  := "Julio"       ; nombre_mes[8]  := "Agosto"
+        nombre_mes[9]  := "Septiembre"  ; nombre_mes[10] := "Octubre"
+        nombre_mes[11] := "Noviembre"   ; nombre_mes[12] := "Diciembre"
+
+        ABRIR E/(facturas)
+        LEER(facturas, r)
+        MIENTRAS NFDA(facturas) HACER
+
+            i := r.fecha.mes                    // la fila sale de la fecha
+
+            SEGUN r.zona HACER                  // la columna, de la letra
+                'A' : j := 1
+                'B' : j := 2
+                'C' : j := 3
+                'D' : j := 4
+            FIN_SEGUN
+
+            importe := r.consumo * tarifa[j]    // el importe no viene, se calcula
+
+            // LOS CUATRO INCREMENTOS, para las dos magnitudes
+            T[i,j].consumo   := T[i,j].consumo   + r.consumo    // la celda
+            T[i,5].consumo   := T[i,5].consumo   + r.consumo    // total del mes
+            T[13,j].consumo  := T[13,j].consumo  + r.consumo    // total de la zona
+            T[13,5].consumo  := T[13,5].consumo  + r.consumo    // total general
+
+            T[i,j].importe   := T[i,j].importe   + importe
+            T[i,5].importe   := T[i,5].importe   + importe
+            T[13,j].importe  := T[13,j].importe  + importe
+            T[13,5].importe  := T[13,5].importe  + importe
+
+            LEER(facturas, r)
+        FIN_MIENTRAS
+        CERRAR(facturas)
+
+        // PASO 7: mostrar los dos cuadros
+        ESCRIBIR("CONSUMOS (Kw)")
+        ESCRIBIR("Mes          | Zona A | Zona B | Zona C | Zona D | Total")
+        PARA i := 1 HASTA 12 HACER
+            ESCRIBIR(nombre_mes[i], " | ", T[i,1].consumo, " | ", T[i,2].consumo,
+                     " | ", T[i,3].consumo, " | ", T[i,4].consumo, " | ", T[i,5].consumo)
+        FIN_PARA
+        ESCRIBIR("TOTAL x ZONA | ", T[13,1].consumo, " | ", T[13,2].consumo, " | ",
+                 T[13,3].consumo, " | ", T[13,4].consumo, " | ", T[13,5].consumo)
+
+        ESCRIBIR("")
+        ESCRIBIR("IMPORTES ($)")
+        ESCRIBIR("Mes          | Zona A | Zona B | Zona C | Zona D | Total")
+        PARA i := 1 HASTA 12 HACER
+            ESCRIBIR(nombre_mes[i], " | ", T[i,1].importe, " | ", T[i,2].importe,
+                     " | ", T[i,3].importe, " | ", T[i,4].importe, " | ", T[i,5].importe)
+        FIN_PARA
+        ESCRIBIR("TOTAL x ZONA | ", T[13,1].importe, " | ", T[13,2].importe, " | ",
+                 T[13,3].importe, " | ", T[13,4].importe, " | ", T[13,5].importe)
+FIN_ACCION

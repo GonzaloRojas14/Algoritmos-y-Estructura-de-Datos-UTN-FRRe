@@ -1,0 +1,25 @@
+confederacion	equipo	nombre_jugador	asistencias	posicion	goles	tarj_rojas
+CONCACAF	Monterrey	Berterame	1	DEL	8	0
+CONCACAF	Monterrey	Canales	6	MED	4	0
+CONCACAF	Monterrey	Medina	0	DEF	0	1
+CONCACAF	Seattle	Ruidiaz	2	DEL	6	1
+CONCACAF	Seattle	Morris	3	DEL	9	0
+CONCACAF	Seattle	Roldan	4	MED	2	0
+CONMEBOL	Boca	Benedetto	2	DEL	9	0
+CONMEBOL	Boca	Cavani	1	DEL	7	1
+CONMEBOL	Boca	Advincula	3	DEF	1	0
+CONMEBOL	Boca	Rossi	0	ARQ	0	1
+CONMEBOL	Palmeiras	Endrick	4	DEL	5	0
+CONMEBOL	Palmeiras	Rony	2	DEL	4	1
+CONMEBOL	Palmeiras	Gomez	1	DEF	2	0
+CONMEBOL	River	Borja	3	DEL	12	0
+CONMEBOL	River	Colidio	5	DEL	6	0
+CONMEBOL	River	Diaz	2	MED	3	1
+UEFA	Bayern	Kane	5	DEL	14	0
+UEFA	Bayern	Musiala	7	MED	6	0
+UEFA	Bayern	Kimmich	9	DEF	2	1
+UEFA	Bayern	Neuer	0	ARQ	0	0
+UEFA	Real Madrid	Mbappe	4	DEL	11	1
+UEFA	Real Madrid	Vinicius	8	DEL	10	0
+UEFA	Real Madrid	Bellingham	6	MED	5	0
+UEFA	Real Madrid	Rudiger	1	DEF	1	1

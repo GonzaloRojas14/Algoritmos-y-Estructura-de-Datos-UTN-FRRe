@@ -1,0 +1,7 @@
+planta	sector	zona	fecha	region
+PlantaA	Pintura	Z1	20261120	1
+PlantaB	Montaje	Z2	20261105	2
+PlantaA	Soldadura	Z3	20261112	2
+PlantaC	Hornos	Z1	20261105	3
+PlantaB	Calderas	Z2	20261130	2
+PlantaC	Prensas	Z4	20261101	4

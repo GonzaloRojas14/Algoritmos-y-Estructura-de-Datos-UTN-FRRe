@@ -1,0 +1,69 @@
+/*
+Prueba de escritorio de Promedio(A, n) = (Promedio(A, n - 1) * (n - 1) + A[n]) / n
+
+Datos: A = 4, 8, 15, 16, 23, 42, 1, 2, 3, 6     (suma 120, promedio 12)
+
+1) BAJADA: cada llamada pide la anterior y queda esperando
+   Promedio(A,10) -> Promedio(A,9) -> ... -> Promedio(A,2) -> Promedio(A,1)
+
+   Promedio(A,1) es el caso base: devuelve A[1] = 4 sin llamar a nadie.
+
+2) SUBIDA: cada llamada termina su cuenta con lo que le devolvió la de abajo
+
+ n | prom. anterior | x (n-1) = suma ant. | + A[n] | = suma de n | / n = Promedio(A,n)
+---+----------------+---------------------+--------+-------------+--------------------
+ 1 |       -        |          -          |   -    |      4      | 4        (caso base)
+ 2 |      4         |     4 x 1 =   4     |   8    |     12      | 12 / 2  =  6
+ 3 |      6         |     6 x 2 =  12     |  15    |     27      | 27 / 3  =  9
+ 4 |      9         |     9 x 3 =  27     |  16    |     43      | 43 / 4  = 10.75
+ 5 |     10.75      | 10.75 x 4 =  43     |  23    |     66      | 66 / 5  = 13.2
+ 6 |     13.2       |  13.2 x 5 =  66     |  42    |    108      | 108 / 6 = 18
+ 7 |     18         |    18 x 6 = 108     |   1    |    109      | 109 / 7 = 15.5714...
+ 8 |     15.5714... |   ... x 7 = 109     |   2    |    111      | 111 / 8 = 13.875
+ 9 |     13.875     | 13.875 x 8 = 111    |   3    |    114      | 114 / 9 = 12.6666...
+10 |     12.6666... |   ... x 9 = 114     |   6    |    120      | 120 / 10 = 12   <- resultado
+
+Fijate la 4ta columna: "promedio anterior x (n-1)" siempre da la suma de los
+anteriores (4, 12, 27, 43, ...). La función nunca guarda la suma, la recupera.
+
+Al ejecutar este archivo la terminal muestra lo mismo: primero las llamadas
+bajando (con sangría) y después las cuentas subiendo.
+*/
+
+ACCION PruebaDeEscritorio ES
+AMBIENTE
+    TAM = 10;          // no le pongo N: el pseudocódigo no distingue N de n, y n es el parámetro
+
+    vector = ARREGLO[1..TAM] de real;
+
+    V: vector;
+
+    Funcion Promedio(A: vector; n: entero): real ES
+    Ambiente
+        ant: real;          // lo que devuelve la llamada de abajo
+        sangria: AN(40);
+        k: entero;
+    Proceso
+        sangria := "";
+        PARA k := 1 HASTA TAM - n HACER
+            sangria := sangria + "  ";
+        FIN_PARA
+
+        SI n = 1 ENTONCES
+            ESCRIBIR(sangria, "Promedio(A, 1): caso base, devuelvo A[1] = ", A[1]);
+            Promedio := A[1];
+        SINO
+            ESCRIBIR(sangria, "Promedio(A, ", n, "): necesito Promedio(A, ", n - 1, ")");
+            ant := Promedio(A, n - 1);
+            Promedio := (ant * (n - 1) + A[n]) / n;
+            ESCRIBIR(sangria, "Promedio(A, ", n, ") = (", ant, " * ", n - 1, " + ", A[n], ") / ", n,
+                     " = (", ant * (n - 1), " + ", A[n], ") / ", n, " = ", (ant * (n - 1) + A[n]) / n);
+        FIN_SI
+    FIN_FUNCION
+
+PROCESO
+    V[1] := 4;   V[2] := 8;   V[3] := 15;  V[4] := 16;  V[5] := 23;
+    V[6] := 42;  V[7] := 1;   V[8] := 2;   V[9] := 3;   V[10] := 6;
+
+    ESCRIBIR("El promedio es: ", Promedio(V, TAM));
+FIN_ACCION

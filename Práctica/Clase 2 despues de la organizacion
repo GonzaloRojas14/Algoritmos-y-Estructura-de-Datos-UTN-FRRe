@@ -1,0 +1,76 @@
+Clase 2 — Procesos Estadísticos (archivos + arreglos)
+
+Matriz: 5 sucursales + 1 fila de totales  = 6 filas
+        7 rubros     + 1 columna de totales = 8 columnas
+        A[6,8] = total general
+
+
+ACCION ESTAD ES
+    AMBIENTE
+        Venta = REGISTRO
+            Id: N(9)
+            Cod_Prod: N(6)
+            Fecha_Venta = REGISTRO
+                Dia: 1..31
+                Mes: 1..12
+                Anio: N(4)
+            FIN_REGISTRO
+            Suc: 1..5
+            Cant: REAL
+            Rubro: 1..7
+            Precio_Unitario: REAL
+        FIN_REGISTRO
+
+        Arch: ARCHIVO DE Venta ORDENADO POR Id
+        Reg: Venta
+        A: ARREGLO DE [1..6, 1..8] DE REAL
+        Lin: REAL
+        i, j: ENTERO
+
+        PROCEDIMIENTO Poner_Cero_Arreglo
+            PARA i := 1 A 6, 1 HACER
+                PARA j := 1 A 8, 1 HACER
+                    A[i, j] := 0
+                FIN_PARA
+            FIN_PARA
+        FIN_PROCEDIMIENTO
+
+        PROCEDIMIENTO Mostrar_Arreglo
+            PARA i := 1 A 6, 1 HACER
+                PARA j := 1 A 8, 1 HACER
+                    ESCRIBIR(A[i, j])
+                FIN_PARA
+            FIN_PARA
+        FIN_PROCEDIMIENTO
+
+    PROCESO
+        Poner_Cero_Arreglo
+
+        ABRIR E/(Arch)
+        LEER(Arch, Reg)
+
+        MIENTRAS NFDA(Arch) HACER
+            Lin := Reg.Cant * Reg.Precio_Unitario
+
+            # celda del cruce sucursal-rubro
+            A[Reg.Suc, Reg.Rubro] := A[Reg.Suc, Reg.Rubro] + Lin
+            # total de la fila: lo facturado por esa sucursal
+            A[Reg.Suc, 8]         := A[Reg.Suc, 8]         + Lin
+            # total de la columna: lo facturado por ese rubro
+            A[6, Reg.Rubro]       := A[6, Reg.Rubro]       + Lin
+            # total general
+            A[6, 8]               := A[6, 8]               + Lin
+
+            LEER(Arch, Reg)
+        FIN_MIENTRAS
+
+        CERRAR(Arch)
+
+        Mostrar_Arreglo
+        Mostrar_Salida_Solicitada
+FIN_ACCION
+
+
+PENDIENTE: falta la consigna del ejercicio -> escribir Mostrar_Salida_Solicitada.
+Ojo: las busquedas de maximo/minimo van PARA i := 1 A 5 y PARA j := 1 A 7,
+sin incluir la fila 6 ni la columna 8 (si no, el maximo siempre es el total).

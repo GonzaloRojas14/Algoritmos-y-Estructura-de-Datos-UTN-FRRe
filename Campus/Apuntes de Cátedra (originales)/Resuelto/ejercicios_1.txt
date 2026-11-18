@@ -1,0 +1,112 @@
+1
+Suma de N números ingresados por el usuario
+
+Leer una cantidad N ingresada por el usuario y luego leer N números. Calcular y mostrar la suma total y el promedio de los valores ingresados.
+
+Acción SumaPromedio ES
+  Ambiente
+    n, i, numero, suma : Numérico
+    promedio          : Numérico
+  Proceso
+    suma := 0
+    Escribir("Ingrese la cantidad de números:")
+    Leer(n)
+    Para i := 1 hasta n hacer
+      Escribir("Ingrese el número ", i, ":")
+      Leer(numero)
+      suma := suma + numero
+    Fin Para
+    promedio := suma / n
+    Escribir("Suma total: ", suma)
+    Escribir("Promedio: ", promedio)
+  Fin Accion
+
+2
+Tabla de multiplicar con validación de rango
+
+Solicitar un número entre 1 y 10. Validar que esté en ese rango (repetir la solicitud si no lo está) y luego mostrar su tabla de multiplicar del 1 al 10.
+
+Accion TablaMultiplicar Es
+  Ambiente
+    num, i, resultado : Numérico
+  Proceso
+    Escribir("Ingrese un número del 1 al 10:")
+    Leer(num)
+    Mientras num < 1 O num > 10 hacer
+      Escribir("Número inválido. Ingrese un número del 1 al 10:")
+      Leer(num)
+    Fin Mientras
+    Escribir("Tabla del ", num)
+    Para i := 1 hasta 10 hacer
+      resultado := num * i
+      Escribir(num, " x ", i, " = ", resultado)
+    Fin Para
+  Fin Accion
+
+3
+Clasificación de notas de un curso
+
+Ingresar notas de alumnos (de 0 a 10) hasta que se ingrese −1 como centinela. Contar cuántos aprobaron (nota ≥ 6), cuántos desaprobaron y calcular el promedio general del curso.
+
+Accion ClasificacionNotas Es
+  Ambiente
+    nota, suma, aprobados, desaprobados, total : Numérico
+    promedio : Numérico
+  Proceso
+    suma := 0
+    aprobados := 0
+    desaprobados := 0
+    total := 0
+    Repetir
+      Escribir("Ingrese nota (o -1 para terminar):")
+      Leer(nota)
+      Si nota <> -1 entonces
+        suma := suma + nota
+        total := total + 1
+        Si nota ≥ 6 entonces
+          aprobados := aprobados + 1
+        Sino
+          desaprobados := desaprobados + 1
+        Fin Si
+      Fin Si
+    Hasta que nota = -1
+    promedio := suma / total
+    Escribir("Aprobados: ", aprobados)
+    Escribir("Desaprobados: ", desaprobados)
+    Escribir("Promedio del curso: ", promedio)
+  Fin Accion
+
+4
+Números primos en un rango
+
+Leer dos números positivos A y B (con A < B). Mostrar todos los números primos en el rango [A, B] y la cantidad total de primos encontrados.
+
+Accion PrimosEnRango Es
+  Ambiente
+    a, b, i, j, cantPrimos : Numérico
+    esPrimo               : Lógico
+  Proceso
+    cantPrimos := 0
+    Escribir("Ingrese el límite inferior A:")
+    Leer(a)
+    Escribir("Ingrese el límite superior B:")
+    Leer(b)
+    Escribir("Números primos entre ", a, " y ", b, ":")
+    Para i := a hasta b hacer
+      esPrimo := Verdadero
+      Si i < 2 entonces
+        esPrimo := Falso
+      Sino
+        Para j := 2 hasta i - 1 hacer
+          Si i mod j = 0 entonces
+            esPrimo := Falso
+          Fin Si
+        Fin Para
+      Fin Si
+      Si esPrimo entonces
+        Escribir(i)
+        cantPrimos := cantPrimos + 1
+      Fin Si
+    Fin Para
+    Escribir("Total de primos encontrados: ", cantPrimos)
+  Fin Accion

@@ -1,0 +1,139 @@
+En un sector de un hospital, donde se encuentran internados 50 pacientes, se toma la temperatura de cada paciente 4 veces al día durante una semana.
+
+Lectura	Dom	Lun	Mar	Mie	Jue	Vie	Sab
+1	XX	XX	XX	XX	XX	XX	XX
+2	XX	XX	XX	XX	XX	XX	XX
+3	XX	XX	XX	XX	XX	XX	XX
+4	XX	XX	XX	XX	XX	XX	XX
+Se dispone de un arreglo con la información recopilada de todos los pacientes.
+
+Construir un algoritmo que:
+
+Liste por pantalla las temperaturas máxima y mínima de cada paciente, indicando el día y lectura en la que ocurrieron.
+Genere un nuevo arreglo que contenga la temperatura promedio por día de cada paciente.
+
+
+ACCION 3.23 ES
+    AMBIENTE
+        temperaturas: ARREGLO[1..4, 1..7, 1..50,] de REAL
+        pac, dia, lec: ENTERO
+        max_temp, min_temp
+
+
+    PROCESO
+        PARA pac := 1 HASTA 50 HACER
+
+            max_temp := temperaturas[1,1,pac]
+            min_temp := temperaturas[1,1,pac]
+
+            
+
+
+
+
+
+Ejercicio 3.25¶
+Una Fábrica que posee 4 plantas de producción en nuestro país y compra materia prima a 3 proveedores 
+distintos, desea realizar un control de los montos totales correspondientes a compras realizadas en cada 
+planta durante el último año, discriminados por proveedor y por mes. Para ello dispone de un 
+archivo con los datos de las facturas correspondientes. 
+(Aclaración: el archivo no está ordenado por ningún criterio)
+
+COMPRAS
+
+Nro_Factura|Proveedor|Fecha|Nro_Planta|Importe
+
+ACCION 3.25 ES
+    AMBIENTE
+        f= REGISTRO
+            nro_fact: ENTERO
+            prov: ("A".."C")
+            fecha_fact: fecha_fact
+            nro_plan: (1..4)
+            imp: REAL
+        FIN_REGISTRO
+
+        arch: ARCHIVO DE f
+        ref_f: f
+
+        tot: ARREGLO [1..5, 'A'..'D'] de REAL
+        pl: (1..5)
+        pr: ('A'..'D')
+
+    PROCESO
+
+
+
+
+
+
+
+Se desea efectuar una estadística de ventas. Se cuenta para ello con una secuencia 
+de las facturas emitidas, las cuales son identificadas por un Número; 
+dicha secuencia contiene información relativa al cliente: su Número y Zona a la cual pertenece, 
+como así también el Tipo de mercadería entregada, la Cantidad de unidades, el total gravado, 
+el total exento de IVA y el valor del IVA. Construya un algoritmo que emita por zona, y 
+dentro de la zona por tipo de mercadería el total de unidades vendidas, el total gravado, 
+el total exento y el total de IVA, y además un total general con la misma información. 
+Hay 9 zonas y 4 tipos de mercadería.
+
+
+
+ACCION 3.27 ES
+    AMBIENTE
+
+    
+
+
+
+
+
+
+
+
+Ejercicio 3.26¶
+Se dispone de un archivo secuencial de facturas de una empresa de energía eléctrica, 
+correspondientes a un año, con el siguiente formato:
+
+Nro_FacturaNro_UsuarioZonaFechaConsumo
+Se desea obtener un cuadro estadístico que informe los consumos y los importes totales 
+facturados por mes discriminados por zona, con el siguiente formato:
+
+Zona A	Zona B	Zona C	Zona D	Total por mes
+Enero	...	...	...	...	...
+Febrero	...	...	...	...	...
+...	...	...	...	...	...
+Diciembre	...	...	...	...	...
+Total por zona	...	...	...	...	Total General
+
+La ciudad está dividida en 4 Zonas (A,B,C,D), la tarifa por Kw. 
+
+
+ACCION 3.26 ES
+    AMBIENTE
+        FECHA: REGISTRO
+            año: NUMERICO(4)
+            mes: (1..12)
+            dia: NUMERICO(2)
+        FIN_REGISTRO
+
+        facturas: REGISTRO
+            nro_fact: ENTERO
+            nro_us: ENTERO
+            zona: ("A", "B", "C", "D")
+            fecha: FECHA
+            consumo: REAL
+        FIN_REGISTRO
+
+        arch_fact: ARCHIVO DE facturas 
+        reg_fact: facturas
+
+        zonas: ARREGLO["A", "B", "C", "D"] de REAL
+        
+        cuad_st: ARREGLO[]
+    PROCESO 
+        ABRIR E/(arch_fact)
+        LEER(arch_fact, reg_fact)
+
+
+

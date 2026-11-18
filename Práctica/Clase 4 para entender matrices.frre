@@ -1,0 +1,68 @@
+/*
+    ALGORITMOS Y ESTRUCTURAS DE DATOS - UTN FRRe
+    EXAMEN FINAL 04/03/2022
+
+    Para su aprobación debe tener al menos el 60% aprobado de cada ejercicio.
+
+    PROBLEMA 1
+
+    Trabajando como programadores en una reconocida empresa de desarrollo de
+    Software, nos solicitan realizar una rutina con la cual se podrá obtener una
+    estadística sobre los errores encontrados en sus programas en un determinado
+    año.
+
+    Para ello nos brindan un listado ya cargado de los 50 códigos de errores
+    posibles con su respectiva descripción, teniendo la siguiente estructura:
+    - Código de error: 8 caracteres
+    - Descripción del Error: 30 caracteres
+
+    Además nos dan un archivo llamado LogErrores con el siguiente diseño de
+    registro:
+    - Fecha: 10 caracteres
+    - Código Error: 8 caracteres
+
+    La información almacenada en este archivo:
+    - ya se encuentra validada
+    - no tiene ningún orden lógico
+    - puede contener la información de más de un año
+
+    Contamos con un procedimiento desarrollado por otra área al cual pasándole por
+    parámetro una fecha, nos devuelve un registro con 3 campos enteros (Día, Mes y
+    Año). Este procedimiento no debe ser desarrollado, solo ser invocado cuando
+    corresponda.
+
+    Se pide:
+
+    a) Desarrollar un algoritmo que reciba como parámetro los 50 Códigos de Error
+    y el año que se desea procesar. Procese los datos del archivo LogErrores y
+    genere 2 archivos nuevos, uno llamado NoProcesados que contendrá aquellos
+    registros que no son del año solicitado para la estadística con el mismo
+    diseño de registro que el archivo LogErrores. Y Otro llamado Totales con el
+    siguiente diseño de registro:
+    - Mes: Entero (1 a 12)
+    - Código de Error: 8 caracteres
+    - Cantidad de Errores: Entero
+
+    b) A partir del archivo Totales y los 50 Códigos de Error, informar:
+    b.1) Códigos de error no informados por mes
+    b.2) Mes con mayor cantidad de errores
+    b.3) Cantidad de errores registrados en total
+
+    ─────────────────────────────────────────────────────────────────────────
+
+    POR QUÉ ESTE EJERCICIO SE RESUELVE CON UNA MATRIZ:
+    el archivo LogErrores "no tiene ningún orden lógico". Sin orden no hay corte
+    de control posible, así que no queda otra que acumular en memoria mientras
+    se recorre. Y como hay que totalizar por DOS cosas a la vez —mes y código—
+    la estructura que corresponde es una matriz de 12 filas (meses) por 50
+    columnas (códigos de error posibles).
+
+    La columna de cada código es su POSICIÓN en el arreglo de 50 códigos: por eso
+    hay que buscarlo ahí antes de acumular.
+*/
+
+ACCION ej_parcial ES
+    Ambiente
+        
+    Proceso
+FIN_ACCION

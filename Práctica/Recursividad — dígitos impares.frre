@@ -1,0 +1,57 @@
+/*
+Desarrollar un algoritmo que permita contar la cantidad de digitos impares
+de un numero N ingresado por el usuario
+
+Idea: el último dígito de N es N MOD 10, y N DIV 10 es N sin ese dígito.
+  Ej. 3527:  3527 MOD 10 = 7   y   3527 DIV 10 = 352
+Así que cuento si el último es impar y le pido a la función el resto del número.
+Cada llamada tiene un dígito menos, hasta que queda uno solo (caso base).
+
+Planteo formal: CantImpares(N)
+  Caso base:       1, si N < 10 y N es impar
+                   0, si N < 10 y N es par
+  Caso recursivo:  1 + CantImpares(N DIV 10), si N >= 10 y N MOD 10 es impar
+                   CantImpares(N DIV 10),     si N >= 10 y N MOD 10 es par
+
+Prueba de escritorio con N = 3527:
+  CantImpares(3527): último 7, impar -> 1 + CantImpares(352)
+    CantImpares(352): último 2, par  -> CantImpares(35)
+      CantImpares(35): último 5, impar -> 1 + CantImpares(3)
+        CantImpares(3): caso base, 3 es impar -> 1
+      CantImpares(35)   = 1 + 1 = 2
+    CantImpares(352)    = 2
+  CantImpares(3527)     = 1 + 2 = 3          (los impares son 3, 5 y 7)
+*/
+
+ACCION DigitosImpares ES
+    AMBIENTE
+        num: entero;
+
+        Funcion CantImpares(N: entero): entero ES
+            Proceso
+                SI N < 10 ENTONCES
+                    // caso base: queda un solo dígito
+                    SI N MOD 2 = 1 ENTONCES
+                        CantImpares := 1
+                    SINO
+                        CantImpares := 0
+                    FIN_SI
+                SINO
+                    // caso recursivo: miro el último dígito y sigo con el resto
+                    SI (N MOD 10) MOD 2 = 1 ENTONCES
+                        CantImpares := 1 + CantImpares(N DIV 10)
+                    SINO
+                        CantImpares := CantImpares(N DIV 10)
+                    FIN_SI
+                FIN_SI
+        FIN_FUNCION
+
+    PROCESO
+        ESCRIBIR("Ingrese un número: ");
+        LEER(num);
+        // el signo no es un dígito: con -3527 cuento los de 3527
+        SI num < 0 ENTONCES
+            num := -num
+        FIN_SI
+        ESCRIBIR("Cantidad de dígitos impares: ", CantImpares(num));
+FIN_ACCION

@@ -1,0 +1,225 @@
+/*
+    ═══════════════════════════════════════════════════════════════════════
+    REVISIÓN DE TU SOLUCIÓN — Ejercicio N° 2 (Eco-Rutas)
+    ═══════════════════════════════════════════════════════════════════════
+
+    La estructura está bien. Los tres bugs que tiene son de detalle, no de
+    enfoque — que es lo difícil y lo tenés resuelto.
+
+
+    ───────────────────────────────────────────────────────────────────────
+    TU SOLUCIÓN, TAL CUAL LA ESCRIBISTE
+    ───────────────────────────────────────────────────────────────────────
+
+    Acción Eco-Rutas (costo: arreglo de [1..6]) de real]) es
+    Ambiente:
+
+    Tot: arreglo de [1..7; 1. 5) de real.
+    Novedades : archivo de NOVEDADES ordenado por tipo&equipo, nro_equips,
+                tipo - novedad, fecha_novedad;
+    Usuarios: archivo de USUARIOS indexado por id- usuario;
+    nov: NOVEDADES, user: USUARIOS;
+    costoComparable, corto: real;
+    i, j: entero;
+
+    Procedimiento:
+
+     Para i:=1 a 7 Hacer
+     Para j:=1 a 5 Hacer
+     Tot[i,j] := 0;
+     FinPara
+     FinPara
+     Abrir E/(Novedades); Leer(Novedades, Nov);
+     Abrir E/(Usuarios);
+     Escribir("Por favor ingrese un monto para comparar con los totales por origen");
+     Leer(costoComparable);
+     Mientras NFDA(Novedades) Hacer
+
+    Si nov.tipo_novedad = 2 Entonces
+    user.id_usuario := nov.id_usuario
+    Leer(Usuarios, user);
+    i:= nov.nro_circuito; j:= user.lugar_de_origen;
+    costo:= costo[j] * diff(nov.hora_inicio, nov.hora_fin)
+    Tot[i,j] := Tot[i,j] + costo;
+    Tot[7,j] := Tot[7,j] + costo;
+    Tot[i,5] := Tot[i,5] + costo;
+    Tot[7,5] := Tot[7,5] + costo;
+    FinSi
+    Leer(Novedades, Nov);
+    FinMientras
+    Para i:=1 a 6 Hacer
+    Escribir("Para el circuito ", i, " se recaudo: $ ");
+    Para j:=1 a 4 Hacer
+    Escribir(Tot[i,j], " del lugar de origen: ", j, ".");
+    FinPara
+    FinPara
+    Para i:=1 a 6 Hacer
+    Escribir("El total recaudado por el circuito ", i, " es de :$", Tot[i,5], ".");
+    FinPara
+    Para j:=1 a 4 Hacer
+    Escribir("El total recaudado por el lugar de origen ", j, " es de :$", Tot[7,j], ".");
+    Si Tot[7,j] > costoComparable Entonces
+    Escribir("Este lugar de origen supera el monto ingresado.");
+    FinSi
+    FinPara
+    Cerrar(Novedades)
+    Cerrar(Usuarios)
+    FinAccion
+
+
+    ═══════════════════════════════════════════════════════════════════════
+    LO QUE ESTÁ BIEN, Y NO ES POCO
+    ═══════════════════════════════════════════════════════════════════════
+
+    - La matriz 7x5 con los márgenes, exacta.
+    - Los CUATRO INCREMENTOS, y cada uno en el margen que le toca:
+          Tot[i,j]  celda      Tot[7,j]  por lugar
+          Tot[i,5]  por circuito         Tot[7,5]  general
+      Es el corazón del ejercicio y está perfecto.
+    - Lectura anticipada arriba + LEER al final del ciclo.
+    - El filtro tipo_novedad = 2.
+    - La consulta al indexado: asignar la clave y después LEER. Bien planteado.
+    - RECIBIR EL VECTOR DE COSTOS POR PARÁMETRO. Esto está MEJOR que lo que hice
+      yo, que lo dejé hardcodeado. La consigna dice "se cuenta con un vector de 6
+      posiciones", o sea que viene dado: pasarlo por parámetro es la lectura
+      fiel.
+    - Meter el inciso b) adentro del mismo PARA que los totales por lugar, en vez
+      de recorrer dos veces. Bien.
+
+
+    ═══════════════════════════════════════════════════════════════════════
+    BUG 1 (el grave) — costo[j] tiene que ser costo[i]
+    ═══════════════════════════════════════════════════════════════════════
+
+        costo := costo[j] * diff(...)        // j es el LUGAR DE ORIGEN
+
+    El vector tiene el costo por hora DE CADA CIRCUITO. El circuito es i, no j.
+    Va:
+
+        costo := costo[i] * diff(...)
+
+    Por qué es el peor de los tres: NO SE CAE. j vale 1..4, el vector va de 1..6,
+    así que el índice es válido y el algoritmo termina lo más bien, con números
+    equivocados. Lo probé metiendo este mismo error en mi versión, con los mismos
+    datos:
+
+                        BIEN      CON EL BUG
+        Circuito 1     40800        43900
+        Circuito 2     28500        28400
+        Circuito 3     19800        27900
+        Circuito 4     42000        28500
+        Circuito 5     15400        23200
+        Circuito 6     21600        18500
+        ─────────────────────────────────
+        TOTAL         168100       170400
+
+    Todo cambia, y nada avisa.
+
+
+    ═══════════════════════════════════════════════════════════════════════
+    BUG 2 — "costo" es el vector Y la variable del importe
+    ═══════════════════════════════════════════════════════════════════════
+
+        Acción Eco_Rutas (costo : ARREGLO[1..6] de real)   <- costo es el vector
+        ...
+        costo := costo[i] * diff(...)                      <- y acá lo pisás
+
+    En el primer préstamo le asignás un real a lo que era el arreglo y lo
+    destruís. A partir del segundo registro, costo[i] ya no existe.
+
+    Además declaraste "corto: real" — un typo de "costo" — así que la variable
+    del importe nunca llegó a existir. Los dos problemas son el mismo despiste.
+
+    Se arregla con un nombre distinto:
+
+        importe := costo[i] * diff(nov.hora_inicio, nov.hora_fin)
+
+
+    ═══════════════════════════════════════════════════════════════════════
+    BUG 3 — falta el SI EXISTE
+    ═══════════════════════════════════════════════════════════════════════
+
+        user.id_usuario := nov.id_usuario
+        Leer(Usuarios, user);
+        i := nov.nro_circuito; j := user.lugar_de_origen;     <- sin verificar
+
+    En un archivo indexado la secuencia es de tres pasos, no de dos:
+
+        asignar la clave  ->  LEER  ->  SI EXISTE  ->  operar
+
+    Si ese id_usuario no está en USUARIOS, user.lugar_de_origen queda con el
+    valor del usuario ANTERIOR, y acumulás la plata en la columna equivocada.
+    Nunca te enterás.
+
+        SI EXISTE ENTONCES
+            ... los cuatro incrementos ...
+        SINO
+            ESCRIBIR("ERROR: el usuario ", nov.id_usuario, " no existe")
+        FIN_SI
+
+
+    ═══════════════════════════════════════════════════════════════════════
+    FALTA — los registros no están declarados
+    ═══════════════════════════════════════════════════════════════════════
+
+    Usás NOVEDADES y USUARIOS como tipos, pero en ningún lado hay un REGISTRO que
+    los defina. Son las dos primeras cosas que tienen que estar en el Ambiente:
+
+        novedad = REGISTRO
+            tipo_equipo   : entero
+            nro_equipo    : entero
+            tipo_novedad  : 1..3
+            fecha_novedad : fecha
+            hora_inicio   : entero
+            hora_fin      : entero
+            nro_circuito  : 1..6
+            id_usuario    : entero
+        FIN_REGISTRO
+
+    En el parcial esto pesa: sin el Ambiente no hay algoritmo.
+
+    Detalle relacionado: le pusiste el mismo nombre al tipo y a la variable de
+    archivo (NOVEDADES / Novedades). Los identificadores son case-insensitive, así
+    que son el mismo nombre y choca. Usá "novedad" para el tipo.
+
+
+    ═══════════════════════════════════════════════════════════════════════
+    MENOR — no mostrás el total general
+    ═══════════════════════════════════════════════════════════════════════
+
+    Acumulás Tot[7,5] en los cuatro incrementos pero nunca lo imprimís. Es una
+    línea al final del todo.
+
+
+    ═══════════════════════════════════════════════════════════════════════
+    NOTACIÓN — para que no te descuenten por forma
+    ═══════════════════════════════════════════════════════════════════════
+
+    Nada de esto cambia la lógica, pero son puntos:
+
+        Eco-Rutas               ->  Eco_Rutas       (el nombre no lleva guiones)
+        Ambiente:               ->  Ambiente        (sin dos puntos)
+        Procedimiento:          ->  Proceso         (es otra palabra clave)
+        Para i := 1 a 7         ->  PARA i := 1 HASTA 7 HACER
+        arreglo de [1..7; 1..5) ->  ARREGLO[1..7, 1..5] de real   (coma, no ;)
+        tipo&equipo             ->  tipo_equipo
+        nro_equips              ->  nro_equipo
+        id- usuario             ->  id_usuario
+        Tot[i,j] := 0;          ->  sin ";" al final
+
+    El "arreglo de [1..6]) de real])" del encabezado quedó con paréntesis de más.
+    Va: ACCION Eco_Rutas(costo : ARREGLO[1..6] de real) ES
+
+
+    ═══════════════════════════════════════════════════════════════════════
+    RESUMEN
+    ═══════════════════════════════════════════════════════════════════════
+
+    Lo difícil de este ejercicio era darse cuenta de que es un proceso
+    estadístico con matriz, saber que la columna sale de consultar un indexado, y
+    acertarle a los cuatro incrementos. Las tres cosas las tenés.
+
+    Lo que falta es control de errores (SI EXISTE), el Ambiente completo, y
+    cuidado con los nombres de variables. Eso se arregla en diez minutos; lo otro
+    es el ejercicio.
+*/

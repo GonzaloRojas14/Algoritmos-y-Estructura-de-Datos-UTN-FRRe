@@ -53,6 +53,30 @@ Dos secciones: errores del alumno (repo `Practica/`) y bugs encontrados **en las
 | 26 | Nombre de acción con puntos: `ACCION 2.2.4 ES` | `ACCION ej_2_2_4 ES` |
 | 27 | `PARA i := 1 HASTA 10 HACER` cuando el paso no es 1 | `PARA i := 20 HASTA -20, -2 HACER` |
 
+### Listas con punteros
+
+| # | Error | Cómo se rompe | Visto en |
+|---|---|---|---|
+| 28 | Avanzar con `p := *p.dato` en vez de `p := *p.prox` | `p` recibe un dato, no una dirección: el recorrido se rompe en el primer paso | tus notas, `Clase 5 Listas.frre` |
+| 29 | Recorrido sin `p := *p.prox` | ciclo infinito sobre el primer nodo | patrón general |
+| 30 | `p.dato` sin asterisco | `p` es un puntero, no un registro: va `*p.dato` | patrón general |
+| 31 | Usar `*p` con `p = NIL`, o un nodo después de `DISPONER(p)` | no hay nodo: error | patrón general |
+| 32 | Circular recorrida con `MIENTRAS p <> NIL` | en una circular nunca aparece `NIL`: ciclo infinito | patrón general |
+| 33 | Circular: el ciclo `MIENTRAS *T.SIG <> PRIMERO` y olvidarse del último | el último nodo no se lista ni se compara | patrón general |
+| 34 | Cola: desencolar el último sin poner `ULT := NIL` | `ULT` queda apuntando a un nodo liberado | patrón general |
+| 35 | `a` (anterior) que no vuelve a `NIL` en cada inserción o eliminación | arrastra el anterior de la vuelta pasada y engancha mal | carga ordenada de la guía, si se repite |
+
+### Recursividad
+
+| # | Error | Cómo se rompe | Visto en |
+|---|---|---|---|
+| 36 | Sin caso base, o con una llamada que no se acerca a él | llamadas infinitas (la extensión corta a las 10000) | patrón general |
+| 37 | Caso base y caso recursivo con condiciones distintas | `> 6` en uno y `>= 6` en el otro: un 6 cuenta según en qué posición esté | promedio de aprobados de clase |
+| 38 | Parámetro `n` y constante `N` en la misma función | no se distinguen mayúsculas: `n` tapa a `N` | `Recursividad — prueba de escritorio.frre` |
+| 39 | Función recursiva llamada como instrucción suelta | el resultado se pierde: va en una expresión o asignado | patrón general |
+| 40 | Una rama del `SI` que no asigna el resultado al nombre de la función | la función devuelve el valor por defecto en ese caso | patrón general |
+| 41 | "Promedio" que divide por el total cuando solo se sumaron algunos | `Promedio_Aprobados` de clase da suma de aprobados / 10, no el promedio de los aprobados | promedio de aprobados de clase |
+
 ---
 
 ## B. Bugs en las fuentes de referencia
@@ -131,12 +155,52 @@ La versión de `AED26_Guia_Ejercicios/Resueltos/TP2/5_Actualizacion/Actualizacio
 
 Lo mismo con `Plantilla_Corte_Control.frre.txt`, que tiene un typo: `conT := contT + cont3` (falta una `t` en el destino).
 
-### B.6 — Errores menores dispersos
+### B.6 — Actualización unitaria: el alta pisa el registro del maestro
+
+La rama de alta de `plantillas.md` §5 (y la plantilla de cátedra de la que salió) armaba el
+registro nuevo **encima de `reg_mae`**:
+
+```
+                SINO
+                    reg_mae.clave  := reg_mov.clave      // ✗
+                    reg_mae.campo1 := reg_mov.campo1
+                    ESCRIBIR(arch_mae_act, reg_mae)
+```
+
+A la rama de alta se llega cuando `reg_mae.clave > reg_mov.clave`. O sea: `reg_mae` **tiene un
+registro del maestro, válido y sin procesar** — perdió la comparación justamente por eso.
+Pisarlo lo destruye. Y como en esa rama solo avanza `leer_mov`, el `reg_mae` corrupto sobrevive
+a la vuelta siguiente y se compara como si fuera real.
+
+Verificado ejecutando el ejercicio 2.2.19 con 6 registros de maestro y 6 movimientos: un
+registro se grabó dos veces, otro quedó con la cantidad del movimiento en lugar de la suya, y
+un tercero desapareció del maestro nuevo.
+
+La solución es un registro aparte (`reg_mae_act : mae`) para armar las altas. `reg_mae` se toca
+solo para leerlo y para la modificación, donde sí corresponde porque ahí el registro **es** el
+que se está tratando.
+
+La plantilla de **lotes** (§6) no tiene el problema: ya usa `aux_mae` para armar todo. El
+auxiliar estaba por otro motivo —acumular varios movimientos sobre la misma clave— pero de paso
+la protege de esto.
+
+Es el mismo patrón que el `i` global pisado por `busqueda` en el parcial resuelto en clase: una
+variable compartida que alguien sobreescribe mientras otro todavía la necesita.
+
+### B.7 — Errores menores dispersos
 
 - `Ejercicio_6.frre` (secuencias): `CERRAR("sec_hab")` con comillas — es un identificador, no un string. Además declara `sec_hab : secuencia de caracter` pero le avanza enteros, y usa `prov` como índice del `PARA` sin declararla.
 - `Ejercicio_13.frre`: declara `cont_alg`/`cont_pal` y al imprimir usa `cant_alg`/`cant_pal`.
 - `ACT INDEX BAJA FIS [TEMPLATE].txt`: `RE-ESCRIBIR(arch_mae_act, reg_mae)` sobre un archivo que nunca se declaró ni abrió; debe ser `arch_mae`.
 - `Ejercicio No Secuencial ILSE`: la función `multi_11_alt` asigna a `multi_11` (otro nombre) y no inicializa `sum`.
+
+### B.8 — Guía 2026: listas
+
+- **Teoría de listas** (`Guía de Cátedra/Teoría/Listas.md`): tres asignaciones escritas con `=` en vez de `:=`: `p = *p.prox` (búsqueda), `Prim = p` (carga encolada) y `Prim = *q.prox` (eliminación). Con `=` es una comparación, no asigna nada.
+- **Complementos, `LISTA_CIRCULAR`** (p. 63): usa `ANT` en la eliminación sin declararlo en el Ambiente.
+- **Complementos, `LISTA_DOBLE`** (p. 64): declara el campo `ant` con un tipo `punt` que no está definido, y le falta un `Fsi`.
+
+Los tres algoritmos corren corregidos en `aed-vscode/test/fixtures/` (`guia_lista_circular.frre`, `guia_lista_doble.frre`), con la corrección comentada.
 
 ---
 
@@ -152,3 +216,8 @@ Lo mismo con `Plantilla_Corte_Control.frre.txt`, que tiene un typo: `conT := con
 | Cargar el archivo de salida desde `r` en un corte | En el momento del corte `r` ya avanzó al registro del grupo siguiente. Se carga desde los **resguardos** |
 | Inicializar antes de leer el primer registro en corte | Los resguardos necesitan el primer registro: `LEER` va antes de `inicializar` |
 | Consistencia vs. congruencia | Consistencia = campo válido en sí mismo (aislado). Congruencia = datos coherentes entre sí (relacional). Si no es consistente, no puede ser congruente; si es consistente, todavía puede ser incongruente |
+| Lista enlazada vs. arreglo | El arreglo tiene tamaño fijo y acceso directo por índice; la lista crece nodo a nodo y se recorre desde `PRIM`. Insertar en el medio de una lista solo mueve punteros |
+| Copiar un puntero no copia el nodo | `q := p` deja **dos punteros al mismo nodo**: cambiar `*q.dato` cambia `*p.dato` |
+| Carga apilada vs. encolada | Apilada: cada nuevo queda primero y la lista sale **al revés** de la lectura. Encolada: queda último y sale **en orden** |
+| Recursión: bajada y subida | Lo que va antes de la llamada se ejecuta al bajar; lo que va después, al subir. Por eso `Binario` llama primero y escribe después |
+| Recursividad vs. iteración | La recursiva usa más memoria (una llamada pendiente por nivel). La cátedra pide usarla cuando el problema es naturalmente recursivo |

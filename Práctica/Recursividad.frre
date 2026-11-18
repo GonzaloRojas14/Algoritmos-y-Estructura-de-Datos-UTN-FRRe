@@ -1,0 +1,146 @@
+/*
+Recursividad
+Es una tecnica matematico computacional en la cual la solucion se basa
+en que el algoritmo realiza llamadas a si mismo
+dentro del proceso
+
+Caso base es un problema trivial que puede resolverse sin un calculo,
+representa una solucion simple para un caso particular
+
+Caso recursivo representa una solucion que involucra volver a utilizar
+la funcion original con parametros que se acercan al caso base
+
+
+Determine una funicon para calcular el promedio de los elementps de un
+arreglo de numeros que contiene 10 posiciones
+*/
+
+/*
+Ejercicios resueltos en clase (pasados en limpio). Cada uno arranca con su planteo formal.
+
+1) EsPar, usando solo la resta
+   Planteo formal: EsPar(Num)
+     Casos base:      = verdadero, si Num = 0
+                      = falso,     si Num = 1
+     Caso recursivo:  EsPar(Num - 2), si Num > 1
+
+2) Guía 5.1.8: dado un vector de 10 números enteros, calcular la suma de sus elementos
+   Planteo formal: Suma(vector, i)
+     Caso base:       vector[1],                      si i = 1
+     Caso recursivo:  vector[i] + Suma(vector, i - 1), si i > 1
+
+3) Ejercicio extra: promedio de los elementos de un arreglo de 10 enteros
+   Se arranca en i = 1 y se avanza hasta 10: cada elemento aporta A[i] / 10.
+     Caso base:       A[10] / 10,                                     si i = 10
+     Caso recursivo:  A[i] / 10 + Promedio_10_Elementos(A, i + 1),    si i < 10
+
+4) Ejercicio extra: igual, pero solo suman los que aprobaron (más de 6)
+     Caso base:       A[10] / 10 si aprobó, 0 si no,                  si i = 10
+     Caso recursivo:  A[i] / 10 + Promedio_Aprobados(A, i + 1) si aprobó,
+                      Promedio_Aprobados(A, i + 1) si no,             si i < 10
+   OJO: en clase quedó "> 6" en el caso base y ">= 6" en el recursivo, así que un 6
+   cuenta en cualquier posición menos en la última. Lo dejé como en clase: hay que
+   elegir uno de los dos (el enunciado dice "mayores a 6").
+
+5) Otra forma del 3, yendo de n hacia abajo: Promedio(A, n) es el promedio de las n
+   primeras posiciones. El promedio de las n-1 primeras por (n-1) es su suma; le sumo
+   A[n] y divido por n. (Ver "Recursividad — prueba de escritorio.frre".)
+     Caso base:       A[1],                                      si n = 1
+     Caso recursivo:  (Promedio(A, n - 1) * (n - 1) + A[n]) / n,  si n > 1
+*/
+
+ACCION Recursividad ES
+    AMBIENTE
+        N = 10;
+
+        vector = ARREGLO[1..N] de entero;
+
+        V: vector;
+        i: entero;
+        num: N(3);
+
+        // 1) EsPar
+        Funcion EsPar(Num: N(3)): logico ES
+            Proceso
+                SI Num = 0 ENTONCES
+                    EsPar := verdadero                  // caso base
+                SINO
+                    SI Num = 1 ENTONCES
+                        EsPar := falso                  // caso base
+                    SINO
+                        EsPar := EsPar(Num - 2)         // caso recursivo
+                    FIN_SI
+                FIN_SI
+        FIN_FUNCION
+
+        // 2) Guía 5.1.8: suma, de i hacia abajo (se llama con i = 10)
+        Funcion Suma(A: vector; i: entero): entero ES
+            Proceso
+                SI i = 1 ENTONCES
+                    Suma := A[i]                        // caso base
+                SINO
+                    Suma := A[i] + Suma(A, i - 1)       // caso recursivo
+                FIN_SI
+        FIN_FUNCION
+
+        // 3) Promedio, de i hacia arriba (se llama con i = 1)
+        Funcion Promedio_10_Elementos(A: vector; i: entero): real ES
+            Proceso
+                SI i = 10 ENTONCES
+                    // caso base: llegamos al final del arreglo
+                    Promedio_10_Elementos := A[i] / 10
+                SINO
+                    // caso recursivo: sumamos el valor actual y avanzamos al siguiente
+                    Promedio_10_Elementos := A[i] / 10 + Promedio_10_Elementos(A, i + 1)
+                FIN_SI
+        FIN_FUNCION
+
+        // 4) Promedio de los aprobados (se llama con i = 1)
+        Funcion Promedio_Aprobados(A: vector; i: entero): real ES
+            Proceso
+                SI i = 10 ENTONCES
+                    // caso base
+                    SI A[i] > 6 ENTONCES
+                        Promedio_Aprobados := A[i] / 10
+                    SINO
+                        Promedio_Aprobados := 0
+                    FIN_SI
+                SINO
+                    // caso recursivo
+                    SI A[i] >= 6 ENTONCES
+                        Promedio_Aprobados := A[i] / 10 + Promedio_Aprobados(A, i + 1)
+                    SINO
+                        Promedio_Aprobados := Promedio_Aprobados(A, i + 1)
+                    FIN_SI
+                FIN_SI
+        FIN_FUNCION
+
+        // 5) Otra forma del promedio, de n hacia abajo (se llama con n = 10)
+        Funcion Promedio(A: vector; n: entero): real ES
+            Proceso
+                SI n = 1 ENTONCES
+                    Promedio := A[1];                                       // caso base
+                SINO
+                    Promedio := (Promedio(A, n - 1) * (n - 1) + A[n]) / n;  // caso recursivo
+                FIN_SI
+        FIN_FUNCION
+
+    PROCESO
+        ESCRIBIR("Ingrese un número para ver si es par: ");
+        LEER(num);
+        SI EsPar(num) ENTONCES
+            ESCRIBIR(num, " es par")
+        SINO
+            ESCRIBIR(num, " es impar")
+        FIN_SI
+
+        PARA i := 1 HASTA N HACER
+            ESCRIBIR("Ingrese el número ", i, ": ");
+            LEER(V[i]);
+        FIN_PARA
+
+        ESCRIBIR("Suma: ", Suma(V, N));
+        ESCRIBIR("Promedio (forma de clase): ", Promedio_10_Elementos(V, 1));
+        ESCRIBIR("Promedio de aprobados: ", Promedio_Aprobados(V, 1));
+        ESCRIBIR("Promedio (otra forma): ", Promedio(V, N));
+FIN_ACCION

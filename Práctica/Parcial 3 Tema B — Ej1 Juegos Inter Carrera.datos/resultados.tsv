@@ -1,0 +1,6 @@
+cod_equipo	posicion_disciplinas[1]	posicion_disciplinas[2]	posicion_disciplinas[3]	posicion_disciplinas[4]	posicion_disciplinas[5]
+1	Campeón	NP	Tercero	Sin podio	NP
+2	Subcampeón	Campeón	Campeón	NP	Sin podio
+3	Sin podio	Sin podio	NP	NP	NP
+4	NP	Tercero	Subcampeón	Campeón	Campeón
+5	NP	NP	NP	NP	NP

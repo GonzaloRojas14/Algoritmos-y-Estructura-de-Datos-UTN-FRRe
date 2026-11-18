@@ -353,7 +353,7 @@ PROCEDIMIENTO carga_vector(var X : ARREGLO[1..10] de entero) ES
 
 ### Ámbito
 
-Local = declarada en la subacción, visible solo ahí. Global = declarada en el `Ambiente` de la acción, visible desde todas las subacciones. **Las plantillas de corte de control dependen de que contadores y resguardos sean globales.**
+Local = declarada en la subacción, visible solo ahí. **Cada llamada tiene sus propias locales y parámetros**, también en una recursión (§14). Global = declarada en el `Ambiente` de la acción, visible desde todas las subacciones. **Las plantillas de corte de control dependen de que contadores y resguardos sean globales.**
 
 ---
 
@@ -412,7 +412,62 @@ Variante abreviada en plantillas de cátedra: `ESC(...)`. Comillas simples o dob
 |---|---|
 | `:=` para asignar | `=` para asignar |
 | `<>` | `!=` |
-| Palabras clave en MAYÚSCULA | mezclar en el mismo archivo |
+| Palabras clave en MAYÚSCULA | — |
 | `FIN_SEGUN` (mayúsculas, sin acento en el código) | — |
 | Cerrar toda estructura abierta | — |
-| Un solo registro notacional por archivo | mezclar `Proceso`/`Algoritmo`, `SINO`/`Contrario` |
+| La forma que prefieras: `FIN_SI` o `FinSi` | — (las dos son válidas, ver §13.3) |
+
+---
+
+## 13. Punteros y listas
+
+```
+Ambiente
+    NODO = REGISTRO
+        dato : <tipo>
+        prox : Puntero a NODO          // lista doble: también  ant : Puntero a NODO
+    FIN_REGISTRO
+    PRIM, p, q : Puntero a NODO
+```
+
+| Qué | Cómo |
+|---|---|
+| Puntero que no apunta a nada | `NIL` (el libro: `NULO`) |
+| Pedir un nodo | `NUEVO(p)` |
+| Liberar un nodo | `DISPONER(p)` (el libro: `BORRAR(p)`) |
+| Campo del nodo apuntado | `*p.dato`, `*p.prox` |
+| Anidado | `*(*p.ant).prox := q` |
+| Avanzar | `p := *p.prox` |
+| Comparar punteros | solo `=` y `<>` (`p = NIL`, `p <> q`) |
+| Tipo con nombre | `punt = Puntero a NODO` y después `p : punt` |
+| Lista que llega por parámetro | `ACCION X (PRIM: Puntero a NODO) ES` |
+
+Variantes del material, todas válidas: `p^.dato`, `P↑.DATO`, `P*.PROX`. `p.dato` sin el
+asterisco **no** es válido: `p` es la dirección, no el nodo.
+
+Los algoritmos (recorrido, cargas apilada, encolada y ordenada, eliminación, circular) están en
+[[plantillas]] §9. La teoría, en [[SINTAXIS]] §10.
+
+---
+
+## 14. Recursividad
+
+Una función o procedimiento que **se llama a sí mismo**. No hay sintaxis nueva: es una llamada
+como cualquier otra, dentro de su propio cuerpo.
+
+```
+FUNCION Fact(n : entero) : entero ES
+    Proceso
+        SI n = 0 ENTONCES
+            Fact := 1                       // caso base
+        SINO
+            Fact := n * Fact(n - 1)         // caso recursivo
+        FIN_SI
+FIN_FUNCION
+```
+
+- Siempre un **caso base** que se resuelve sin llamarse, y un **caso recursivo** que se llama con un parámetro **más cerca** del caso base.
+- El resultado se asigna al nombre de la función **en todas las ramas**.
+- En clase se escribe antes el **planteo formal** (los casos como función matemática). Ver [[plantillas]] §10.
+- El pseudocódigo no distingue mayúsculas: un parámetro `n` y una constante `N` son el mismo nombre.
+

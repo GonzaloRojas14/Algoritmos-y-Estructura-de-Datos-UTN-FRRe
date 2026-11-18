@@ -1,0 +1,179 @@
+/*
+3er Parcial 2025 — Comisión C — TEMA A — Ejercicio 1 (3 pts): HackaTec 2025
+
+La Universidad llevó adelante el hackathon "HackaTec 2025". Los equipos usaron algunas de
+estas tecnologías: robótica (ro), mecatrónica (mc), inteligencia artificial (ia),
+programación (pr), ciencia de datos (cd).
+El jurado puntuó cada proyecto según:
+  1. Innovación y creatividad (ic): 0 a 35
+  2. Impacto y aplicabilidad (ia): 0 a 25
+  3. Calidad del prototipo y su presentación (cp): 0 a 40
+Además, cada equipo recibió un punto extra por cada tecnología utilizada:
+  Puntaje_final = Σ(puntos_por_criterio) + Σ(puntos_por_tecnologia)
+El jurado también evaluó al líder de cada equipo con un puntaje de 1 a 10.
+
+Archivos:
+  INSCRIPCIONES, secuencial ordenado por id_equipo:
+    id_equipo | nombre_equipo | fecha_inscripcion | tecnologias_utilizadas [ro,mc,ia,pr,cd]
+    (tecnologias_utilizadas es un vector de 5 que indica si se usó o no cada tecnología)
+  PUNTAJES, indexado por id_equipo:
+    id_equipo | puntaje_por_criterio [ic,ia,cp] | puntaje_lider
+
+Se pide:
+  1. Crear una lista doblemente enlazada con nombre_equipo, puntaje_total, puntaje_lider,
+     ordenada por puntaje_total de forma ascendente.
+  2. Informar cuántos equipos usaron 3 o más tecnologías.
+  3. Mostrar los datos de los ganadores de primer, segundo y tercer puesto. En caso de
+     empate, se desempata por los puntos del líder.
+
+
+CÓMO SE ARMA (el mismo patrón que los otros ejercicios 1, ver "Patrón — Ejercicio 1 de listas")
+  - Recorro el secuencial UNA vez. Cada registro es un equipo.
+  - Por cada equipo: cuento tecnologías (PARA de 1 a 5 sobre el vector), consulto su
+    puntaje en el indexado (clave -> LEER -> SI EXISTE), calculo el total y lo cargo
+    ordenado en la lista doble.
+  - El punto 3 sale gratis si la lista queda ordenada también por el líder cuando hay
+    empate: los ganadores son los 3 últimos, y la lista doble se recorre desde ULT hacia
+    atrás con *P.ant.
+*/
+
+// Lo que asumo, porque la consigna no lo aclara:
+// 1) tecnologias_utilizadas es un ARREGLO[1..5] de logico (verdadero = la usó).
+// 2) Si un equipo no tiene registro en PUNTAJES, no tiene puntaje final: lo informo y no
+//    entra en la lista. Igual cuenta para el punto 2, que solo mira las tecnologías.
+// 3) Para la lista, a igual puntaje_total va primero el de menor puntaje_lider. Así, al
+//    recorrerla desde el final, el empate ya queda resuelto a favor del mejor líder.
+// 4) Si dos equipos empatan también en el líder, la consigna no dice nada: quedan en el
+//    orden en que se leyeron.
+
+ACCION HackaTec ES
+    AMBIENTE
+        inscripcion = REGISTRO
+            id_equipo: entero;
+            nombre_equipo: AN(50);
+            fecha_inscripcion: N(8);                            // AAAAMMDD
+            tecnologias_utilizadas: ARREGLO[1..5] de logico;    // ro, mc, ia, pr, cd
+        FIN_REGISTRO
+
+        puntaje = REGISTRO
+            id_equipo: entero;
+            puntaje_por_criterio: ARREGLO[1..3] de entero;      // ic, ia, cp
+            puntaje_lider: 1..10;
+        FIN_REGISTRO
+
+        inscripciones: ARCHIVO de inscripcion ordenado por id_equipo;
+        puntajes: ARCHIVO de puntaje INDEXADO por id_equipo;
+        reg_ins: inscripcion;
+        reg_pun: puntaje;
+
+        // la lista doble que se genera
+        NODO = REGISTRO
+            nombre_equipo: AN(50);
+            puntaje_total: entero;
+            puntaje_lider: 1..10;
+            ant: Puntero a NODO;
+            prox: Puntero a NODO;
+        FIN_REGISTRO
+
+        PRIM, ULT, P, Q: Puntero a NODO;
+
+        i, cant_tec, total, cant_3_o_mas, puesto: entero;
+
+    PROCESO
+        PRIM := NIL;
+        ULT := NIL;
+        cant_3_o_mas := 0;
+
+        ABRIR E/(inscripciones);
+        ABRIR E/(puntajes);
+
+        LEER(inscripciones, reg_ins);
+        MIENTRAS NFDA(inscripciones) HACER
+            // --- tecnologías: un punto por cada una que usó ---
+            cant_tec := 0;
+            PARA i := 1 HASTA 5 HACER
+                SI reg_ins.tecnologias_utilizadas[i] ENTONCES
+                    cant_tec := cant_tec + 1;
+                FIN_SI
+            FIN_PARA
+            SI cant_tec >= 3 ENTONCES
+                cant_3_o_mas := cant_3_o_mas + 1;                // punto 2
+            FIN_SI
+
+            // --- el puntaje del jurado no está en la inscripción: se consulta el indexado ---
+            reg_pun.id_equipo := reg_ins.id_equipo;
+            LEER(puntajes, reg_pun);
+            SI EXISTE ENTONCES
+                total := cant_tec;
+                PARA i := 1 HASTA 3 HACER
+                    total := total + reg_pun.puntaje_por_criterio[i];
+                FIN_PARA
+
+                // --- armar el nodo ---
+                NUEVO(Q);
+                *Q.nombre_equipo := reg_ins.nombre_equipo;
+                *Q.puntaje_total := total;
+                *Q.puntaje_lider := reg_pun.puntaje_lider;
+
+                // --- insertarlo ordenado en la lista doble (los 4 casos de la filmina 8) ---
+                SI PRIM = NIL ENTONCES                             // CASO 1: lista vacía
+                    PRIM := Q;
+                    ULT := Q;
+                    *Q.prox := NIL;
+                    *Q.ant := NIL;
+                SINO
+                    P := PRIM;
+                    MIENTRAS (P <> NIL) Y ((*P.puntaje_total < *Q.puntaje_total) O
+                          ((*P.puntaje_total = *Q.puntaje_total) Y (*P.puntaje_lider < *Q.puntaje_lider))) HACER
+                        P := *P.prox;
+                    FIN_MIENTRAS
+                    SI P = PRIM ENTONCES                           // CASO 2: antes del primero
+                        *Q.prox := P;
+                        *P.ant := Q;
+                        *Q.ant := NIL;
+                        PRIM := Q;
+                    SINO
+                        SI P = NIL ENTONCES                        // CASO 4: después del último
+                            *Q.ant := ULT;
+                            *Q.prox := NIL;
+                            *ULT.prox := Q;
+                            ULT := Q;
+                        SINO                                       // CASO 3: en el medio
+                            *Q.ant := *P.ant;
+                            *Q.prox := P;
+                            *(*P.ant).prox := Q;
+                            *P.ant := Q;
+                        FIN_SI
+                    FIN_SI
+                FIN_SI
+            SINO
+                ESCRIBIR("El equipo ", reg_ins.nombre_equipo, " no tiene puntajes cargados: no entra en la lista");
+            FIN_SI
+
+            LEER(inscripciones, reg_ins);
+        FIN_MIENTRAS
+
+        CERRAR(inscripciones);
+        CERRAR(puntajes);
+
+        // 1) la lista doble generada (ascendente por puntaje_total)
+        ESCRIBIR("Equipo | Puntaje total | Puntaje líder");
+        P := PRIM;
+        MIENTRAS P <> NIL HACER
+            ESCRIBIR(*P.nombre_equipo, " | ", *P.puntaje_total, " | ", *P.puntaje_lider);
+            P := *P.prox;
+        FIN_MIENTRAS
+
+        // 2) equipos que usaron 3 o más tecnologías
+        ESCRIBIR("Equipos con 3 o más tecnologías: ", cant_3_o_mas);
+
+        // 3) ganadores: los 3 últimos, recorriendo hacia atrás desde ULT
+        P := ULT;
+        puesto := 1;
+        MIENTRAS (P <> NIL) Y (puesto <= 3) HACER
+            ESCRIBIR(puesto, "° puesto: ", *P.nombre_equipo, " con ", *P.puntaje_total,
+                     " puntos (líder: ", *P.puntaje_lider, ")");
+            puesto := puesto + 1;
+            P := *P.ant;
+        FIN_MIENTRAS
+FIN_ACCION

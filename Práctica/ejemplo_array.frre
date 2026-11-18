@@ -1,0 +1,43 @@
+ACCION ej_3_9 ES
+    AMBIENTE
+        libros = REGISTRO
+            nro: ENTERO
+            titulo: AN(50)
+            autor: an(50)
+            hojas: ENTERO
+        FIN_REGISTRO
+
+        a: arreglo de [1..200] de libros
+        i,mayor,posicion,libro: ENTERO
+        bandera: LOGICO
+
+    PROCESO
+        bandera:= Falso
+        mayor:= 0
+        posicion:=1
+        libro:=1
+        PARA i:=1 HASTA 200 HACER
+            SI a[i].autor = "Nicklaus Wirth" ENTONCES
+                ESCRIBIR(a[i].titulo)
+                bandera:= verdadero
+
+                SI a[i].hojas > mayor ENTONCES
+                    mayor:= a[i].hojas
+                    libro:= i
+                FIN_SI
+            FIN_SI
+
+            SI a[i].titulo = "Algoritmos + Estructuras de Datos=Programa" ENTONCES
+                posicion:=i
+            FIN_SI
+
+
+        FIN_PARA
+        SI bandera = Falso ENTONCES
+            ESCRIBIR("No se encontraron libros de ese autor")
+        FIN_SI
+
+        ESCRIBIR("Algoritmos + Estructuras de Datos=Programa se encuentra en la posicion", posicion)
+
+        ESCRIBIR("El libro de ese wachin con mas hojas es", a[libro].titulo)
+FIN_ACCION

@@ -1,0 +1,24 @@
+clave.id_pais	clave.id_niño	cod_evento	fecha_event.año	fecha_event.mes	fecha_event.dia	detalle	punt_camb	tipo	id_reg_des	reg_des
+1	101	12	2026	11	3	Ayudo a su hermano	10	A	0	
+1	101	34	2026	11	9	Ordeno su cuarto	5	A	0	
+1	101	55	2026	11	20	Cambio de regalo	0		9	Telescopio
+1	102	20	2026	11	5	Se peleo en la escuela	25	R	0	
+1	103	0	2026	11	1	Alta de nuevo nino	0		3	Pelota
+1	103	25	2026	11	8	Ayudo a decorar el arbol	15	A	0	
+1	103	70	2026	11	22	Cambio de regalo	0		9	Telescopio
+1	105	99	2026	11	28	Retiro de la lista	0		0	
+2	201	40	2026	11	7	Hizo la tarea	12	A	0	
+2	202	15	2026	11	4	Ayudo en casa	8	A	0	
+2	203	0	2026	11	2	Alta de nuevo nino	0		4	Autito
+2	203	61	2026	11	16	Cambio de regalo	0		5	Patineta
+2	207	18	2026	11	6	Grito a su madre	20	R	0	
+2	207	77	2026	11	21	Pidio disculpas	9	A	0	
+3	301	99	2026	11	25	Retiro de la lista	0		0	
+3	305	99	2026	11	26	Retiro de la lista	0		0	
+3	308	0	2026	11	1	Alta de nuevo nino	0		2	Rompecabezas
+3	308	44	2026	11	12	Compartio sus juguetes	15	A	0	
+4	401	30	2026	11	8	Rompio un vidrio	18	R	0	
+4	404	22	2026	11	10	Estudio toda la semana	40	A	0	
+4	407	0	2026	11	3	Alta de nuevo nino	0		6	Muneca
+4	407	33	2026	11	15	Se porto muy bien	20	A	0	
+4	409	66	2026	11	18	Cambio de regalo	0		1	Libro

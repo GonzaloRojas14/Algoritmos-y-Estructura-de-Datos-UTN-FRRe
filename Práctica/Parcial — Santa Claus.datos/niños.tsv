@@ -1,0 +1,13 @@
+clave.id_pais	clave.id_niño	nyp	punt_comp	id_regalo	nom_regalo	fecha_reg.año	fecha_reg.mes	fecha_reg.dia	fecha_ret.año	fecha_ret.mes	fecha_ret.dia
+1	101	Ana Perez	45	7	Bicicleta	2024	3	10	9999	12	31
+1	102	Bruno Diaz	-12	3	Pelota	2024	5	2	9999	12	31
+1	105	Carla Ruiz	88	9	Telescopio	2023	1	20	9999	12	31
+2	201	Diego Sosa	15	4	Autito	2025	2	14	9999	12	31
+2	203	Elena Vega	62	7	Bicicleta	2024	8	30	9999	12	31
+2	207	Facundo Lima	-5	1	Libro	2025	6	1	9999	12	31
+3	301	Gaston Mora	30	2	Rompecabezas	2024	11	11	9999	12	31
+3	302	Helena Cruz	74	9	Telescopio	2023	9	5	9999	12	31
+3	308	Ivan Rojas	0	3	Pelota	2025	7	19	9999	12	31
+4	401	Julia Nieto	51	5	Patineta	2024	4	4	9999	12	31
+4	404	Kevin Ortiz	-30	1	Libro	2025	1	8	9999	12	31
+4	409	Lucia Paz	19	6	Muneca	2025	3	22	9999	12	31

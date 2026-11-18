@@ -1,0 +1,281 @@
+/*
+    ═══════════════════════════════════════════════════════════════════════
+    EJERCICIO N° 1 — Santa Claus
+    ═══════════════════════════════════════════════════════════════════════
+
+    Santa Claus y su equipo de duendes registran toda la información de los
+    niños que esperan regalos durante la Navidad. Cada niño está registrado en
+    un archivo secuencial llamado NIÑOS, donde se guarda información sobre su
+    comportamiento y su deseo principal.
+
+    Al final de la temporada previa a Navidad, los duendes recopilan los eventos
+    ocurridos durante el mes en un archivo secuencial llamado EVENTOS, que
+    detalla las novedades, incluyendo cambios de comportamiento, solicitudes de
+    regalos, y demás actualizaciones.
+
+    ── Archivo NIÑOS (ordenado por id_pais, id_niño) ──────────────────────
+
+    id_pais | id_niño | nombre y apellido | puntaje_buen_comportamiento |
+    id_regalo | nombre_regalo | fecha_registro | fecha_retiro
+
+    - id_pais: Identificador del País del niño.
+    - id_niño: Identificador único del niño.
+    - puntaje_buen_comportamiento: Puntaje que indica el comportamiento del
+      niño (puede ser positivo o negativo).
+    - regalo_deseado: Nombre del regalo que desea recibir.
+    - fecha_registro: Fecha en la que se registró al niño.
+    - fecha_retiro: Fecha en la que fue retirado de la lista de navidad
+      (si corresponde).
+
+    ── Archivo EVENTOS (ordenado por id_pais, id_niño, cod_evento) ────────
+
+    id_pais | id_niño | cod_evento (0..99) | fecha_evento | detalle |
+    puntaje_cambio | tipo | id_regalo_deseado | regalo_deseado
+
+    - cod_evento: 0: Alta de un nuevo niño; 99: Retiro de un niño de la lista;
+      1-98: Actualización de puntaje de comportamiento o cambio de regalo
+      deseado.
+    - detalle: Descripción del evento (por ejemplo, "Ayudó a su hermano",
+      "Se peleó en la escuela", etc.).
+    - puntaje_cambio: Valor que se sumará o restará al puntaje de
+      comportamiento del niño.
+    - tipo: "A" si el evento mejora el puntaje (positivo), "R" si lo reduce
+      (negativo), vacío si es un cambio de regalo.
+    - regalo_deseado: Nuevo regalo deseado (si corresponde).
+
+    ── Se pide ────────────────────────────────────────────────────────────
+
+    Desarrollar un algoritmo que permita mantener actualizado el archivo NIÑOS
+    con los eventos registrados en el archivo EVENTOS.
+
+    El algoritmo debe ajustar los puntajes de comportamiento y actualizar los
+    regalos deseados si corresponde. Informar por pantalla cualquier tipo de
+    error que considere pertinente durante el proceso. Además indicar:
+
+    a) La cantidad total de niños nuevos que se registraron durante el proceso.
+    b) El nombre del niño con mejor puntaje de buen comportamiento.
+
+
+    ═══════════════════════════════════════════════════════════════════════
+    LOS DATOS
+    ═══════════════════════════════════════════════════════════════════════
+
+    En "Parcial — Santa Claus.datos/": 12 niños en el maestro y 20 eventos.
+    Los dos ya vienen ordenados como pide la consigna.
+
+    Declará los archivos con estos nombres, que es como se llaman los .tsv:
+
+        ninos   : ARCHIVO de <reg_nino>   ordenado por id_pais y id_nino
+        eventos : ARCHIVO de <reg_evento> ordenado por id_pais, id_nino y cod_evento
+        ninos_act : ARCHIVO de <reg_nino>        <- el maestro actualizado
+
+    ── columnas de ninos.tsv ──
+        id_pais              entero
+        id_nino              entero
+        nombre               AN(40)
+        puntaje              entero        (puede ser negativo)
+        id_regalo            entero
+        regalo_deseado       AN(30)
+        fecha_registro.anio  entero        \
+        fecha_registro.mes   entero         > un REGISTRO fecha anidado
+        fecha_registro.dia   entero        /
+        fecha_retiro.anio    entero        \
+        fecha_retiro.mes     entero         > 0 0 0 = todavía en la lista
+        fecha_retiro.dia     entero        /
+
+    ── columnas de eventos.tsv ──
+        id_pais              entero
+        id_nino              entero
+        cod_evento           entero        (0..99)
+        fecha_evento.anio    entero
+        fecha_evento.mes     entero
+        fecha_evento.dia     entero
+        detalle              AN(40)
+        puntaje_cambio       entero
+        tipo                 AN(1)         'A', 'R', o vacío
+        id_regalo_deseado    entero
+        regalo_deseado       AN(30)
+
+    OJO con "tipo": declaralo AN(1) y no caracter, porque puede venir VACÍO
+    (es lo que marca que el evento es un cambio de regalo y no de puntaje).
+
+    Las fechas van anio, mes, dia en ese orden: los registros se comparan campo
+    por campo en el orden en que se declaran.
+
+    Si preferís agrupar la clave en un registro aparte, renombrá en el .tsv las
+    dos primeras columnas a "clave.id_pais" y "clave.id_nino".
+
+
+    ───────────────────────────────────────────────────────────────────────
+
+    Las respuestas correctas están en "Parcial — Santa Claus — respuestas.md".
+    Abrilo DESPUÉS, para contrastar.
+
+
+    ═══════════════════════════════════════════════════════════════════════
+    ESCRIBÍ ACÁ ABAJO
+    ═══════════════════════════════════════════════════════════════════════
+*/
+
+ACCION parcial_sc ES
+  Ambiente
+    FECHA = REGISTRO
+      año: 1..9999
+      mes: 1..12
+      dia: 1..31
+    FIN_REGISTRO
+
+    clave = REGISTRO 
+        id_pais: ENTERO
+        id_niño: ENTERO
+    FIN_REGISTRO
+
+    niño = REGISTRO
+      clave: clave
+      nyp: AN(30) 
+      punt_comp: ENTERO
+      id_regalo: ENTERO
+      nom_regalo: AN(30)
+      fecha_reg: FECHA
+      fecha_ret: FECHA
+    FIN_REGISTRO
+
+    evento = REGISTRO
+          clave: clave
+          cod_evento: 0..99
+          fecha_event: FECHA
+          detalle: AN(50)
+          punt_camb: ENTERO
+          tipo: AN(1)
+          id_reg_des: ENTERO
+          reg_des: AN(30)
+      FIN_REGISTRO
+
+    niños: ARCHIVO DE niño ORDENADO POR clave
+    eventos: ARCHIVO DE evento ORDENADO POR clave, cod_evento
+    niños_act: ARCHIVO DE niño
+
+    reg_niño: niño
+    reg_event: evento
+    reg_act: niño
+
+    tot_n_nuevos: ENTERO
+    niñ_max: AN(30)
+    aux_n: ENTERO
+
+    HV: ENTERO
+
+    PROCEDIMIENTO proc_alta ES
+      SI reg_event.cod_evento = 0 ENTONCES
+        tot_n_nuevos:= tot_n_nuevos + 1
+        ESCRIBIR("Este Registro es un alta")
+
+        reg_act.clave.id_pais:= reg_event.clave.id_pais
+        reg_act.clave.id_niño:= reg_event.clave.id_niño
+        reg_act.punt_comp:= reg_event.punt_camb
+        reg_act.id_regalo:= reg_event.id_reg_des
+        reg_act.nom_regalo:= reg_event.reg_des
+        reg_act.fecha_reg:= reg_event.fecha_event
+        reg_act.fecha_ret.año:= 9999                   // ← CAMBIO: mismo centinela
+        reg_act.fecha_ret.mes:= 12                     //   que traen los datos
+        reg_act.fecha_ret.dia:= 31
+        ESCRIBIR(niños_act, reg_act)
+      SINO
+        SI reg_event.cod_evento = 99 ENTONCES
+          ESCRIBIR("ERROR: No se puede dar baja a un registro inexistente")
+        SINO
+          ESCRIBIR("ERROR: No se puede actualizar un registro inexistente")
+        FIN_SI
+        reg_act:= reg_niño
+      FIN_SI
+      
+
+    FIN_PROCEDIMIENTO
+
+    PROCEDIMIENTO proc_mod_baja ES
+      SI reg_event.cod_evento > 0 Y reg_event.cod_evento < 99 ENTONCES
+        SI reg_event.tipo = 'R' ENTONCES
+          reg_niño.punt_comp:= reg_niño.punt_comp - reg_event.punt_camb
+        SINO 
+          SI reg_event.tipo = 'A' ENTONCES
+            reg_niño.punt_comp:= reg_niño.punt_comp + reg_event.punt_camb
+          SINO
+            reg_niño.nom_regalo:= reg_event.reg_des
+            reg_niño.id_regalo:= reg_event.id_reg_des
+          FIN_SI
+        FIN_SI
+      SINO
+          SI reg_event.cod_evento = 0 ENTONCES
+            ESCRIBIR("ERROR: No se puede dar de alta un registro existente")
+          SINO
+            SI reg_event.cod_evento = 99 ENTONCES
+              reg_niño.fecha_ret:= reg_event.fecha_event
+            FIN_SI
+          FIN_SI
+      FIN_SI
+    FIN_PROCEDIMIENTO
+
+    PROCEDIMIENTO leer_niños ES
+      LEER(niños, reg_niño)
+      SI FDA(niños) ENTONCES
+        reg_niño.clave.id_pais:= 99999
+        reg_niño.clave.id_niño:= 99999
+      FIN_SI
+    FIN_PROCEDIMIENTO
+
+    PROCEDIMIENTO leer_eventos ES
+      LEER(eventos, reg_event)
+      SI FDA(eventos) ENTONCES
+        reg_event.clave.id_pais:= 99999
+        reg_event.clave.id_niño:= 99999
+      FIN_SI
+    FIN_PROCEDIMIENTO
+
+  Proceso
+    tot_n_nuevos:= 0
+    aux_n:= 0
+    
+
+    ABRIR E/(niños); ABRIR /S(niños_act); ABRIR E/(eventos)
+
+    leer_niños; leer_eventos
+    niñ_max:= reg_niño.nyp
+    
+    MIENTRAS reg_niño.clave.id_pais <> 99999 O reg_event.clave.id_pais <> 99999 HACER
+      SI reg_niño.clave > reg_event.clave ENTONCES
+        
+        proc_alta
+        leer_eventos
+        MIENTRAS reg_niño.clave = reg_event.clave  HACER
+          proc_mod_baja
+          leer_eventos
+        FIN_MIENTRAS
+        ESCRIBIR(niños_act, reg_act)
+      SINO
+        SI reg_niño.clave < reg_event.clave ENTONCES
+          reg_act:= reg_niño
+          ESCRIBIR(niños_act, reg_act)
+          leer_niños
+        SINO
+          MIENTRAS reg_niño.clave = reg_event.clave HACER
+            proc_mod_baja
+            leer_eventos
+          FIN_MIENTRAS
+          ESCRIBIR(niños_act, reg_act)
+          leer_niños
+        FIN_SI
+      FIN_SI
+
+      SI reg_act.punt_comp > aux_n ENTONCES
+        niñ_max := reg_act.nyp
+        aux_n:= reg_act.punt_comp
+      FIN_SI
+      
+    FIN_MIENTRAS
+
+    ESCRIBIR("El niño con mejor puntaje es: ", niñ_max, " con: ", aux_n)
+    ESCRIBIR("La cantidad de niños dados de alta son: ", tot_n_nuevos)
+
+    CERRAR(niños); CERRAR(niños_act); CERRAR(eventos)
+
+FIN_ACCION

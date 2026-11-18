@@ -1,0 +1,8 @@
+id_equipo	nombre_equipo	fecha_inscripcion	tecnologias_utilizadas[1]	tecnologias_utilizadas[2]	tecnologias_utilizadas[3]	tecnologias_utilizadas[4]	tecnologias_utilizadas[5]
+1	Robotix	20250801	verdadero	verdadero	falso	verdadero	falso
+2	DataMinds	20250801	falso	falso	verdadero	verdadero	verdadero
+3	MecaTeam	20250802	verdadero	verdadero	falso	falso	falso
+4	NeuroLab	20250803	falso	falso	verdadero	falso	verdadero
+5	CodeRunners	20250803	falso	falso	falso	verdadero	falso
+6	SinPuntaje	20250804	verdadero	falso	falso	falso	falso
+7	Innova	20250805	verdadero	verdadero	verdadero	verdadero	verdadero
